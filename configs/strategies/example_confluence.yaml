@@ -1,0 +1,20 @@
+# Mẫu chiến lược — logic confluence đầy đủ ở Phase 3
+id: btc_confluence_spot
+display_name: "Confluence BTC Spot"
+enabled: false
+symbol: BTC/USDT
+market_type: spot
+timeframes:
+  - H1
+  - H4
+
+confluence:
+  score_threshold: 60
+  required: []   # Phase 3: danh sách điều kiện AND
+  optional: []
+
+indicators:
+  - id: ema_34_89
+    display_name: "EMA 34/89"
+  - id: rsi
+    display_name: "RSI filter"

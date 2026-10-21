@@ -1,0 +1,20 @@
+# Rủi ro & confluence (Spot trước — không dùng leverage)
+starting_balance_usdt: 1000
+risk_per_trade_pct: 1.0
+
+confluence:
+  score_threshold: 60   # /100 — tối ưu sau bằng backtest
+  score_max: 100
+
+rating:
+  label: "Độ tin cậy"   # số cao = tin hơn
+  min: 1
+  max: 10
+
+# Perp sau này — chưa áp dụng ở Spot
+perp:
+  max_leverage: 10      # Tomas muốn 10–20x; chốt trần khi sang Perp
+  require_stop_loss: true
+
+kill_switch: false
+max_open_orders: 5
