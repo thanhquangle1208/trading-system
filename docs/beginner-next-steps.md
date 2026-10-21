@@ -30,6 +30,8 @@ Không cần hiểu hết code. Chỉ cần: mở được repo → chạy vài 
 
 Agent sẽ **hỏi từng bước** trong chat — không bắt bạn làm hết một lúc.
 
+**Cập nhật (2026-10-21):** Tomas muốn agent **tự chạy** các lệnh cài đặt / test / smoke trên môi trường agent, rồi báo lại. Tomas chỉ cần làm việc “phía người”: mở repo, duyệt, trả lời câu hỏi, tạo key khi cần.
+
 ## Phase 2 là gì? (chưa làm)
 
 Phase 2 = viết **chỉ báo** (EMA, RSI, …) — công thức đọc biểu đồ. Chỉ bắt đầu khi bạn nói Phase 1 ổn.
