@@ -74,11 +74,9 @@ Sẽ: mock → confluence → **risk plan** (size/SL/TP hoặc reject) → paper
 python -m trading_system.backtest
 ```
 
-- Không nhìn trước tương lai (vào lệnh ở bar sau tín hiệu)
-- Phí + slippage (+ funding=0 với spot)
-- Metrics: PnL, winrate, drawdown, fees
-- Walk-forward train/test + Optuna tối ưu `score_threshold`
-- Config: `configs/backtest.yaml` · code: `src/trading_system/backtest/`
+- `configs/backtest.yaml` → `data.mode: real` lấy nến công khai (ưu tiên **Bybit**; nếu máy/agent bị chặn quốc gia → tự fallback OKX/Gate…)
+- Không nhìn trước tương lai; phí + slippage; walk-forward + Optuna
+- Trên máy Việt Nam thường lấy được Bybit trực tiếp
 
 ### Phase 6 — Telegram + dashboard
 

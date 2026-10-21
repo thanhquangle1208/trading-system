@@ -5,6 +5,14 @@ fee_bps: 10               # 0.10% mỗi phía (vào/ra)
 slippage_bps: 5           # 0.05% trượt giá giả lập
 funding_bps_per_bar: 0    # Spot = 0; perp sau có thể > 0
 
+# Nến thật
+data:
+  mode: real              # real | mock
+  prefer_exchange: bybit  # thử Bybit trước; nếu bị chặn geo → OKX/Gate…
+  symbol: BTC/USDT
+  timeframe: H1
+  bars: 500
+
 # Walk-forward
 walk_forward:
   train_ratio: 0.7

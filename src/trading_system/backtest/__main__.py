@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import json
+from dataclasses import replace
+from datetime import datetime, timezone
 
 from trading_system.backtest.config import load_backtest_config
 from trading_system.backtest.costs import CostModel
@@ -10,14 +12,13 @@ from trading_system.backtest.engine import BacktestEngine
 from trading_system.backtest.optimize import optimize_score_threshold
 from trading_system.backtest.walk_forward import run_walk_forward, split_candles
 from trading_system.data.base import Candle
-from trading_system.data.factory import get_exchange_adapter
+from trading_system.data.ohlcv_history import fetch_real_btc_ohlcv
 from trading_system.logging_setup import get_logger, setup_logging
 from trading_system.settings import get_settings
 from trading_system.signals.strategy_loader import load_strategy
 
 
 def _synth_trend_candles(n: int = 260) -> list[Candle]:
-    """Nến tổng hợp: sideway rồi uptrend — dùng khi mock quá nhiễu."""
     out: list[Candle] = []
     price = 100.0
     for i in range(n):
@@ -38,21 +39,43 @@ def _synth_trend_candles(n: int = 260) -> list[Candle]:
     return out
 
 
+def _fmt_ts(ms: int) -> str:
+    return datetime.fromtimestamp(ms / 1000, tz=timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+
+
 def main() -> None:
     settings = get_settings()
     setup_logging(settings.log_level)
     log = get_logger("backtest.main")
     cfg = load_backtest_config()
 
-    # Ưu tiên mock/synth ổn định cho smoke (không phụ thuộc mạng)
-    if settings.mock_exchange:
+    source = "mock"
+    if cfg.data_mode == "real":
+        candles, source = fetch_real_btc_ohlcv(
+            symbol=cfg.symbol,
+            timeframe=cfg.timeframe,
+            limit_bars=cfg.bars,
+            prefer=cfg.prefer_exchange,
+        )
+        log.info(
+            "Nến thật %s %s từ %s: %d bars (%s → %s)",
+            cfg.symbol,
+            cfg.timeframe,
+            source,
+            len(candles),
+            _fmt_ts(candles[0].timestamp_ms),
+            _fmt_ts(candles[-1].timestamp_ms),
+        )
+        if source != cfg.prefer_exchange:
+            log.warning(
+                "Ưu tiên %s nhưng không truy cập được từ môi trường này "
+                "(thường do chặn quốc gia). Đã dùng %s — giá BTC spot công khai.",
+                cfg.prefer_exchange,
+                source,
+            )
+    else:
         candles = _synth_trend_candles(400)
         log.info("Dùng nến tổng hợp %d bars (MOCK)", len(candles))
-    else:
-        adapter = get_exchange_adapter(settings)
-        candles = adapter.fetch_ohlcv("BTC/USDT", "H1", limit=300)
-        adapter.close()
-        log.info("Dùng nến exchange %d bars", len(candles))
 
     costs = CostModel(
         fee_bps=cfg.fee_bps,
@@ -64,7 +87,7 @@ def main() -> None:
         costs=costs,
         initial_balance=cfg.initial_balance_usdt,
         warmup_bars=cfg.warmup_bars,
-        timeframe="H1",
+        timeframe=cfg.timeframe,
     )
 
     train, test = split_candles(candles, cfg.train_ratio)
@@ -83,19 +106,26 @@ def main() -> None:
         opt["best_return_pct"],
     )
 
-    # Áp threshold tốt nhất lên full walk-forward
-    from dataclasses import replace
-
     best_strategy = replace(engine.strategy, score_threshold=opt["best_score_threshold"])
     best_engine = BacktestEngine(
         strategy=best_strategy,
         costs=costs,
         initial_balance=cfg.initial_balance_usdt,
         warmup_bars=cfg.warmup_bars,
-        timeframe="H1",
+        timeframe=cfg.timeframe,
     )
     wf = run_walk_forward(candles, best_engine, cfg.train_ratio)
     report = {
+        "data": {
+            "mode": cfg.data_mode,
+            "source_exchange": source,
+            "prefer_exchange": cfg.prefer_exchange,
+            "symbol": cfg.symbol,
+            "timeframe": cfg.timeframe,
+            "bars": len(candles),
+            "from": _fmt_ts(candles[0].timestamp_ms),
+            "to": _fmt_ts(candles[-1].timestamp_ms),
+        },
         "optuna": {
             "best_score_threshold": opt["best_score_threshold"],
             "best_return_pct_train": opt["best_return_pct"],
@@ -104,7 +134,7 @@ def main() -> None:
         "test": wf["test"].metrics.as_dict(),
     }
     log.info("Báo cáo: %s", json.dumps(report, ensure_ascii=False, indent=2))
-    log.info("Phase 5 backtest smoke xong.")
+    log.info("Backtest data thật xong.")
 
 
 if __name__ == "__main__":

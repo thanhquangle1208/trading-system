@@ -51,6 +51,7 @@ Giải thích và tài liệu bằng **tiếng Việt**, chậm rãi, dễ hiể
 | Phase 5 | Backtest + Optuna — Tomas **OK Phase 5** (2026-10-21) |
 | Phase 6 | Telegram + dashboard — Tomas **OK Phase 6** (2026-10-21) |
 | Pine add-on | Scripts TV trong `optional/pine/` — Tomas **OK Pine** (2026-10-21) |
+| Backtest data thật | `data.mode: real`; ưu tiên Bybit, fallback nếu geo-block (2026-10-21) |
 
 ### Ghi chú leverage (khi sau này làm Perp)
 

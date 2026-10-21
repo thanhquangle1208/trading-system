@@ -18,12 +18,18 @@ class BacktestConfig:
     optuna_n_trials: int
     score_threshold_min: float
     score_threshold_max: float
+    data_mode: str
+    prefer_exchange: str
+    symbol: str
+    timeframe: str
+    bars: int
 
 
 def load_backtest_config() -> BacktestConfig:
     raw = load_yaml("backtest.yaml")
     wf = raw.get("walk_forward") or {}
     opt = raw.get("optuna") or {}
+    data = raw.get("data") or {}
     return BacktestConfig(
         initial_balance_usdt=float(raw.get("initial_balance_usdt", 1000)),
         warmup_bars=int(raw.get("warmup_bars", 100)),
@@ -34,4 +40,9 @@ def load_backtest_config() -> BacktestConfig:
         optuna_n_trials=int(opt.get("n_trials", 8)),
         score_threshold_min=float(opt.get("score_threshold_min", 50)),
         score_threshold_max=float(opt.get("score_threshold_max", 80)),
+        data_mode=str(data.get("mode", "real")),
+        prefer_exchange=str(data.get("prefer_exchange", "bybit")),
+        symbol=str(data.get("symbol", "BTC/USDT")),
+        timeframe=str(data.get("timeframe", "H1")),
+        bars=int(data.get("bars", 500)),
     )
