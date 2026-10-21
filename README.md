@@ -15,7 +15,7 @@ Bot giao dịch cá nhân của Tomas: theo dõi **BTC** nhiều khung thời gi
 | 2–6 | Chỉ báo → tín hiệu → risk → backtest → Telegram/UI | Chưa |
 | Add-on | **Pine Script** sau Phase 6; DEX adapter sau | Chưa |
 
-Đọc bàn giao: **[docs/HANDOFF.md](docs/HANDOFF.md)**
+Đọc bàn giao: **[docs/HANDOFF.md](docs/HANDOFF.md)** · Newbie xem **[docs/beginner-next-steps.md](docs/beginner-next-steps.md)** và **[docs/preferences.md](docs/preferences.md)**
 
 ---
 

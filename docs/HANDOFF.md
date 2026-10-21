@@ -1,6 +1,6 @@
 # HANDOFF — Trading System
 
-**Đọc file này trước** khi làm bất kỳ việc gì trong repo. Sau đó đọc: `architecture-roadmap.md` → `project-context.md` → `cost-estimate.md` → `preferences.md`.
+**Đọc file này trước** khi làm bất kỳ việc gì trong repo. Sau đó đọc: `preferences.md` (newbie) → `beginner-next-steps.md` → `architecture-roadmap.md` → `project-context.md` → `cost-estimate.md`.
 
 > **Trạng thái:** Tomas đã nói **“OK Phase 1”** (2026-10-21). Phase 1 đang / đã scaffold trên nhánh `cursor/phase-1-foundation-fcd8`. **Chưa** bắt Phase 2 cho đến khi Tomas duyệt Phase 1.
 
