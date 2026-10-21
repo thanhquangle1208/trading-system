@@ -49,6 +49,7 @@ Giải thích và tài liệu bằng **tiếng Việt**, chậm rãi, dễ hiể
 | Phase 3 | Confluence + rating — Tomas **OK Phase 3** (2026-10-21) |
 | Phase 4 | Risk + paper execution — Tomas **OK Phase 4** (2026-10-21) |
 | Phase 5 | Backtest + Optuna — Tomas **OK Phase 5** (2026-10-21) |
+| Phase 6 | Telegram + dashboard — Tomas **OK Phase 6** (2026-10-21) |
 
 ### Ghi chú leverage (khi sau này làm Perp)
 
@@ -67,13 +68,12 @@ Không còn câu hỏi chặn Phase 1. Khi sang Perp / Phase 6 sẽ hỏi lại 
 | Phase | Trạng thái |
 |-------|------------|
 | Kiến trúc / roadmap | Đã chốt |
-| **Phase 1–4** | Xong |
-| **Phase 5** | Backtest — nhánh `cursor/phase-5-backtest-fcd8` (chờ Tomas duyệt) |
-| Phase 6 | Chưa |
-| Pine (add-on) | Sau Phase 6 |
+| **Phase 1–5** | Xong |
+| **Phase 6** | Telegram + dashboard — nhánh `cursor/phase-6-notify-dashboard-fcd8` (chờ Tomas duyệt) |
+| Pine (add-on) | Sau Phase 6 — chờ confirm |
 | DEX | Sau |
 
-**Quy tắc agent:** Báo cáo → hỏi → chỉ tiếp tục khi Tomas confirm. Không nhảy Phase 6 trước khi Tomas OK.
+**Quy tắc agent:** Báo cáo → hỏi → chỉ tiếp tục khi Tomas confirm. Không làm Pine/DEX trước khi Tomas OK.
 
 ---
 

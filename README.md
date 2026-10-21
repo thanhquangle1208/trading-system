@@ -79,6 +79,17 @@ python -m trading_system.backtest
 - Walk-forward train/test + Optuna tối ưu `score_threshold`
 - Config: `configs/backtest.yaml` · code: `src/trading_system/backtest/`
 
+### Phase 6 — Telegram + dashboard
+
+```bash
+# Dashboard localhost (trình duyệt: http://127.0.0.1:8000)
+python -m trading_system.dashboard
+```
+
+- Template tin: channel, TF, `display_name`, chỉ báo, **Độ tin cậy**
+- 1 kênh trước (`configs/notify.yaml`); chưa có token → dry-run (không gửi mạng)
+- Dashboard: vốn paper, lệnh LONG/SHORT (SL/TP/Qty), tín hiệu gần đây
+
 ### Phase 3 — tín hiệu
 
 - Strategy YAML: `configs/strategies/btc_confluence_wyckoff.yaml`
