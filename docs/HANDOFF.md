@@ -2,7 +2,7 @@
 
 **Đọc file này trước** khi làm bất kỳ việc gì trong repo. Sau đó đọc: `preferences.md` (newbie) → `beginner-next-steps.md` → `architecture-roadmap.md` → `project-context.md` → `cost-estimate.md`.
 
-> **Trạng thái:** Tomas đã nói **“OK Phase 1”** (2026-10-21). Phase 1 đang / đã scaffold trên nhánh `cursor/phase-1-foundation-fcd8`. **Chưa** bắt Phase 2 cho đến khi Tomas duyệt Phase 1.
+> **Trạng thái:** Tomas **OK Phase 1** + **OK Phase 2** (2026-10-21). Phase 2 trên nhánh `cursor/phase-2-indicators-fcd8`. **Chưa** Phase 3 cho đến khi Tomas confirm.
 
 ---
 
@@ -45,7 +45,7 @@ Giải thích và tài liệu bằng **tiếng Việt**, chậm rãi, dễ hiể
 | Leverage | **10x–20x** khi Perp sau; Spot không dùng |
 | Pine Script | **Có làm** — add-on **sau Phase 6** |
 | Phase 1 | Tomas đã **OK Phase 1** (2026-10-21) |
-| Phase 2 phạm vi | Chỉ báo thường **+ module Wyckoff cơ bản** (cấu trúc + vài tín hiệu đơn giản); chưa code — chờ “OK Phase 2” |
+| Phase 2 phạm vi | Chỉ báo thường **+ Wyckoff cơ bản** — Tomas **OK Phase 2** (2026-10-21) |
 
 ### Ghi chú leverage (khi sau này làm Perp)
 
@@ -64,12 +64,13 @@ Không còn câu hỏi chặn Phase 1. Khi sang Perp / Phase 6 sẽ hỏi lại 
 | Phase | Trạng thái |
 |-------|------------|
 | Kiến trúc / roadmap | Đã chốt |
-| **Phase 1** | **Đang triển khai / chờ Tomas duyệt** — nhánh `cursor/phase-1-foundation-fcd8` |
-| Phase 2–6 | Chưa |
+| **Phase 1** | Xong (scaffold) |
+| **Phase 2** | Chỉ báo + Wyckoff cơ bản — nhánh `cursor/phase-2-indicators-fcd8` (chờ Tomas duyệt) |
+| Phase 3–6 | Chưa |
 | Pine (add-on) | Sau Phase 6 |
 | DEX | Sau |
 
-**Quy tắc agent:** Không nhảy Phase 2 trước khi Tomas duyệt kết quả Phase 1.
+**Quy tắc agent:** Báo cáo → hỏi → chỉ tiếp tục khi Tomas confirm. Không nhảy Phase 3 trước khi Tomas OK.
 
 ---
 

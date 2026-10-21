@@ -39,8 +39,8 @@ Ngắn gọn cho agent / phiên sau. Cập nhật khi Tomas chốt quyết đị
 
 ## Trạng thái code
 
-- Phase 1 scaffold trên nhánh `cursor/phase-1-foundation-fcd8`
-- Chưa Phase 2+
+- Phase 1 scaffold xong
+- Phase 2 chỉ báo + Wyckoff cơ bản trên nhánh `cursor/phase-2-indicators-fcd8` — chờ Tomas duyệt trước Phase 3
 
 ## Tài liệu liên quan
 

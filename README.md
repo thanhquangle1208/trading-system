@@ -11,8 +11,9 @@ Bot giao dịch cá nhân của Tomas: theo dõi **BTC** nhiều khung thời gi
 | Phase | Nội dung | Trạng thái |
 |-------|----------|------------|
 | Kiến trúc | Layers, CEX/DEX, TV, rating, notifier | Đã chốt |
-| **1** | Nền tảng: cấu trúc, `.env`, logging, SQLite, Bybit/mock, paper skeleton | **Đang / vừa scaffold — chờ Tomas duyệt** |
-| 2–6 | Chỉ báo → tín hiệu → risk → backtest → Telegram/UI | Chưa |
+| **1** | Nền tảng: cấu trúc, `.env`, logging, SQLite, Bybit/mock, paper skeleton | Xong |
+| **2** | Plugin chỉ báo + **Wyckoff cơ bản** | **Đang / vừa xong — chờ Tomas duyệt** |
+| 3–6 | Tín hiệu → risk → backtest → Telegram/UI | Chưa |
 | Add-on | **Pine Script** sau Phase 6; DEX adapter sau | Chưa |
 
 Đọc bàn giao: **[docs/HANDOFF.md](docs/HANDOFF.md)** · Newbie xem **[docs/beginner-next-steps.md](docs/beginner-next-steps.md)** và **[docs/preferences.md](docs/preferences.md)**
@@ -46,13 +47,17 @@ Khi có key Bybit testnet: điền `BYBIT_API_KEY` / `BYBIT_API_SECRET`, đặt 
 pytest
 ```
 
-### 4) Smoke Phase 1 (mock feed + paper lệnh nhỏ)
+### 4) Smoke Phase 1+2 (mock feed + chỉ báo + paper)
 
 ```bash
 python -m trading_system
 ```
 
-Sẽ: bật log → tạo SQLite `data/trading.db` → lấy vài nến mock → ghi paper order mẫu.
+Sẽ: bật log → SQLite → nến mock → tính thử EMA/RSI/Wyckoff → paper order mẫu.
+
+### Phase 2 — chỉ báo có gì?
+
+Plugin trong `src/trading_system/indicators/`: EMA 34/89, RSI, MACD, Bollinger, VWAP, ATR, Volume, market structure, S/R, mẫu nến, **Wyckoff cơ bản** (spring / upthrust / pha đơn giản). Lấy qua `get_indicator("rsi")` — xem `tests/test_indicators_math.py`.
 
 ---
 
