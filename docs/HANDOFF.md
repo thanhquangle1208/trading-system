@@ -2,7 +2,7 @@
 
 **Đọc file này trước** khi làm bất kỳ việc gì trong repo. Sau đó đọc: `preferences.md` (newbie) → `beginner-next-steps.md` → `architecture-roadmap.md` → `project-context.md` → `cost-estimate.md`.
 
-> **Trạng thái:** Tomas **OK Phase 1–4** (2026-10-21). Phase 4 trên nhánh `cursor/phase-4-risk-execution-fcd8`. **Chưa** Phase 5 cho đến khi Tomas confirm.
+> **Trạng thái:** Tomas **OK Phase 1–5** (2026-10-21). Phase 5 trên nhánh `cursor/phase-5-backtest-fcd8`. **Chưa** Phase 6 cho đến khi Tomas confirm.
 
 ---
 
@@ -48,6 +48,7 @@ Giải thích và tài liệu bằng **tiếng Việt**, chậm rãi, dễ hiể
 | Phase 2 phạm vi | Chỉ báo thường **+ Wyckoff cơ bản** — Tomas **OK Phase 2** (2026-10-21) |
 | Phase 3 | Confluence + rating — Tomas **OK Phase 3** (2026-10-21) |
 | Phase 4 | Risk + paper execution — Tomas **OK Phase 4** (2026-10-21) |
+| Phase 5 | Backtest + Optuna — Tomas **OK Phase 5** (2026-10-21) |
 
 ### Ghi chú leverage (khi sau này làm Perp)
 
@@ -66,13 +67,13 @@ Không còn câu hỏi chặn Phase 1. Khi sang Perp / Phase 6 sẽ hỏi lại 
 | Phase | Trạng thái |
 |-------|------------|
 | Kiến trúc / roadmap | Đã chốt |
-| **Phase 1–3** | Xong |
-| **Phase 4** | Risk + paper — nhánh `cursor/phase-4-risk-execution-fcd8` (chờ Tomas duyệt) |
-| Phase 5–6 | Chưa |
+| **Phase 1–4** | Xong |
+| **Phase 5** | Backtest — nhánh `cursor/phase-5-backtest-fcd8` (chờ Tomas duyệt) |
+| Phase 6 | Chưa |
 | Pine (add-on) | Sau Phase 6 |
 | DEX | Sau |
 
-**Quy tắc agent:** Báo cáo → hỏi → chỉ tiếp tục khi Tomas confirm. Không nhảy Phase 5 trước khi Tomas OK.
+**Quy tắc agent:** Báo cáo → hỏi → chỉ tiếp tục khi Tomas confirm. Không nhảy Phase 6 trước khi Tomas OK.
 
 ---
 

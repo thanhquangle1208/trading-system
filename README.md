@@ -14,8 +14,9 @@ Bot giao dịch cá nhân của Tomas: theo dõi **BTC** nhiều khung thời gi
 | **1** | Nền tảng: cấu trúc, `.env`, logging, SQLite, Bybit/mock, paper skeleton | Xong |
 | **2** | Plugin chỉ báo + **Wyckoff cơ bản** | Xong |
 | **3** | Confluence AND + score ≥ 60 + **Độ tin cậy** rating | Xong |
-| **4** | Risk (ATR sizing, SL/TP, kill switch) + paper | **Đang / vừa xong — chờ Tomas duyệt** |
-| 5–6 | Backtest → Telegram/UI | Chưa |
+| **4** | Risk (ATR sizing, SL/TP, kill switch) + paper | Xong |
+| **5** | Backtest no look-ahead + phí + Optuna/walk-forward | **Đang / vừa xong — chờ Tomas duyệt** |
+| **6** | Telegram templates + dashboard | Chưa |
 | Add-on | **Pine Script** sau Phase 6; DEX adapter sau | Chưa |
 
 Đọc bàn giao: **[docs/HANDOFF.md](docs/HANDOFF.md)** · Newbie xem **[docs/beginner-next-steps.md](docs/beginner-next-steps.md)** và **[docs/preferences.md](docs/preferences.md)**
@@ -64,6 +65,18 @@ Sẽ: mock → confluence → **risk plan** (size/SL/TP hoặc reject) → paper
 - Perp: thiếu SL → từ chối (khung sẵn, Spot đang dùng)
 - Live stub — **chưa** bật tiền thật
 - Config: `configs/risk.yaml` · code: `src/trading_system/risk/`
+
+### Phase 5 — backtest
+
+```bash
+python -m trading_system.backtest
+```
+
+- Không nhìn trước tương lai (vào lệnh ở bar sau tín hiệu)
+- Phí + slippage (+ funding=0 với spot)
+- Metrics: PnL, winrate, drawdown, fees
+- Walk-forward train/test + Optuna tối ưu `score_threshold`
+- Config: `configs/backtest.yaml` · code: `src/trading_system/backtest/`
 
 ### Phase 3 — tín hiệu
 

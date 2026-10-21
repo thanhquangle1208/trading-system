@@ -1,3 +1,3 @@
-"""Trading System — Phase 1–4 (nền tảng → risk/execution paper)."""
+"""Trading System — Phase 1–5 (gồm backtest)."""
 
-__version__ = "0.4.0"
+__version__ = "0.5.0"
