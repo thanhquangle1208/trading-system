@@ -19,5 +19,7 @@ Cập nhật khi Tomas trả lời. Agent đọc file này trước khi viết P
 | Bước | Trạng thái |
 |------|------------|
 | T0 docs | Đã duyệt (cùng OK phương pháp) |
-| T1 Pine trendline+volume | **Đã viết** — chờ Tomas dán TV và phản hồi |
-| T2+ | Chưa |
+| T1 indicator | Đã viết; Tomas: **quá nhiều mũi tên** |
+| T1b strategy + THỐNG KÊ + hộp PnL | **Đã viết** — `pine/T1b_strategy_thongke.pine` |
+| Học từ lệnh lãi | Doc `learn-from-winners.md` |
+| T2+ S/D + lọc theo WIN | Chưa |

@@ -87,8 +87,9 @@ Trả lời khi quay lại bot; agent cập nhật `project-context.md`.
 |------|------------|
 | Kiến trúc bot / roadmap | Đã có trong docs; **bot chưa code** |
 | **T0** + method | **OK** (Tomas duyệt) |
-| **T1** Pine trendline + volume | **Đã viết** → `pine/T1_trendline_volume.pine` — chờ phản hồi sau khi dán TV |
-| **T2–T6** | Chưa (S/D → Spring/PA → hộp → THỐNG KÊ → chỉnh) |
+| **T1** indicator (nhiều tín hiệu) | `pine/T1_trendline_volume.pine` — tham khảo |
+| **T1b** strategy + THỐNG KÊ | **`pine/T1b_strategy_thongke.pine`** ← dùng cái này; chờ Tomas dán & phản hồi |
+| **T2+** | S/D zones, Spring/PA confluence, siết lọc theo WIN |
 | **Phase 1–6** bot | **HOÃN** |
 
 **Quy tắc agent:** Phương pháp đã OK → được viết T1. T2+ cần Tomas OK từng bước (hoặc bảo “tiếp T2”). Không scaffold Phase 1 bot cho đến “OK Phase 1”.
