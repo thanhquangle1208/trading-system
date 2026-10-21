@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Trading System — Dashboard</title>
+  <style>
+    :root {
+      --bg: #0f1419;
+      --panel: #1a222c;
+      --text: #e7ecf1;
+      --muted: #8b9aab;
+      --accent: #3d9cf0;
+      --long: #2ecc71;
+      --short: #e74c3c;
+      --line: #2a3542;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", system-ui, sans-serif;
+      background: radial-gradient(1200px 600px at 10% -10%, #1b2a3a, var(--bg));
+      color: var(--text);
+      min-height: 100vh;
+    }
+    header {
+      padding: 1.5rem 2rem 0.5rem;
+    }
+    header h1 { margin: 0; font-size: 1.6rem; letter-spacing: 0.02em; }
+    header p { margin: 0.35rem 0 0; color: var(--muted); }
+    main { padding: 1rem 2rem 3rem; display: grid; gap: 1.25rem; }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 0.75rem;
+    }
+    .stat {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      padding: 1rem;
+    }
+    .stat .label { color: var(--muted); font-size: 0.85rem; }
+    .stat .value { font-size: 1.4rem; margin-top: 0.35rem; font-variant-numeric: tabular-nums; }
+    section h2 { font-size: 1.05rem; margin: 0 0 0.75rem; color: var(--accent); }
+    .grid-orders {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 0.75rem;
+    }
+    .order {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      padding: 1rem;
+    }
+    .order .side-long { color: var(--long); font-weight: 700; }
+    .order .side-short { color: var(--short); font-weight: 700; }
+    .meta { color: var(--muted); font-size: 0.85rem; margin-top: 0.4rem; }
+    table { width: 100%; border-collapse: collapse; background: var(--panel); }
+    th, td { text-align: left; padding: 0.55rem 0.75rem; border-bottom: 1px solid var(--line); font-size: 0.92rem; }
+    th { color: var(--muted); font-weight: 600; }
+    .empty { color: var(--muted); padding: 1rem; background: var(--panel); border: 1px dashed var(--line); }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Trading System</h1>
+    <p>Dashboard localhost · Phase 6 · v{{ version }} · Spot paper</p>
+  </header>
+  <main>
+    <div class="stats">
+      <div class="stat">
+        <div class="label">Vốn paper (USDT)</div>
+        <div class="value">{% if balance is not none %}{{ '%.2f'|format(balance) }}{% else %}—{% endif %}</div>
+      </div>
+      <div class="stat">
+        <div class="label">Số lệnh gần đây</div>
+        <div class="value">{{ n_orders }}</div>
+      </div>
+      <div class="stat">
+        <div class="label">Số tín hiệu</div>
+        <div class="value">{{ n_signals }}</div>
+      </div>
+      <div class="stat">
+        <div class="label">Độ tin cậy TB</div>
+        <div class="value">{% if avg_rating is not none %}{{ '%.1f'|format(avg_rating) }}/10{% else %}—{% endif %}</div>
+      </div>
+    </div>
+
+    <section>
+      <h2>Lệnh LONG / SHORT (SL · TP · Qty)</h2>
+      {% if orders %}
+      <div class="grid-orders">
+        {% for o in orders %}
+        <article class="order">
+          <div>
+            <span class="{% if o.side == 'buy' %}side-long{% else %}side-short{% endif %}">
+              {% if o.side == 'buy' %}LONG{% else %}SHORT{% endif %}
+            </span>
+            · {{ o.symbol }}
+          </div>
+          <div class="meta">
+            Qty {{ '%.6f'|format(o.quantity) }} @ {{ '%.2f'|format(o.price) }}
+          </div>
+          <div class="meta">
+            SL {{ o.stop_loss if o.stop_loss is not none else '—' }}
+            · TP1 {{ o.take_profit_1 if o.take_profit_1 is not none else '—' }}
+            · TP2 {{ o.take_profit_2 if o.take_profit_2 is not none else '—' }}
+          </div>
+          <div class="meta">
+            Độ tin cậy: {% if o.rating is not none %}{{ o.rating }}/10{% else %}—{% endif %}
+            · {{ o.created_at }}
+          </div>
+        </article>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="empty">Chưa có lệnh paper trong DB. Chạy smoke / backtest trước.</div>
+      {% endif %}
+    </section>
+
+    <section>
+      <h2>Tín hiệu gần đây</h2>
+      {% if signals %}
+      <table>
+        <thead>
+          <tr>
+            <th>Thời điểm</th>
+            <th>TF</th>
+            <th>Hướng</th>
+            <th>Score</th>
+            <th>Độ tin cậy</th>
+            <th>Strategy</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for s in signals %}
+          <tr>
+            <td>{{ s.created_at }}</td>
+            <td>{{ s.timeframe }}</td>
+            <td>{{ s.direction or '—' }}</td>
+            <td>{% if s.score is not none %}{{ '%.0f'|format(s.score) }}{% else %}—{% endif %}</td>
+            <td>{% if s.rating is not none %}{{ s.rating }}/10{% else %}—{% endif %}</td>
+            <td>{{ s.strategy_id or '—' }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <div class="empty">Chưa có tín hiệu lưu trong DB.</div>
+      {% endif %}
+    </section>
+  </main>
+</body>
+</html>
