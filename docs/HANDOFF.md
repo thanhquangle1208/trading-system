@@ -2,7 +2,7 @@
 
 **Đọc file này trước** khi làm bất kỳ việc gì trong repo. Sau đó đọc: `architecture-roadmap.md` → `project-context.md` → `cost-estimate.md` → `preferences.md` → **`thesis/T0-trading-thesis.md`** (nếu làm thesis).
 
-> **Trạng thái hiện tại (2026-10-21):** Tomas **hoãn trading bot (Phase 1)**. Phương pháp **S/D + Wyckoff + PA + Trend line** đã **OK**. Đã chốt **TP 2R**, **TF 5m**, **volume bắt buộc**. **T1 Pine** đã có trong `pine/T1_trendline_volume.pine` — chờ Tomas dán TV. Bước sau cần “OK T2” (S/D zones).
+> **Trạng thái hiện tại (2026-10-21):** Bot Phase 1 **hoãn**. Phương pháp OK (TP **2R**, TF **5m**, volume bắt buộc). Tomas phản hồi T1 **quá nhiều mũi tên** → đã thêm **`pine/T1b_strategy_thongke.pine`**: strategy ít lệnh hơn + hộp PnL + bảng **THỐNG KÊ** giống ảnh mẫu. Quy trình học từ lệnh lãi: `docs/thesis/learn-from-winners.md`.
 
 ---
 

@@ -37,8 +37,9 @@ Chart thesis: **BINANCE:BTCUSDT.P**, vốn paper **$10.000**.
 | Bước | Nội dung | Trạng thái |
 |------|----------|------------|
 | **T0** | Method S/D–Wyckoff–PA | **OK** (TP 2R, TF 5m, volume bắt buộc) |
-| **T1** | Pine trendline + volume | **Có** — [`pine/T1_trendline_volume.pine`](pine/T1_trendline_volume.pine) |
-| **T2–T6** | S/D → Spring/PA → hộp → THỐNG KÊ → chỉnh | Chưa |
+| **T1** | Indicator (nhiều mũi tên) | [`pine/T1_trendline_volume.pine`](pine/T1_trendline_volume.pine) |
+| **T1b** | Strategy + hộp PnL + **THỐNG KÊ** | **Dùng** [`pine/T1b_strategy_thongke.pine`](pine/T1b_strategy_thongke.pine) |
+| **T2–T6** | S/D → Spring/PA → siết lọc theo lệnh lãi | Chưa |
 | Phase 1–6 bot | Bybit/ccxt, paper, Telegram, dashboard… | **Hoãn** |
 
 Mỗi bước: Tomas duyệt rồi mới code (vd. “OK T0”, “OK T1”).

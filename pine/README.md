@@ -9,33 +9,28 @@ Script dán vào **TradingView → Pine Editor**. Không chạy bằng Python.
 | Phương pháp | S/D + Wyckoff + PA + Trend line |
 | Chart | **BINANCE:BTCUSDT.P** |
 | TF | **5m** |
-| TP | **2R** (áp dụng từ bước hộp lệnh T4) |
-| Volume | **Bắt buộc** trong tín hiệu |
+| TP | **2R** |
+| Volume | **Bắt buộc** |
 | Vốn paper | $10.000 |
 
-## Cách dán script (Tomas làm trên máy)
+## Nên dùng file nào?
 
-1. Mở [TradingView](https://www.tradingview.com/) → đăng nhập.  
-2. Ô tìm symbol → gõ **BTCUSDT.P** → chọn **Binance** perpetual.  
-3. Khung thời gian chọn **5**.  
-4. Dưới chart bấm **Pine Editor**.  
-5. Xóa code mẫu → mở file trong repo (vd. `T1_trendline_volume.pine`) → **copy toàn bộ** → dán vào editor.  
-6. Bấm **Save** → **Add to chart**.  
-7. Nếu báo lỗi đỏ: chụp màn hình gửi agent (copy dòng lỗi cũng được).
+| File | Khi nào |
+|------|---------|
+| **`T1b_strategy_thongke.pine`** ← **dùng cái này** | Ít lệnh hơn; mỗi mũi tên = 1 lệnh có SL/TP; hộp PnL; bảng **THỐNG KÊ** giống ảnh mẫu |
+| `T1_trendline_volume.pine` | Bản cũ (nhiều mũi tên, chỉ báo tín hiệu) — để tham khảo |
 
-## File
+## Cách dán (T1b)
 
-| File | Bước | Việc |
-|------|------|------|
-| `T1_trendline_volume.pine` | **T1** | Pivot + trendline + bias + mũi tên (có lọc volume) |
-| (sau) T2… | T2+ | S/D zones, Spring/PA, hộp lệnh, THỐNG KÊ |
+1. TradingView → symbol **BTCUSDT.P** (Binance) → khung **5**  
+2. **Pine Editor** → xóa code cũ → dán toàn bộ `T1b_strategy_thongke.pine`  
+3. **Save** → **Add to chart**  
+4. Góc phải: bảng **THỐNG KÊ**  
+5. Trên nến: hộp LONG/SHORT + khi đóng hiện WIN/LOSS  
+6. Tab **Strategy Tester** (dưới chart) để đối chiếu số liệu  
 
-## T1 xem được gì?
+Nếu vẫn còn nhiều lệnh: tăng **Cooldown**, tăng **Volume ≥ SMA ×**, hoặc tăng **ATR multiplier**.
 
-- Đường **teal** = hỗ trợ (uptrend lows)  
-- Đường **cam** = kháng cự (downtrend highs)  
-- Nền xanh nhạt = bias up; cam nhạt = bias down  
-- Mũi tên **L / S** = tín hiệu thô T1 (chưa đủ 4 trụ — thiếu S/D + Wyckoff + PA)  
-- Bảng góc phải: Bias, Volume OK, nhắc TP 2R / TF 5m  
+## Học từ lệnh lãi
 
-Nếu mũi tên quá nhiều/ít: chỉnh input **Pivot**, **Gần trendline %**, hoặc **Volume ≥ SMA ×**.
+Xem [`docs/thesis/learn-from-winners.md`](../docs/thesis/learn-from-winners.md): nhìn hộp WIN → tìm điểm chung → bảo agent thêm lọc.
