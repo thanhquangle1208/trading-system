@@ -4,8 +4,9 @@ Ngắn gọn cho agent / phiên sau. Cập nhật khi Tomas chốt quyết đị
 
 ## Người dùng
 
-- Tomas Le — mới bắt đầu, không nền tảng code.
-- Muốn giải thích tiếng Việt, rõ ràng; duyệt thiết kế trước mỗi phase.
+- Tomas Le — **newbie, gần như không biết code** (terminal, Git, Python, PR…).
+- Muốn giải thích tiếng Việt, chậm, rõ; duyệt thiết kế trước mỗi phase.
+- Agent phải: **một bước một**, nói **làm gì / để làm gì / tác dụng**, vừa làm vừa hỏi — chi tiết trong `preferences.md`.
 
 ## Mục tiêu sản phẩm
 

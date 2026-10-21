@@ -18,7 +18,7 @@ Hệ thống giao dịch cá nhân của **Tomas Le** (người mới bắt đ�
 - Sàn: **CEX qua ccxt, Bybit trước**; DEX là hướng sau (adapter riêng).
 - **Pine Script** (TradingView): làm **sau Phase 6** (add-on).
 
-Giải thích và tài liệu bằng **tiếng Việt**, chậm rãi, dễ hiểu. Mỗi phase: đề xuất → Tomas duyệt → mới code; mỗi phase có **tests + README**.
+Giải thích và tài liệu bằng **tiếng Việt**, chậm rãi, dễ hiểu. Tomas là **newbie (gần như không biết code)** — xem `preferences.md`: mỗi lần nhờ Tomas làm gì phải nói **làm gì / để làm gì / tác dụng**, **một bước một**, vừa làm vừa hỏi. Mỗi phase: đề xuất → Tomas duyệt → mới code; mỗi phase có **tests + README**.
 
 ---
 
@@ -86,9 +86,10 @@ Không còn câu hỏi chặn Phase 1. Khi sang Perp / Phase 6 sẽ hỏi lại 
 
 1. Đọc hết các file trên trong `docs/`.
 2. Phase 1 đã được OK — làm đúng phạm vi Phase 1 (chưa DEX code, chưa Pine code, chưa chỉ báo đầy đủ).
-3. Giải thích tiếng Việt, rõ ràng, giả định người mới.
-4. Sau mỗi lần làm: commit + push nhánh.
+3. Giải thích tiếng Việt, rõ ràng; Tomas **newbie không biết code** — mỗi hướng dẫn: làm gì / để làm gì / tác dụng; một bước rồi hỏi lại.
+4. Sau mỗi lần làm: commit + push nhánh; **nói Tomas bước tiếp theo là gì** (1–3 việc nhỏ).
 5. Ưu tiên làm việc qua **Git repository**.
+6. Không nhảy Phase 2+ khi Tomas chưa duyệt / chưa hiểu Phase trước.
 
 ---
 
