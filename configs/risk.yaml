@@ -1,0 +1,35 @@
+# Rủi ro & confluence (Spot trước — không dùng leverage)
+starting_balance_usdt: 1000
+risk_per_trade_pct: 1.0
+
+confluence:
+  score_threshold: 60
+  score_max: 100
+
+rating:
+  label: "Độ tin cậy"
+  min: 1
+  max: 10
+
+# Sizing theo ATR (Phase 4)
+sizing:
+  atr_period: 14
+  atr_stop_mult: 1.5      # SL cách entry = ATR × hệ số
+  atr_tp1_mult: 2.0       # TP1 (partial)
+  atr_tp2_mult: 3.5       # Runner target (tham chiếu)
+  partial_tp_pct: 0.5     # Chốt 50% tại TP1, giữ phần còn lại (runner)
+
+# Spot: không tự giữ lệnh lỗ — chỉ khi bạn xác nhận thủ công
+spot:
+  hold_losers_auto: false
+  hold_losers_manual_only: true
+
+# Perp sau này
+perp:
+  max_leverage: 10
+  require_stop_loss: true
+
+# Giới hạn & dừng khẩn cấp
+kill_switch: false
+max_open_orders: 5
+max_daily_loss_pct: 3.0   # lỗ paper trong ngày vượt mức → chặn lệnh mới

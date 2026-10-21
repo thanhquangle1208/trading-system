@@ -1,0 +1,74 @@
+# Chiến lược mẫu Phase 3 — Confluence + Wyckoff cơ bản (Spot)
+id: btc_confluence_wyckoff
+display_name: "Confluence BTC Spot + Wyckoff"
+enabled: true
+symbol: BTC/USDT
+market_type: spot
+direction: long
+timeframes:
+  - H1
+  - H4
+
+confluence:
+  score_threshold: 60
+  score_max: 100
+  # Bắt buộc (AND) — không đủ thì không có tín hiệu
+  required:
+    - id: ema_bullish
+      indicator: ema_34_89
+      signal: trend_bullish
+      equals: true
+      points: 25
+    - id: structure_up
+      indicator: market_structure
+      signal: uptrend
+      equals: true
+      points: 20
+  # Tùy chọn — cộng điểm
+  optional:
+    - id: macd_hist_pos
+      indicator: macd
+      signal: hist_positive
+      equals: true
+      points: 15
+    - id: above_vwap
+      indicator: vwap
+      signal: above_vwap
+      equals: true
+      points: 15
+    - id: rsi_not_extreme
+      indicator: rsi
+      signal: overbought
+      equals: false
+      points: 10
+    - id: wyckoff_spring
+      indicator: wyckoff_basic
+      signal: spring
+      equals: true
+      points: 25
+    - id: wyckoff_bullish_bias
+      indicator: wyckoff_basic
+      signal: bullish_bias
+      equals: true
+      points: 15
+    - id: volume_spike
+      indicator: volume
+      signal: volume_spike
+      equals: true
+      points: 10
+
+indicators:
+  - id: ema_34_89
+    display_name: "EMA 34/89"
+  - id: market_structure
+    display_name: "Market structure"
+  - id: rsi
+    display_name: "RSI filter"
+  - id: macd
+    display_name: "MACD"
+  - id: vwap
+    display_name: "VWAP"
+  - id: volume
+    display_name: "Volume"
+  - id: wyckoff_basic
+    display_name: "Wyckoff cơ bản"

@@ -1,0 +1,24 @@
+# Bật/tắt adapter sàn. Secrets nằm trong .env, không ghi ở đây.
+default: bybit
+
+exchanges:
+  bybit:
+    type: cex
+    adapter: bybit_ccxt
+    enabled: true
+    market_type: spot   # spot trước; perp sau
+    data_source: exchange
+    testnet: true       # paper / chưa có key production
+
+  # Chỗ cắm sau — chưa implement
+  # binance:
+  #   type: cex
+  #   adapter: binance_ccxt
+  #   enabled: false
+  #   market_type: spot
+  #   data_source: exchange
+
+# DEX: adapter riêng, không dùng ccxt — Phase sau
+dex:
+  enabled: false
+  note: "Interface sẵn trong code; chưa kết nối Uniswap/DEX khác"
