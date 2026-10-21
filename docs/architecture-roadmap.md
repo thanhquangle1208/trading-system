@@ -216,26 +216,28 @@ Tất cả implement qua **plugin cùng interface** (cùng cách gọi `compute(
 
 ---
 
-## 12. Câu hỏi cần bạn trả lời trước khi code
+## 12. Câu hỏi vận hành — đã trả lời (2026-10-21)
 
-Trả lời ngắn trong chat là đủ; agent sẽ cập nhật `project-context.md`.
+| # | Câu hỏi | Trả lời Tomas |
+|---|---------|----------------|
+| 1 | Spot hay Perp trước? | **Spot trước** |
+| 2 | Vốn paper | **1.000 USDT** |
+| 3 | Timezone | **`Asia/Ho_Chi_Minh`** |
+| 4 | Bybit API / testnet | **Chưa có API**; paper dùng **testnet** khi có |
+| 5 | Telegram + số kênh | **Chưa có** token/chat ID; **1 kênh trước**, scale sau |
+| 6 | Ngưỡng confluence | Agent đề xuất **60/100** — chờ Tomas OK |
+| 7 | Leverage (Perp sau) | Tomas muốn **10x–20x**; Spot không dùng; trần chốt khi sang Perp |
+| 8 | Nhãn `rating` | **“Độ tin cậy”** (số cao = tin hơn) |
+| 9 | Pine Script | Tomas hỏi ý nghĩa — mặc định **Python đủ**; Pine optional nếu sau này muốn |
 
-1. **Ưu tiên chính: Spot hay Perp?** (có thể hỗ trợ cả hai; cần biết cái nào làm trước.)
-2. **Vốn paper** khởi điểm bao nhiêu USDT? (ví dụ 1.000 / 5.000 / 10.000.)
-3. **Timezone** hiển thị & lịch giao dịch: `Asia/Ho_Chi_Minh` hay UTC?
-4. **Bybit API** (key + secret, quyền đọc/ghi phù hợp) đã tạo chưa? Paper có dùng testnet không?
-5. **Telegram bot token** + chat ID đã có chưa? Dự kiến **một** hay **nhiều** kênh từ đầu?
-6. **Ngưỡng score confluence** ban đầu bạn muốn khoảng bao nhiêu? (ví dụ 60/100 — có thể đổi sau trong YAML.)
-7. **Đòn bẩy (leverage) tối đa** nếu làm perp trước? (ví dụ 2x–5x khi mới.)
-8. **`rating`:** bạn muốn thanh theo kiểu “Rủi ro cao = số lớn” hay “Độ tin cậy cao = số lớn”? (cùng thang 1–10, chỉ khác cách đặt tên trên UI.)
-9. **Pine Script (TV):** có muốn làm sau Phase 6 không, hay chỉ cần dashboard Python là đủ?
+Chi tiết / trạng thái Phase: [`HANDOFF.md`](./HANDOFF.md), [`project-context.md`](./project-context.md).
 
 ---
 
 ## 13. Bước tiếp theo sau khi duyệt
 
-1. Bạn trả lời mục 12 và xác nhận “OK, làm Phase 1”.
-2. Agent triển khai **chỉ Phase 1** (test + README) — **chưa** DEX, **chưa** Pine.
-3. Bạn xem kết quả → duyệt Phase 2 → …
+1. Tomas xác nhận nhẹ (score 60?, Pine bỏ/để sau) và nói **“OK Phase 1”**.
+2. Agent triển khai **chỉ Phase 1** (test + README) — **chưa** DEX, **chưa** Pine; Bybit/Telegram chưa có key → mock + `.env.example`.
+3. Tomas xem kết quả → duyệt Phase 2 → …
 
 *Tài liệu song song trong repo git: `docs/architecture-roadmap.md`.*

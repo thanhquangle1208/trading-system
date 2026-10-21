@@ -33,29 +33,34 @@ Giải thích và tài liệu bằng **tiếng Việt**, chậm rãi, dễ hiể
 | Chế độ chạy | **Paper + historical backtest trước live**; không dùng tiền thật để thử chỉ báo |
 | Chi phí | **Ít opex**: paper + máy nhà ~$0/tháng; không tự thuê VPS / TV Pro / domain trừ khi Tomas yêu cầu |
 | Kiến trúc | **Modular / plugins** (chỉ báo, adapter sàn); strategy bằng **YAML/JSON** |
-| Rating | Có — field `rating` 1–10; tính/lưu Phase 3; hiện Telegram Phase 6 |
-| Notifier | Template + **`display_name`** + multi-route (channel / TF / method) — Phase 6 |
+| Rating | Có — field `rating` 1–10; nhãn **“Độ tin cậy”** (số cao = tin hơn); tính/lưu Phase 3; hiện Telegram Phase 6 |
+| Notifier | Template + **`display_name`** + multi-route — **bắt đầu 1 kênh Telegram**, scale thêm kênh sau; Phase 6 |
 | CEX / DEX | **CEX có ngay** trong kiến trúc; **DEX sau** |
-| Code Phase 1–6 | **Chưa** — chờ “OK Phase 1” + câu trả lời còn lại |
+| Market primary | **Spot trước**; Perp sau |
+| Vốn paper | **1.000 USDT** |
+| Timezone | **`Asia/Ho_Chi_Minh`** |
+| Bybit API | **Chưa có**; paper dùng **cả testnet** (key tạo khi cần; Phase 1 dùng mock / `.env.example`) |
+| Telegram credentials | **Chưa có** bot token + chat ID; Phase 1 chỉ skeleton / mẫu env |
+| Confluence score | **Đề xuất mặc định 60/100** (đổi được trong YAML; chốt khi Tomas OK) |
+| Leverage (khi làm Perp sau) | Tomas muốn khoảng **10x–20x**; **chưa áp dụng** vì đang Spot trước — xem ghi chú rủi ro bên dưới |
+| Pine Script | Tomas hỏi ý nghĩa — **không bắt buộc**; giải thích trong chat; mặc định **chỉ cần dashboard Python**, Pine chỉ nếu sau này muốn soi trên TV |
+| Code Phase 1–6 | **Chưa** — chờ “OK Phase 1” |
+
+### Ghi chú leverage (khi sau này làm Perp)
+
+Điều chỉnh **ký quỹ / kích thước lệnh** giúp kiểm soát số tiền bỏ ra, nhưng **leverage cao vẫn tăng tốc thanh lý (liquidation)** và làm PnL biến động mạnh hơn cùng một % giá. Với người mới: khi sang Perp, agent sẽ đề xuất **trần leverage trong config** (có thể bắt đầu thấp hơn 10–20x rồi nới dần sau backtest/paper). **Phase Spot không dùng leverage.**
 
 Chi tiết đầy đủ: [`architecture-roadmap.md`](./architecture-roadmap.md). Chi phí: [`cost-estimate.md`](./cost-estimate.md).
 
 ---
 
-## Câu hỏi vẫn chờ Tomas
+## Câu hỏi còn mở (nhẹ)
 
 Trả lời ngắn trong chat là đủ; agent cập nhật `project-context.md`.
 
-1. **Spot hay Perp** làm primary trước? (có thể hỗ trợ cả hai sau.)
-2. **Vốn paper** khởi điểm (USDT)? ví dụ 1.000 / 5.000 / 10.000
-3. **Timezone:** `Asia/Ho_Chi_Minh` hay UTC?
-4. **Bybit API** (key/secret, quyền) đã tạo chưa? Paper dùng testnet không?
-5. **Telegram** bot token + chat ID sẵn chưa?
-6. **`rating`:** nhãn **“Rủi ro”** (số cao = rủi ro cao) hay **“Độ tin cậy”** (số cao = tin hơn)?
-7. **Một hay nhiều** kênh Telegram từ đầu?
-8. **Ngưỡng score confluence** mặc định? (ví dụ 60/100 — đổi được trong YAML)
-9. **Leverage tối đa** nếu làm perp trước? (ví dụ 2x–5x)
-10. **Pine Script:** làm sau Phase 6 hay chỉ cần dashboard Python?
+1. **Ngưỡng confluence 60/100** — Tomas đồng ý làm mặc định không? (có thể đổi sau trong YAML)
+2. **Pine Script** — sau khi đọc giải thích: **bỏ qua** (chỉ Python) hay **để optional sau Phase 6**?
+3. Khi sẵn sàng: nói rõ **“OK Phase 1”** (Bybit/Telegram chưa có key vẫn OK — Phase 1 dùng mock + `.env.example`)
 
 ---
 
@@ -63,23 +68,19 @@ Trả lời ngắn trong chat là đủ; agent cập nhật `project-context.md`
 
 | Phase | Trạng thái |
 |-------|------------|
-| Kiến trúc / roadmap | Đã viết & đẩy Git — hướng đã rõ; chờ xác nhận cuối + câu hỏi |
-| **Phase 1** (repo skeleton, `.env`, logging, SQLite, Bybit read, paper skeleton) | **CHƯA bắt đầu** |
+| Kiến trúc / roadmap | Đã viết; quyết định vận hành đã cập nhật (2026-10-21) |
+| **Phase 1** (repo skeleton, `.env`, logging, SQLite, Bybit read, paper skeleton) | **CHƯA bắt đầu** — chờ “OK Phase 1” |
 | Phase 2–6 | Chưa |
 
-**Quy tắc agent:** Không scaffold / không code Phase 1 cho đến khi Tomas gửi kiểu **“OK Phase 1”** (và tốt nhất là trả lời mục câu hỏi). Có thể cập nhật tài liệu nếu được hỏi.
+**Quy tắc agent:** Không scaffold / không code Phase 1 cho đến khi Tomas gửi kiểu **“OK Phase 1”**. Có thể cập nhật tài liệu nếu được hỏi.
 
 ---
 
 ## Nhánh Git & commit gần đây
 
-- **Nhánh làm việc:** `cursor/architecture-roadmap-abd1`
-- **`main`:** thường **đứng sau** nhánh này (chỉ có commit khởi tạo). Tomas mở nhánh trên **Repositories** hoặc merge bằng PR sau — **không force-merge** trừ khi Tomas yêu cầu.
-- **Commit gần đây (kiến trúc, không có code Phase 1):**
-  - `docs: add cost estimate and link from README`
-  - `Expand architecture for CEX/DEX, TV tracks, rating, notifier templates`
-  - `Add Vietnamese architecture roadmap for Trading System`
-  - (+ commit handoff pack này)
+- **Nhánh cập nhật quyết định:** `cursor/lock-open-decisions-fcd8` (từ `main`)
+- **`main`:** có handoff/architecture docs; **không force-merge** trừ khi Tomas yêu cầu.
+- Commit gần đây trên `main`: `Add architecture handoff docs for Trading System`
 
 ---
 
@@ -99,12 +100,12 @@ Trả lời ngắn trong chat là đủ; agent cập nhật `project-context.md`
 
 **What:** Beginner-friendly multi-TF BTC trading system (confluence + rating + risk + paper/backtest before live + Telegram + localhost dashboard). Owner: Tomas Le; prefer Vietnamese explanations.
 
-**Locked:** Track **B before A/Pine**; **Python**; **Bybit/ccxt** (CEX yes, DEX later); **SQLite**; paper + historical backtest before live; **low opex**; modular plugins; signal **rating**; notifier **display_name** / multi-route; no Phase 1–6 code yet.
+**Locked:** Track **B before A/Pine**; **Python**; **Bybit/ccxt** (CEX yes, DEX later); **SQLite**; paper + historical backtest before live; **low opex**; modular plugins; **Spot first**; paper **1000 USDT**; TZ **Asia/Ho_Chi_Minh**; rating label **Độ tin cậy** (high = more confidence); **1 Telegram channel first**; Bybit/Telegram credentials **not ready yet** (testnet when available); no Phase 1–6 code yet.
 
-**Open (wait on Tomas):** Spot vs Perp primary; paper capital; timezone; API/Telegram readiness; rating label “Rủi ro” vs “Độ tin cậy”; 1 vs many TG channels; confluence score threshold; max leverage (if perp first); Pine after Phase 6 or Python-only.
+**Soft-open:** Confirm confluence default **60/100**; Pine skip vs optional after Phase 6; leverage **10x–20x intent** only when Perp later (Spot has no leverage).
 
-**Phase status:** Architecture direction approved in docs; **Phase 1 NOT started**. Wait for explicit **“OK Phase 1”** plus answers (or conscious deferrals).
+**Phase status:** Architecture + ops answers recorded; **Phase 1 NOT started**. Wait for explicit **“OK Phase 1”**.
 
-**Branch:** `cursor/architecture-roadmap-abd1` (ahead of `main`). Do not force-merge to `main` unless asked.
+**Branch:** `cursor/lock-open-decisions-fcd8` (docs update). Do not force-merge to `main` unless asked.
 
 **Must-read before any code:** this file, then `architecture-roadmap.md`, `project-context.md`, `cost-estimate.md`, `preferences.md`.

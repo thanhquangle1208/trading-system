@@ -23,43 +23,41 @@ Ngắn gọn cho agent / phiên sau. Cập nhật khi Tomas chốt quyết đị
 - Telegram: multi-channel / multi-TF / multi-method; mỗi tin có channel, TF, strategy/method **`display_name`**, indicator labels; routing trong YAML.
 - Mỗi phase: **tests + README**; không nhảy phase khi chưa duyệt.
 
-## Quyết định đã chốt (thiết kế)
+## Quyết định đã chốt (thiết kế + vận hành)
 
-| Mục | Quyết định |
-|-----|------------|
-| Ngôn ngữ | **Python** (ccxt, backtest, Optuna) |
-| Sàn đầu | Bybit qua ccxt (CEX) |
-| DEX | Adapter riêng, **sau** — Phase 1 chỉ chỗ cắm |
-| TradingView | **B trước (Python UI chính)**; **A (Pine) tùy chọn sau** — không inject Python vào TV |
-| Chi phí | Ưu tiên **ít opex**: paper + máy nhà ~$0/tháng; VPS/TV Pro chỉ khi Tomas chủ động cần — xem `cost-estimate.md` |
-| Rating tín hiệu | Có — field `rating` 1–10; Phase 3 tính/lưu; Phase 6 hiện Telegram |
-| Notifier | Template + `display_name` + multi-route — Phase 6 |
-| DB đầu | SQLite |
-| Config | YAML/JSON cho strategy, risk, exchanges, notify |
-| Lộ trình | 6 phase (+ Pine/DEX add-on sau) — xem `architecture-roadmap.md` |
-| Code Phase 1–6 | **Chưa** — chờ duyệt đề xuất + câu hỏi còn lại |
+| Mục | Quyết định | Khi chốt |
+|-----|------------|----------|
+| Ngôn ngữ | **Python** (ccxt, backtest, Optuna) | thiết kế |
+| Sàn đầu | Bybit qua ccxt (CEX) | thiết kế |
+| DEX | Adapter riêng, **sau** — Phase 1 chỉ chỗ cắm | thiết kế |
+| TradingView | **B trước (Python UI chính)**; **A (Pine) tùy chọn sau** — không inject Python vào TV | thiết kế |
+| Chi phí | Ưu tiên **ít opex**: paper + máy nhà ~$0/tháng — xem `cost-estimate.md` | thiết kế |
+| Rating tín hiệu | `rating` 1–10; nhãn **“Độ tin cậy”** (số cao = tin hơn); Phase 3 tính/lưu; Phase 6 Telegram | 2026-10-21 |
+| Notifier | **1 kênh Telegram trước**, scale thêm kênh sau; template + `display_name` — Phase 6 | 2026-10-21 |
+| DB đầu | SQLite | thiết kế |
+| Config | YAML/JSON cho strategy, risk, exchanges, notify | thiết kế |
+| Market primary | **Spot trước**; Perp sau | 2026-10-21 |
+| Vốn paper | **1.000 USDT** | 2026-10-21 |
+| Timezone | **`Asia/Ho_Chi_Minh`** | 2026-10-21 |
+| Bybit API | **Chưa có**; paper dùng **testnet** khi có key; Phase 1 mock / `.env.example` | 2026-10-21 |
+| Telegram credentials | **Chưa có** token + chat ID | 2026-10-21 |
+| Confluence score | **Đề xuất mặc định 60/100** — chờ Tomas xác nhận | 2026-10-21 |
+| Leverage | Tomas muốn **10x–20x** khi Perp sau; **Spot không dùng leverage**; trần cụ thể chốt khi sang Perp | 2026-10-21 |
+| Lộ trình | 6 phase (+ Pine/DEX add-on sau) — xem `architecture-roadmap.md` | thiết kế |
+| Code Phase 1–6 | **Chưa** — chờ “OK Phase 1” | — |
 
-## Yêu cầu mới (đã ghi vào kiến trúc — chờ Tomas xác nhận)
-
-Các điểm Tomas hỏi đã được **đưa vào roadmap** (không bắt đầu code):
+## Yêu cầu đã ghi vào kiến trúc (không bắt đầu code)
 
 1. CEX + (sau) DEX, toggle API / config, chart/data source chọn được.
 2. Backtest + PnL UI kiểu TradingView (panel VN + hộp LONG/SHORT) trên dashboard Python; Pine optional.
-3. Rating rủi ro/tin cậy per-signal (kiểu 7/10) + analytics trung bình sau.
-4. Multi-channel notify + tên method/indicator tùy chỉnh khi Telegram bắn.
+3. Rating độ tin cậy per-signal (kiểu 7/10) + analytics trung bình sau.
+4. Multi-channel notify + tên method/indicator tùy chỉnh khi Telegram bắn — bắt đầu 1 kênh.
 
-## Chưa chốt (chờ Tomas)
+## Còn mở / chờ xác nhận nhẹ
 
-- Spot vs Perp làm primary trước
-- Vốn paper (USDT)
-- Timezone (`Asia/Ho_Chi_Minh` vs UTC)
-- Bybit API / testnet sẵn chưa
-- Telegram bot token + chat ID sẵn chưa; một hay nhiều kênh từ đầu
-- Ngưỡng score confluence mặc định
-- Leverage tối đa (nếu perp trước)
-- **Rating:** nhãn “Rủi ro” (số cao = rủi ro cao) hay “Độ tin cậy” (số cao = tin hơn)?
-- **Pine Script:** làm sau Phase 6 hay chỉ cần dashboard Python?
-- Ưu tiên DEX khi nào (nếu có)
+- Tomas **đồng ý ngưỡng confluence 60/100** làm mặc định? (đổi được trong YAML)
+- **Pine Script:** bỏ qua (chỉ Python) hay để optional sau Phase 6? (xem giải thích trong chat / HANDOFF)
+- Nói **“OK Phase 1”** khi muốn scaffold (key Bybit/Telegram chưa cần ngay)
 
 ## Tài liệu liên quan
 
