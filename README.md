@@ -12,8 +12,9 @@ Bot giao dịch cá nhân của Tomas: theo dõi **BTC** nhiều khung thời gi
 |-------|----------|------------|
 | Kiến trúc | Layers, CEX/DEX, TV, rating, notifier | Đã chốt |
 | **1** | Nền tảng: cấu trúc, `.env`, logging, SQLite, Bybit/mock, paper skeleton | Xong |
-| **2** | Plugin chỉ báo + **Wyckoff cơ bản** | **Đang / vừa xong — chờ Tomas duyệt** |
-| 3–6 | Tín hiệu → risk → backtest → Telegram/UI | Chưa |
+| **2** | Plugin chỉ báo + **Wyckoff cơ bản** | Xong |
+| **3** | Confluence AND + score ≥ 60 + **Độ tin cậy** rating | **Đang / vừa xong — chờ Tomas duyệt** |
+| 4–6 | Risk/execution → backtest → Telegram/UI | Chưa |
 | Add-on | **Pine Script** sau Phase 6; DEX adapter sau | Chưa |
 
 Đọc bàn giao: **[docs/HANDOFF.md](docs/HANDOFF.md)** · Newbie xem **[docs/beginner-next-steps.md](docs/beginner-next-steps.md)** và **[docs/preferences.md](docs/preferences.md)**
@@ -47,13 +48,20 @@ Khi có key Bybit testnet: điền `BYBIT_API_KEY` / `BYBIT_API_SECRET`, đặt 
 pytest
 ```
 
-### 4) Smoke Phase 1+2 (mock feed + chỉ báo + paper)
+### 4) Smoke Phase 1–3
 
 ```bash
 python -m trading_system
 ```
 
-Sẽ: bật log → SQLite → nến mock → tính thử EMA/RSI/Wyckoff → paper order mẫu.
+Sẽ: mock nến → confluence strategy `btc_confluence_wyckoff` → score/rating → lưu signal nếu fired → paper order mẫu.
+
+### Phase 3 — tín hiệu
+
+- Strategy YAML: `configs/strategies/btc_confluence_wyckoff.yaml`
+- Luật: mọi **required** phải đúng (AND) **và** score ≥ 60 → `fired`
+- `rating` = **Độ tin cậy** 1–10 (chỉ khi fired)
+- Engine: `src/trading_system/signals/`
 
 ### Phase 2 — chỉ báo có gì?
 

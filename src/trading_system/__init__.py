@@ -1,3 +1,3 @@
-"""Trading System — Phase 1 nền tảng + Phase 2 chỉ báo."""
+"""Trading System — Phase 1–3 (nền tảng, chỉ báo, tín hiệu)."""
 
-__version__ = "0.2.0"
+__version__ = "0.3.0"

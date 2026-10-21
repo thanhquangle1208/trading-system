@@ -2,7 +2,7 @@
 
 **Đọc file này trước** khi làm bất kỳ việc gì trong repo. Sau đó đọc: `preferences.md` (newbie) → `beginner-next-steps.md` → `architecture-roadmap.md` → `project-context.md` → `cost-estimate.md`.
 
-> **Trạng thái:** Tomas **OK Phase 1** + **OK Phase 2** (2026-10-21). Phase 2 trên nhánh `cursor/phase-2-indicators-fcd8`. **Chưa** Phase 3 cho đến khi Tomas confirm.
+> **Trạng thái:** Tomas **OK Phase 1–3** (2026-10-21). Phase 3 trên nhánh `cursor/phase-3-signals-fcd8`. **Chưa** Phase 4 cho đến khi Tomas confirm.
 
 ---
 
@@ -64,13 +64,14 @@ Không còn câu hỏi chặn Phase 1. Khi sang Perp / Phase 6 sẽ hỏi lại 
 | Phase | Trạng thái |
 |-------|------------|
 | Kiến trúc / roadmap | Đã chốt |
-| **Phase 1** | Xong (scaffold) |
-| **Phase 2** | Chỉ báo + Wyckoff cơ bản — nhánh `cursor/phase-2-indicators-fcd8` (chờ Tomas duyệt) |
-| Phase 3–6 | Chưa |
+| **Phase 1** | Xong |
+| **Phase 2** | Xong — chỉ báo + Wyckoff cơ bản |
+| **Phase 3** | Confluence + rating — nhánh `cursor/phase-3-signals-fcd8` (chờ Tomas duyệt) |
+| Phase 4–6 | Chưa |
 | Pine (add-on) | Sau Phase 6 |
 | DEX | Sau |
 
-**Quy tắc agent:** Báo cáo → hỏi → chỉ tiếp tục khi Tomas confirm. Không nhảy Phase 3 trước khi Tomas OK.
+**Quy tắc agent:** Báo cáo → hỏi → chỉ tiếp tục khi Tomas confirm. Không nhảy Phase 4 trước khi Tomas OK.
 
 ---
 

@@ -111,6 +111,27 @@ class Database:
         self._conn.commit()
         return len(rows)
 
+    def insert_signal(
+        self,
+        *,
+        symbol: str,
+        timeframe: str,
+        direction: str | None,
+        score: float | None,
+        rating: int | None,
+        strategy_id: str | None,
+        payload_json: str | None,
+    ) -> int:
+        cur = self._conn.execute(
+            """
+            INSERT INTO signals(symbol, timeframe, direction, score, rating, strategy_id, payload_json)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+            """,
+            (symbol, timeframe, direction, score, rating, strategy_id, payload_json),
+        )
+        self._conn.commit()
+        return int(cur.lastrowid)
+
     def schema_version(self) -> str | None:
         try:
             cur = self._conn.execute(
