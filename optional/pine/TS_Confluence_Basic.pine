@@ -1,0 +1,38 @@
+//@version=5
+// Trading System — Confluence cơ bản (điểm minh họa trên TV)
+// Khác engine Python (YAML AND + score). Đây chỉ là bản soi gần đúng.
+indicator("TS Confluence Basic", overlay=false, precision=0)
+
+scoreThr = input.int(60, "Ngưỡng score (mặc định Tomas: 60)", minval=1, maxval=100)
+
+emaFast = ta.ema(close, 34)
+emaSlow = ta.ema(close, 89)
+rsiVal  = ta.rsi(close, 14)
+[macdLine, signalLine, hist] = ta.macd(close, 12, 26, 9)
+vwapVal = ta.vwap(hlc3)
+
+score = 0.0
+score += emaFast > emaSlow ? 25.0 : 0.0
+score += rsiVal < 70 ? 15.0 : 0.0
+score += hist > 0 ? 20.0 : 0.0
+score += close > vwapVal ? 20.0 : 0.0
+// Cấu trúc đơn giản: close trên SMA 50
+score += close > ta.sma(close, 50) ? 20.0 : 0.0
+
+fired = score >= scoreThr and emaFast > emaSlow
+
+plot(score, "Score", color=color.aqua, linewidth=2)
+hline(scoreThr, "Ngưỡng", color=color.orange, linestyle=hline.style_dashed)
+hline(100, "Max", color=color.gray, linestyle=hline.style_dotted)
+bgcolor(fired ? color.new(color.lime, 85) : na)
+
+plotshape(fired and fired[1] == false, title="Confluence ON", style=shape.circle, location=location.bottom, color=color.lime, size=size.small)
+
+var table t = table.new(position.top_right, 2, 3, bgcolor=color.new(color.black, 70))
+if barstate.islast
+    table.cell(t, 0, 0, "Score", text_color=color.gray)
+    table.cell(t, 1, 0, str.tostring(score, "#"), text_color=fired ? color.lime : color.white)
+    table.cell(t, 0, 1, "Fired", text_color=color.gray)
+    table.cell(t, 1, 1, fired ? "YES" : "NO", text_color=fired ? color.lime : color.red)
+    table.cell(t, 0, 2, "Note", text_color=color.gray)
+    table.cell(t, 1, 2, "≠ bot Python 100%", text_color=color.yellow)

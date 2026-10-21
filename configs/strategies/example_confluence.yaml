@@ -1,0 +1,38 @@
+# Mẫu tối giản — xem thêm btc_confluence_wyckoff.yaml
+id: btc_confluence_spot
+display_name: "Confluence BTC Spot"
+enabled: false
+symbol: BTC/USDT
+market_type: spot
+direction: long
+timeframes:
+  - H1
+
+confluence:
+  score_threshold: 60
+  score_max: 100
+  required:
+    - id: ema_bullish
+      indicator: ema_34_89
+      signal: trend_bullish
+      equals: true
+      points: 30
+  optional:
+    - id: rsi_not_ob
+      indicator: rsi
+      signal: overbought
+      equals: false
+      points: 30
+    - id: macd_pos
+      indicator: macd
+      signal: hist_positive
+      equals: true
+      points: 40
+
+indicators:
+  - id: ema_34_89
+    display_name: "EMA 34/89"
+  - id: rsi
+    display_name: "RSI filter"
+  - id: macd
+    display_name: "MACD"

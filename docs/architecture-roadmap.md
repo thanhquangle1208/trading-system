@@ -158,7 +158,7 @@ trading-system/
 | Phase | Giao gì | Test trọng tâm | Ghi chú mở rộng từ yêu cầu mới |
 |-------|---------|----------------|--------------------------------|
 | **1 — Nền tảng** | Cấu trúc repo, `.env`, logging, SQLite tối thiểu, **adapter CEX Bybit (ccxt)** đọc dữ liệu, paper skeleton; chỗ cắm adapter (DEX sau) | Kết nối / mock feed; ghi log; schema DB | Toggle exchange qua config + `.env`; **chưa** DEX, **chưa** Pine |
-| **2 — Chỉ báo** | Interface plugin + EMA34/89, RSI, MACD, BB, VWAP, ATR, Volume, cấu trúc thị trường, S/R, nến/mẫu; tùy chọn funding/OI/liq | Đúng công thức trên dữ liệu cố định; không phụ thuộc sàn | — |
+| **2 — Chỉ báo** | Interface plugin + EMA34/89, RSI, MACD, BB, VWAP, ATR, Volume, cấu trúc thị trường, S/R, nến/mẫu; **Wyckoff cơ bản** (cấu trúc + vài tín hiệu đơn giản); tùy chọn funding/OI/liq | Đúng công thức trên dữ liệu cố định; không phụ thuộc sàn; Wyckoff có test mẫu đơn giản | Tomas chọn thêm Wyckoff cơ bản vào Phase 2 (2026-10-21) |
 | **3 — Tín hiệu** | Watchlist multi-TF; strategy YAML/JSON; confluence **AND bắt buộc** + **score ≥ threshold**; **`rating` 1–10** trên mỗi tín hiệu | Config mẫu → có/không tín hiệu + rating đúng kỳ vọng | **Rating thuộc Phase 3** |
 | **4 — Risk + Execution** | % risk, ATR sizing, partial TP + runner; spot: “hold losers” chỉ khi **thủ công**; **perp bắt buộc SL**; limits + kill switch; paper rồi live | Sizing đúng; từ chối lệnh thiếu SL (perp); kill switch dừng | Rating đi kèm order vào DB |
 | **5 — Backtest** | Multi-TF **không look-ahead**; phí / slippage / funding; metrics; Optuna + walk-forward; nền cho UI stats | Không rò rỉ tương lai; báo cáo metric ổn định | Track **(B)** — số liệu cho panel vốn / winrate / phí |
@@ -210,32 +210,35 @@ Sau mỗi phase: bạn duyệt kết quả → mới sang phase sau.
 **Chỉ báo / module khởi đầu**
 
 - Bắt buộc hướng: EMA 34/89, RSI, MACD, Bollinger Bands, VWAP, ATR, Volume, market structure, Support/Resistance, nến & pattern.
+- **Wyckoff cơ bản (Phase 2):** module cấu trúc (vd. vùng tích lũy/phân phối đơn giản, spring/upthrust mức cơ bản) + vài cờ/tín hiệu đơn giản — **không** port full methodology một lần; tinh chỉnh sau bằng backtest/paper.
 - Tùy chọn (perp): funding, open interest (OI), liquidations.
 
 Tất cả implement qua **plugin cùng interface** (cùng cách gọi `compute(...)`). Tên hiển thị trên Telegram lấy từ config (`display_name` / nhãn chỉ báo), không hard-code trong notifier.
 
 ---
 
-## 12. Câu hỏi cần bạn trả lời trước khi code
+## 12. Câu hỏi vận hành — đã trả lời (2026-10-21)
 
-Trả lời ngắn trong chat là đủ; agent sẽ cập nhật `project-context.md`.
+| # | Câu hỏi | Trả lời Tomas |
+|---|---------|----------------|
+| 1 | Spot hay Perp trước? | **Spot trước** |
+| 2 | Vốn paper | **1.000 USDT** |
+| 3 | Timezone | **`Asia/Ho_Chi_Minh`** |
+| 4 | Bybit API / testnet | **Chưa có API**; paper dùng **testnet** khi có |
+| 5 | Telegram + số kênh | **Chưa có** token/chat ID; **1 kênh trước**, scale sau |
+| 6 | Ngưỡng confluence | **60/100** (Tomas OK — tối ưu sau) |
+| 7 | Leverage (Perp sau) | Tomas muốn **10x–20x**; Spot không dùng; trần chốt khi sang Perp |
+| 8 | Nhãn `rating` | **“Độ tin cậy”** (số cao = tin hơn) |
+| 9 | Pine Script | **Có làm sau Phase 6** |
 
-1. **Ưu tiên chính: Spot hay Perp?** (có thể hỗ trợ cả hai; cần biết cái nào làm trước.)
-2. **Vốn paper** khởi điểm bao nhiêu USDT? (ví dụ 1.000 / 5.000 / 10.000.)
-3. **Timezone** hiển thị & lịch giao dịch: `Asia/Ho_Chi_Minh` hay UTC?
-4. **Bybit API** (key + secret, quyền đọc/ghi phù hợp) đã tạo chưa? Paper có dùng testnet không?
-5. **Telegram bot token** + chat ID đã có chưa? Dự kiến **một** hay **nhiều** kênh từ đầu?
-6. **Ngưỡng score confluence** ban đầu bạn muốn khoảng bao nhiêu? (ví dụ 60/100 — có thể đổi sau trong YAML.)
-7. **Đòn bẩy (leverage) tối đa** nếu làm perp trước? (ví dụ 2x–5x khi mới.)
-8. **`rating`:** bạn muốn thanh theo kiểu “Rủi ro cao = số lớn” hay “Độ tin cậy cao = số lớn”? (cùng thang 1–10, chỉ khác cách đặt tên trên UI.)
-9. **Pine Script (TV):** có muốn làm sau Phase 6 không, hay chỉ cần dashboard Python là đủ?
+Chi tiết / trạng thái Phase: [`HANDOFF.md`](./HANDOFF.md), [`project-context.md`](./project-context.md).
 
 ---
 
-## 13. Bước tiếp theo sau khi duyệt
+## 13. Bước tiếp theo
 
-1. Bạn trả lời mục 12 và xác nhận “OK, làm Phase 1”.
-2. Agent triển khai **chỉ Phase 1** (test + README) — **chưa** DEX, **chưa** Pine.
-3. Bạn xem kết quả → duyệt Phase 2 → …
+1. ~~Tomas OK Phase 1~~ — đã nói (2026-10-21).
+2. Agent triển khai **Phase 1** (test + README) — **chưa** DEX code, **chưa** Pine code.
+3. Tomas duyệt Phase 1 → mới Phase 2 → …
 
 *Tài liệu song song trong repo git: `docs/architecture-roadmap.md`.*
