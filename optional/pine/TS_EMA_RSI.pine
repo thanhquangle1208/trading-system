@@ -1,0 +1,37 @@
+//@version=5
+// Trading System — EMA 34/89 + RSI (soi trên TradingView)
+// Không kết nối bot Python. Chỉ để nhìn chart.
+indicator("TS EMA 34/89 + RSI", overlay=true, max_labels_count=50)
+
+fastLen = input.int(34, "EMA nhanh")
+slowLen = input.int(89, "EMA chậm")
+rsiLen  = input.int(14, "RSI period")
+rsiOb   = input.int(70, "RSI overbought")
+rsiOs   = input.int(30, "RSI oversold")
+
+emaFast = ta.ema(close, fastLen)
+emaSlow = ta.ema(close, slowLen)
+rsiVal  = ta.rsi(close, rsiLen)
+
+plot(emaFast, "EMA Fast", color=color.new(color.teal, 0), linewidth=2)
+plot(emaSlow, "EMA Slow", color=color.new(color.orange, 0), linewidth=2)
+
+bull = emaFast > emaSlow
+bear = emaFast < emaSlow
+bgcolor(bull ? color.new(color.teal, 92) : bear ? color.new(color.red, 94) : na)
+
+// Cảnh báo khi EMA cắt (tùy chọn bật Alert trên TV)
+emaCrossUp = ta.crossover(emaFast, emaSlow)
+emaCrossDn = ta.crossunder(emaFast, emaSlow)
+plotshape(emaCrossUp, title="EMA cross up", style=shape.triangleup, location=location.belowbar, color=color.teal, size=size.tiny)
+plotshape(emaCrossDn, title="EMA cross down", style=shape.triangledown, location=location.abovebar, color=color.red, size=size.tiny)
+
+// Bảng RSI góc phải
+var table t = table.new(position.top_right, 2, 3, bgcolor=color.new(color.black, 70))
+if barstate.islast
+    table.cell(t, 0, 0, "RSI", text_color=color.gray)
+    table.cell(t, 1, 0, str.tostring(rsiVal, "#.0"), text_color=rsiVal >= rsiOb ? color.red : rsiVal <= rsiOs ? color.lime : color.white)
+    table.cell(t, 0, 1, "EMA", text_color=color.gray)
+    table.cell(t, 1, 1, bull ? "Bull" : bear ? "Bear" : "Flat", text_color=bull ? color.lime : bear ? color.red : color.gray)
+    table.cell(t, 0, 2, "TS", text_color=color.gray)
+    table.cell(t, 1, 2, "Python bot riêng", text_color=color.aqua)
