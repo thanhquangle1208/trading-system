@@ -225,19 +225,19 @@ Tất cả implement qua **plugin cùng interface** (cùng cách gọi `compute(
 | 3 | Timezone | **`Asia/Ho_Chi_Minh`** |
 | 4 | Bybit API / testnet | **Chưa có API**; paper dùng **testnet** khi có |
 | 5 | Telegram + số kênh | **Chưa có** token/chat ID; **1 kênh trước**, scale sau |
-| 6 | Ngưỡng confluence | Agent đề xuất **60/100** — chờ Tomas OK |
+| 6 | Ngưỡng confluence | **60/100** (Tomas OK — tối ưu sau) |
 | 7 | Leverage (Perp sau) | Tomas muốn **10x–20x**; Spot không dùng; trần chốt khi sang Perp |
 | 8 | Nhãn `rating` | **“Độ tin cậy”** (số cao = tin hơn) |
-| 9 | Pine Script | Tomas hỏi ý nghĩa — mặc định **Python đủ**; Pine optional nếu sau này muốn |
+| 9 | Pine Script | **Có làm sau Phase 6** |
 
 Chi tiết / trạng thái Phase: [`HANDOFF.md`](./HANDOFF.md), [`project-context.md`](./project-context.md).
 
 ---
 
-## 13. Bước tiếp theo sau khi duyệt
+## 13. Bước tiếp theo
 
-1. Tomas xác nhận nhẹ (score 60?, Pine bỏ/để sau) và nói **“OK Phase 1”**.
-2. Agent triển khai **chỉ Phase 1** (test + README) — **chưa** DEX, **chưa** Pine; Bybit/Telegram chưa có key → mock + `.env.example`.
-3. Tomas xem kết quả → duyệt Phase 2 → …
+1. ~~Tomas OK Phase 1~~ — đã nói (2026-10-21).
+2. Agent triển khai **Phase 1** (test + README) — **chưa** DEX code, **chưa** Pine code.
+3. Tomas duyệt Phase 1 → mới Phase 2 → …
 
 *Tài liệu song song trong repo git: `docs/architecture-roadmap.md`.*

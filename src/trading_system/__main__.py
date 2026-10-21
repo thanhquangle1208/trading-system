@@ -1,0 +1,54 @@
+"""Chạy smoke Phase 1: logging + DB + mock feed + paper order mẫu."""
+
+from __future__ import annotations
+
+from trading_system.config_loader import load_risk, load_watchlist
+from trading_system.data.factory import get_exchange_adapter
+from trading_system.execution.paper import PaperBroker
+from trading_system.logging_setup import get_logger, setup_logging
+from trading_system.notify.telegram_skeleton import TelegramNotifierSkeleton
+from trading_system.settings import get_settings
+from trading_system.storage.db import Database
+
+
+def main() -> None:
+    settings = get_settings()
+    setup_logging(settings.log_level)
+    log = get_logger("main")
+
+    log.info("Trading System Phase 1 smoke — env=%s tz=%s", settings.app_env, settings.timezone)
+
+    watchlist = load_watchlist()
+    risk = load_risk()
+    symbol = (watchlist.get("symbols") or ["BTC/USDT"])[0]
+    timeframe = (watchlist.get("timeframes") or ["H1"])[0]
+    score_threshold = (risk.get("confluence") or {}).get("score_threshold", 60)
+    log.info("Watchlist %s TF=%s | confluence threshold=%s", symbol, timeframe, score_threshold)
+
+    db = Database.from_settings(settings)
+    db.init_schema()
+    account_id = db.ensure_paper_account(
+        "default",
+        balance=settings.paper_starting_balance_usdt,
+    )
+
+    adapter = get_exchange_adapter(settings)
+    candles = adapter.fetch_ohlcv(symbol, timeframe, limit=5)
+    price = adapter.fetch_ticker_price(symbol)
+    saved = db.save_candles(adapter.name, symbol, timeframe, candles)
+    log.info("Giá %s ≈ %.2f | đã lưu %d nến (%s)", symbol, price, saved, adapter.name)
+
+    broker = PaperBroker(db, account_id)
+    # Lệnh paper rất nhỏ để demo (không phải tín hiệu thật)
+    qty = 0.001
+    fill = broker.market_order(symbol, "buy", quantity=qty, price=price, rating=None)
+    log.info("Paper fill order_id=%s balance_after=%.2f", fill.order_id, fill.balance_after)
+
+    TelegramNotifierSkeleton(settings).send_test()
+    adapter.close()
+    db.close()
+    log.info("Phase 1 smoke xong.")
+
+
+if __name__ == "__main__":
+    main()
