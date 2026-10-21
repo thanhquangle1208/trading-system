@@ -2,7 +2,7 @@
 
 **Đọc file này trước** khi làm bất kỳ việc gì trong repo. Sau đó đọc: `preferences.md` (newbie) → `beginner-next-steps.md` → `architecture-roadmap.md` → `project-context.md` → `cost-estimate.md`.
 
-> **Trạng thái:** Tomas **OK Phase 1–6** (2026-10-21). Phase 6 trên nhánh `cursor/phase-6-notify-dashboard-fcd8`. Lõi 6 phase xong — **Pine** là add-on sau, chờ Tomas confirm.
+> **Trạng thái:** Tomas **OK Phase 1–6** + **OK Pine** (2026-10-21). Pine scripts trong `optional/pine/`. DEX vẫn chờ confirm.
 
 ---
 
@@ -50,6 +50,7 @@ Giải thích và tài liệu bằng **tiếng Việt**, chậm rãi, dễ hiể
 | Phase 4 | Risk + paper execution — Tomas **OK Phase 4** (2026-10-21) |
 | Phase 5 | Backtest + Optuna — Tomas **OK Phase 5** (2026-10-21) |
 | Phase 6 | Telegram + dashboard — Tomas **OK Phase 6** (2026-10-21) |
+| Pine add-on | Scripts TV trong `optional/pine/` — Tomas **OK Pine** (2026-10-21) |
 
 ### Ghi chú leverage (khi sau này làm Perp)
 
@@ -68,12 +69,11 @@ Không còn câu hỏi chặn Phase 1. Khi sang Perp / Phase 6 sẽ hỏi lại 
 | Phase | Trạng thái |
 |-------|------------|
 | Kiến trúc / roadmap | Đã chốt |
-| **Phase 1–5** | Xong |
-| **Phase 6** | Telegram + dashboard — nhánh `cursor/phase-6-notify-dashboard-fcd8` (chờ Tomas duyệt) |
-| Pine (add-on) | Sau Phase 6 — chờ confirm |
-| DEX | Sau |
+| **Phase 1–6** | Xong |
+| **Pine** | `optional/pine/` — nhánh `cursor/pine-addon-fcd8` |
+| DEX | Sau — chờ confirm |
 
-**Quy tắc agent:** Báo cáo → hỏi → chỉ tiếp tục khi Tomas confirm. Không làm Pine/DEX trước khi Tomas OK.
+**Quy tắc agent:** Báo cáo → hỏi → chỉ tiếp tục khi Tomas confirm.
 
 ---
 

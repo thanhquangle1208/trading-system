@@ -17,7 +17,8 @@ Bot giao dịch cá nhân của Tomas: theo dõi **BTC** nhiều khung thời gi
 | **4** | Risk (ATR sizing, SL/TP, kill switch) + paper | Xong |
 | **5** | Backtest no look-ahead + phí + Optuna/walk-forward | Xong |
 | **6** | Telegram templates + dashboard localhost | **Đang / vừa xong — chờ Tomas duyệt** |
-| Add-on | Pine Script (sau Phase 6) | Chưa |
+| Add-on | Pine Script (TradingView) | **Đang / vừa xong — xem `optional/pine/`** |
+| Add-on | DEX adapter | Chưa |
 | Add-on | **Pine Script** sau Phase 6; DEX adapter sau | Chưa |
 
 Đọc bàn giao: **[docs/HANDOFF.md](docs/HANDOFF.md)** · Newbie xem **[docs/beginner-next-steps.md](docs/beginner-next-steps.md)** và **[docs/preferences.md](docs/preferences.md)**
@@ -89,6 +90,11 @@ python -m trading_system.dashboard
 - Template tin: channel, TF, `display_name`, chỉ báo, **Độ tin cậy**
 - 1 kênh trước (`configs/notify.yaml`); chưa có token → dry-run (không gửi mạng)
 - Dashboard: vốn paper, lệnh LONG/SHORT (SL/TP/Qty), tín hiệu gần đây
+
+### Pine (TradingView) — add-on
+
+Xem **[optional/pine/HUONG-DAN-DAN-VAO-TRADINGVIEW.md](optional/pine/HUONG-DAN-DAN-VAO-TRADINGVIEW.md)**  
+Scripts: `TS_EMA_RSI.pine`, `TS_Confluence_Basic.pine`, `TS_Wyckoff_Basic.pine` — soi chart, **không** thay bot Python.
 
 ### Phase 3 — tín hiệu
 
