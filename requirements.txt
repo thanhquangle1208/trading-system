@@ -1,9 +1,10 @@
-# Phase 1 — nền tảng
+# Phase 1–5
 ccxt>=4.4.0
 pydantic>=2.0
 pydantic-settings>=2.0
 python-dotenv>=1.0
 PyYAML>=6.0
+optuna>=3.6.0
 
 # Dev / test
 pytest>=8.0

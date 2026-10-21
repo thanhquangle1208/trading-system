@@ -72,7 +72,8 @@ def evaluate_strategy(
         indicator_snapshot=snapshot,
         reason=reason,
     )
-    log.info(
+    log_fn = log.info if fired else log.debug
+    log_fn(
         "Strategy %s TF=%s fired=%s score=%.0f rating=%s (%s)",
         strategy.id,
         timeframe,
