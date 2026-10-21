@@ -2,7 +2,7 @@
 
 **Đọc file này trước** khi làm bất kỳ việc gì trong repo. Sau đó đọc: `architecture-roadmap.md` → `project-context.md` → `cost-estimate.md` → `preferences.md` → **`thesis/T0-trading-thesis.md`** (nếu làm thesis).
 
-> **Trạng thái hiện tại (2026-10-21):** Tomas **hoãn trading bot (Phase 1)**. Ưu tiên **Trading Thesis trên TradingView (Pine Script)** — viết lại từ đầu, giống UI ảnh (hộp lệnh + THỐNG KÊ). **Không viết Pine / bot** cho đến khi Tomas duyệt bước tương ứng (vd. “OK T0”, “OK T1”).
+> **Trạng thái hiện tại (2026-10-21):** Tomas **hoãn trading bot (Phase 1)**. Ưu tiên **Trading Thesis trên TradingView (Pine)** — phương pháp **Supply/Demand + Wyckoff + Price Action + Trend line**. UI giống ảnh (zones + hộp lệnh + THỐNG KÊ). **Không viết Pine / bot** cho đến khi Tomas duyệt (vd. “OK phương pháp”, “OK T0”, “OK T1”).
 
 ---
 
@@ -41,7 +41,8 @@ Chi tiết: [`thesis/T0-trading-thesis.md`](./thesis/T0-trading-thesis.md).
 | Logic | Vừa làm vừa research (bắt đầu đơn giản) |
 | Vốn paper thesis | **$10.000** |
 | Chart | **BINANCE:BTCUSDT.P** (perp) |
-| TF học | Bắt đầu **5m** (như ảnh) |
+| TF học | Đề xuất bắt đầu **5m** (như ảnh); có thể thử **15m** nếu nhiễu |
+| Phương pháp | **S/D + Wyckoff (subset) + PA + Trend line** — xem [`thesis/method-sd-wyckoff-pa.md`](./thesis/method-sd-wyckoff-pa.md) |
 
 ### Kiến trúc bot dài hạn (vẫn giữ, chưa code)
 
@@ -82,8 +83,8 @@ Trả lời khi quay lại bot; agent cập nhật `project-context.md`.
 | Bước | Trạng thái |
 |------|------------|
 | Kiến trúc bot / roadmap | Đã có trong docs; **bot chưa code** |
-| **T0** Thesis doc | **Đã viết — chờ Tomas “OK T0”** |
-| **T1–T5** Pine (tín hiệu → hộp → THỐNG KÊ → zone → chỉnh) | Chưa |
+| **T0** + method S/D–Wyckoff–PA | **Đã viết — chờ Tomas OK phương pháp / T0** |
+| **T1–T6** Pine (trendline → S/D → Spring/PA → hộp → THỐNG KÊ → chỉnh) | Chưa |
 | **Phase 1–6** bot | **HOÃN** |
 
 **Quy tắc agent:** Không viết Pine cho đến “OK T0” / “OK T1”… Không scaffold Phase 1 cho đến “OK Phase 1”.
@@ -112,8 +113,8 @@ Trả lời khi quay lại bot; agent cập nhật `project-context.md`.
 
 ## English summary (for other AIs)
 
-**Now:** Pause Phase 1 bot. Build **TradingView Pine thesis from scratch** (trade boxes + THỐNG KÊ), capital **$10k**, chart **BINANCE:BTCUSDT.P**, learn-while-researching. Pine integrates into the TV chart; Python does not.
+**Now:** Pause Phase 1 bot. Build **TradingView Pine thesis** with **S/D + Wyckoff + PA + trendlines**, capital **$10k**, chart **BINANCE:BTCUSDT.P**. Pine draws on TV; Python does not.
 
-**Wait for:** “OK T0” before Pine code; later “OK Phase 1” for bot.
+**Wait for:** “OK phương pháp” / “OK T0” before Pine; later “OK Phase 1” for bot.
 
 **Branch:** `cursor/trading-thesis-pine-43e3`.

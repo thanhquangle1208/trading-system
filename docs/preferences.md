@@ -9,3 +9,4 @@
 - Customize/tối ưu chỉ trên backtest lịch sử và paper; không dùng tiền thật để thử chỉ báo. (2026-10-21)
 - Ưu tiên làm việc qua Git repository (Repositories); tài liệu/handoff phải nằm trong repo để agent khác đọc được. (2026-10-21)
 - Thesis: viết Pine từ đầu; chart BINANCE:BTCUSDT.P; vốn $10k; logic vừa làm vừa research. (2026-10-21)
+- Phương pháp thesis: Supply/Demand + Wyckoff + Price Action + Trend line (confluence); agent tự research rồi đề xuất trước khi code. (2026-10-21)

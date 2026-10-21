@@ -15,6 +15,7 @@ Repo tài liệu + (sau này) mã nguồn cho Tomas: **chốt trading thesis tr�
 |--------|------|----------|
 | 1 | [docs/HANDOFF.md](docs/HANDOFF.md) | Trạng thái, quyết định, quy tắc agent |
 | 2 | [docs/thesis/T0-trading-thesis.md](docs/thesis/T0-trading-thesis.md) | Thesis: tích hợp TV = Pine; vốn $10k; BTCUSDT.P |
+| 2b | [docs/thesis/method-sd-wyckoff-pa.md](docs/thesis/method-sd-wyckoff-pa.md) | Phương pháp: S/D + Wyckoff + PA + Trend line |
 | 3 | [docs/architecture-roadmap.md](docs/architecture-roadmap.md) | Kiến trúc bot dài hạn (hoãn) |
 | 4 | [docs/project-context.md](docs/project-context.md) | Ngữ cảnh ngắn |
 | 5 | [docs/cost-estimate.md](docs/cost-estimate.md) | Chi phí |

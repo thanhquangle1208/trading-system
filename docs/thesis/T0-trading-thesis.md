@@ -4,6 +4,8 @@
 
 Mục tiêu giai đoạn này: **làm thesis trên TradingView giống ảnh** (hộp lệnh + bảng THỐNG KÊ), **hoãn bot / Telegram / Bybit API**.
 
+**Phương pháp giao dịch (2026-10-21):** **Supply/Demand + Wyckoff + Price Action + Trend line** (confluence). Chi tiết: [`method-sd-wyckoff-pa.md`](./method-sd-wyckoff-pa.md).
+
 ---
 
 ## 1. Câu hỏi “tích hợp vào chart TV” — trả lời ngắn
@@ -46,61 +48,51 @@ Python bot = **bước sau**, khi thesis đã rõ và bạn muốn lệnh thật
 
 ---
 
-## 3. Bản thesis khởi điểm (đơn giản — sẽ chỉnh khi research)
+## 3. Bản thesis khởi điểm — 4 trụ confluence
 
-Đây **không** phải luật cuối. Mục đích: có khung để viết Pine T1, rồi bạn và agent chỉnh.
+Đây **không** phải luật cuối. Chi tiết đầy đủ + bảng Spring/UT/PA: [`method-sd-wyckoff-pa.md`](./method-sd-wyckoff-pa.md).
 
-### 3.1 Xu hướng (trend filter)
+| Trụ | Vai trò trong lệnh |
+|-----|-------------------|
+| **Trend line** | Chỉ hướng + hỗ trợ/kháng cự động |
+| **Supply / Demand** | Nơi ưu tiên vào (Demand=LONG, Supply=SHORT) |
+| **Wyckoff (subset)** | Spring / Upthrust / LPS + đọc cung–cầu |
+| **Price Action** | Nến xác nhận tại vùng confluence |
 
-- Dùng 2 đường theo giá (kiểu trailing / ATR channel — chi tiết chọn khi viết Pine).
-- **Chỉ LONG** khi xu hướng tăng; **chỉ SHORT** khi xu hướng giảm.
-- Đảo chiều: đóng lệnh cũ trước khi mở lệnh ngược (“Close Long before Short” như ảnh).
+**Vào lệnh:** cần **đồng thuận** (đề xuất ≥ 3/4 trụ). Không vào chỉ vì một nến đẹp giữa chart.
 
-### 3.2 Vào lệnh (entry) — phiên bản v0
+### 3.1 Thoát lệnh / vốn / phí
 
-Khi vừa research: bắt đầu bằng **1–2 điều kiện**, ví dụ:
-
-- Giá cắt / phản ứng với đường trend **và**
-- (tuỳ chọn sau) gần vùng Demand (LONG) / Supply (SHORT).
-
-Supply/Demand zones: **T4** (sau khi đã có hộp lệnh + thống kê).
-
-### 3.3 Thoát lệnh (exit)
-
-| Thành phần | Đề xuất v0 | Ghi chú |
-|------------|------------|---------|
-| SL | Theo ATR hoặc khoảng cách cố định từ entry | Có thể đổi |
-| TP | Theo **R** (vd. 2R–5R như ảnh có “TP 5R”) | Chỉnh được trên input |
-| Đảo chiều | Đóng hết rồi mở chiều mới | Giống ảnh |
-
-### 3.4 Quy mô lệnh (Qty) & phí
-
-| Mục | Đề xuất v0 |
-|-----|------------|
+| Thành phần | Đề xuất v0 |
+|------------|------------|
+| SL | Ngoài zone / ngoài Spring–UT |
+| TP | Theo **R** (chờ Tomas chọn 2R / 3R / 5R) |
+| Đảo chiều | Đóng hết rồi mở chiều mới |
 | Vốn | $10.000 |
-| Risk / lệnh | ~1% vốn (đổi được) |
-| Qty | Tính từ khoảng cách Entry→SL và % risk |
-| Phí | Ước tính % (vd. taker Binance Futures) để ra Gross vs Net |
+| Risk / lệnh | ~1% vốn |
+| Qty | Từ khoảng Entry→SL và % risk |
+| Phí | Ước tính % taker Binance Futures → Gross vs Net |
 
-### 3.5 Hiển thị (giống ảnh)
+### 3.2 Hiển thị (giống ảnh)
 
-1. Mũi tên vào / ra lệnh  
-2. Hộp lệnh VN: Entry, SL, TP, Qty, phí, Gross/Net, WIN/LOSS  
-3. Bảng **THỐNG KÊ**: vốn, số lệnh, winrate, phí, PF, Max DD…  
-4. (Sau) ô Supply / Demand  
+1. Trend line + ô Supply / Demand  
+2. Mũi tên vào / ra  
+3. Hộp lệnh VN: Entry, SL, TP, Qty, phí, Gross/Net, WIN/LOSS  
+4. Bảng **THỐNG KÊ**  
 
 ---
 
-## 4. Lộ trình làm (sau khi Tomas OK T0)
+## 4. Lộ trình làm (sau khi Tomas OK phương pháp + T0)
 
 | Bước | Việc | Sản phẩm |
 |------|------|----------|
-| **T0** | Chốt tài liệu này | File này đã duyệt |
-| **T1** | Pine: trend + tín hiệu mũi tên | Chart có Long/Short signal |
-| **T2** | Pine: SL/TP/Qty + hộp lệnh VN | Hộp giống ảnh |
-| **T3** | Pine: bảng THỐNG KÊ | Panel góc phải |
-| **T4** | (Tuỳ chọn) Supply / Demand | Zones như ảnh |
-| **T5** | Research + chỉnh rule trên backtest TV | Thesis “chuẩn” hơn |
+| **T0** | Chốt T0 + method S/D–Wyckoff–PA | Docs đã duyệt |
+| **T1** | Pine: pivot + trend line + hướng | Đường trend + mũi tên thô |
+| **T2** | Pine: S/D zones | Ô Supply/Demand |
+| **T3** | Pine: Spring/UT + PA → tín hiệu confluence | Tín hiệu “đúng thesis” |
+| **T4** | Hộp lệnh VN + SL/TP/Qty/phí | Giống ảnh |
+| **T5** | Bảng THỐNG KÊ | Panel góc phải |
+| **T6** | Research chỉnh trên BTCUSDT.P | Thesis ổn hơn |
 | **Sau** | Bot Python / Bybit / Telegram | Chỉ khi Tomas nói OK |
 
 Mỗi bước: **đề xuất → Tomas OK → mới code**.
@@ -119,16 +111,15 @@ Agent sẽ gửi script từng bước; bạn chỉ cần copy–paste.
 
 ---
 
-## 6. Còn mở (research dần — không chặn T1)
+## 6. Còn mở (chờ Tomas — xem thêm method §10)
 
-- Công thức trend chính xác (ATR length, multiplier…)  
-- Entry trigger cụ thể (break, pullback, zone…)  
-- TP mặc định bao nhiêu R  
-- Phí % chính xác theo Binance  
-- Có làm zone Supply/Demand từ đầu hay để T4  
+- TP mặc định: **2R / 3R / 5R**?  
+- TF học: giữ **5m** hay bắt đầu **15m** (ít nhiễu)?  
+- Volume bắt buộc ngay hay để sau?  
+- Tham số pivot / độ rộng zone — chỉnh khi có Pine  
 
 ---
 
 ## English summary
 
-Pause bot. Build TradingView **Pine Script from scratch** so visuals match the screenshot (trade boxes + THỐNG KÊ). Capital $10k; chart BINANCE:BTCUSDT.P. Logic starts simple and is refined while researching. Python cannot draw on TV charts; Pine is the integration path.
+Pause bot. Thesis method: **Supply/Demand + Wyckoff (subset) + Price Action + Trend lines** with confluence. Pine from scratch on BINANCE:BTCUSDT.P, $10k. Full Wyckoff phases come gradually; automate a practical subset first.
