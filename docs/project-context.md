@@ -13,7 +13,7 @@ Ngắn gọn cho agent / phiên sau. Cập nhật khi Tomas chốt quyết đị
 - Watchlist multi-TF: **M15, H1, H4, D1**; **BTC** cặp chính.
 - Confluence: điều kiện **AND (required)** + **score ≥ 60/100** (tối ưu sau).
 - Mỗi tín hiệu/lệnh có **`rating` (1–10)** nhãn **Độ tin cậy**; hiện Telegram + DB.
-- Indicator plugins (Phase 2+): EMA34/89, RSI, MACD, BB, VWAP, ATR, Volume, market structure, S/R, candles/patterns; optional funding/OI/liq.
+- Indicator plugins (Phase 2+): EMA34/89, RSI, MACD, BB, VWAP, ATR, Volume, market structure, S/R, candles/patterns; **Wyckoff cơ bản** (cấu trúc + vài tín hiệu đơn giản, cùng lớp plugin — Tomas chọn 2026-10-21); optional funding/OI/liq.
 - Exchange: **CEX qua ccxt**, **Bybit spot trước**; DEX adapter riêng sau.
 - Storage: **SQLite trước**; secrets `.env`.
 - Paper **1000 USDT**; timezone **Asia/Ho_Chi_Minh**.

@@ -45,6 +45,7 @@ Giải thích và tài liệu bằng **tiếng Việt**, chậm rãi, dễ hiể
 | Leverage | **10x–20x** khi Perp sau; Spot không dùng |
 | Pine Script | **Có làm** — add-on **sau Phase 6** |
 | Phase 1 | Tomas đã **OK Phase 1** (2026-10-21) |
+| Phase 2 phạm vi | Chỉ báo thường **+ module Wyckoff cơ bản** (cấu trúc + vài tín hiệu đơn giản); chưa code — chờ “OK Phase 2” |
 
 ### Ghi chú leverage (khi sau này làm Perp)
 

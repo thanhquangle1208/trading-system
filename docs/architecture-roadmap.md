@@ -158,7 +158,7 @@ trading-system/
 | Phase | Giao gì | Test trọng tâm | Ghi chú mở rộng từ yêu cầu mới |
 |-------|---------|----------------|--------------------------------|
 | **1 — Nền tảng** | Cấu trúc repo, `.env`, logging, SQLite tối thiểu, **adapter CEX Bybit (ccxt)** đọc dữ liệu, paper skeleton; chỗ cắm adapter (DEX sau) | Kết nối / mock feed; ghi log; schema DB | Toggle exchange qua config + `.env`; **chưa** DEX, **chưa** Pine |
-| **2 — Chỉ báo** | Interface plugin + EMA34/89, RSI, MACD, BB, VWAP, ATR, Volume, cấu trúc thị trường, S/R, nến/mẫu; tùy chọn funding/OI/liq | Đúng công thức trên dữ liệu cố định; không phụ thuộc sàn | — |
+| **2 — Chỉ báo** | Interface plugin + EMA34/89, RSI, MACD, BB, VWAP, ATR, Volume, cấu trúc thị trường, S/R, nến/mẫu; **Wyckoff cơ bản** (cấu trúc + vài tín hiệu đơn giản); tùy chọn funding/OI/liq | Đúng công thức trên dữ liệu cố định; không phụ thuộc sàn; Wyckoff có test mẫu đơn giản | Tomas chọn thêm Wyckoff cơ bản vào Phase 2 (2026-10-21) |
 | **3 — Tín hiệu** | Watchlist multi-TF; strategy YAML/JSON; confluence **AND bắt buộc** + **score ≥ threshold**; **`rating` 1–10** trên mỗi tín hiệu | Config mẫu → có/không tín hiệu + rating đúng kỳ vọng | **Rating thuộc Phase 3** |
 | **4 — Risk + Execution** | % risk, ATR sizing, partial TP + runner; spot: “hold losers” chỉ khi **thủ công**; **perp bắt buộc SL**; limits + kill switch; paper rồi live | Sizing đúng; từ chối lệnh thiếu SL (perp); kill switch dừng | Rating đi kèm order vào DB |
 | **5 — Backtest** | Multi-TF **không look-ahead**; phí / slippage / funding; metrics; Optuna + walk-forward; nền cho UI stats | Không rò rỉ tương lai; báo cáo metric ổn định | Track **(B)** — số liệu cho panel vốn / winrate / phí |
@@ -210,6 +210,7 @@ Sau mỗi phase: bạn duyệt kết quả → mới sang phase sau.
 **Chỉ báo / module khởi đầu**
 
 - Bắt buộc hướng: EMA 34/89, RSI, MACD, Bollinger Bands, VWAP, ATR, Volume, market structure, Support/Resistance, nến & pattern.
+- **Wyckoff cơ bản (Phase 2):** module cấu trúc (vd. vùng tích lũy/phân phối đơn giản, spring/upthrust mức cơ bản) + vài cờ/tín hiệu đơn giản — **không** port full methodology một lần; tinh chỉnh sau bằng backtest/paper.
 - Tùy chọn (perp): funding, open interest (OI), liquidations.
 
 Tất cả implement qua **plugin cùng interface** (cùng cách gọi `compute(...)`). Tên hiển thị trên Telegram lấy từ config (`display_name` / nhãn chỉ báo), không hard-code trong notifier.
