@@ -11,7 +11,13 @@
 - **Vừa làm vừa hỏi:** không đổ một lúc 10 lệnh. Một bước → Tomas làm / trả lời → mới bước tiếp.
 - Tránh jargon; nếu phải dùng từ kỹ thuật thì giải thích ngay trong ngoặc.
 - Không “làm nhanh rồi bỏ lại”: sau mỗi lần agent code, tóm tắt **Tomas cần làm gì tiếp theo** (1–3 việc nhỏ).
-- **Chạy lệnh kỹ thuật trên môi trường agent:** Tomas OK để agent **tự chạy** các lệnh kiểu `venv`, `pip`, `cp .env`, `pytest`, `python -m …` trên máy/agent cloud, rồi **báo kết quả bằng tiếng Việt dễ hiểu**. Chỉ nhờ Tomas tự chạy khi: (a) việc phải làm trên máy Tomas (mở Cursor, duyệt PR, tạo API key…), hoặc (b) Tomas muốn học tay. (2026-10-21)
+- **Chạy lệnh kỹ thuật trên môi trường agent:** Tomas OK để agent **tự chạy** các lệnh kiểu `venv`, `pip`, `cp .env`, `pytest`, `python -m …` trên máy/agent cloud. (2026-10-21)
+- **Nhịp báo cáo bắt buộc (Tomas chốt 2026-10-21):**
+  1. Agent **tự làm** phần kỹ thuật trong phạm vi đã được phép,
+  2. **Báo lại** bằng tiếng Việt: đã làm gì · cái đó là gì · tác dụng gì,
+  3. **Hỏi** Tomas có muốn chạy / làm tiếp bước nào không,
+  4. **Chỉ tiếp tục khi Tomas confirm** (ví dụ “OK”, “làm tiếp Phase 2”).
+  Không tự nhảy phase hay tự mở việc lớn tiếp theo.
 
 ## Cách làm việc dự án
 
