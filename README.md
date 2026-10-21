@@ -13,8 +13,9 @@ Bot giao dịch cá nhân của Tomas: theo dõi **BTC** nhiều khung thời gi
 | Kiến trúc | Layers, CEX/DEX, TV, rating, notifier | Đã chốt |
 | **1** | Nền tảng: cấu trúc, `.env`, logging, SQLite, Bybit/mock, paper skeleton | Xong |
 | **2** | Plugin chỉ báo + **Wyckoff cơ bản** | Xong |
-| **3** | Confluence AND + score ≥ 60 + **Độ tin cậy** rating | **Đang / vừa xong — chờ Tomas duyệt** |
-| 4–6 | Risk/execution → backtest → Telegram/UI | Chưa |
+| **3** | Confluence AND + score ≥ 60 + **Độ tin cậy** rating | Xong |
+| **4** | Risk (ATR sizing, SL/TP, kill switch) + paper | **Đang / vừa xong — chờ Tomas duyệt** |
+| 5–6 | Backtest → Telegram/UI | Chưa |
 | Add-on | **Pine Script** sau Phase 6; DEX adapter sau | Chưa |
 
 Đọc bàn giao: **[docs/HANDOFF.md](docs/HANDOFF.md)** · Newbie xem **[docs/beginner-next-steps.md](docs/beginner-next-steps.md)** và **[docs/preferences.md](docs/preferences.md)**

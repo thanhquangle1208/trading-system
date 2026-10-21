@@ -2,7 +2,7 @@
 
 **Đọc file này trước** khi làm bất kỳ việc gì trong repo. Sau đó đọc: `preferences.md` (newbie) → `beginner-next-steps.md` → `architecture-roadmap.md` → `project-context.md` → `cost-estimate.md`.
 
-> **Trạng thái:** Tomas **OK Phase 1–3** (2026-10-21). Phase 3 trên nhánh `cursor/phase-3-signals-fcd8`. **Chưa** Phase 4 cho đến khi Tomas confirm.
+> **Trạng thái:** Tomas **OK Phase 1–4** (2026-10-21). Phase 4 trên nhánh `cursor/phase-4-risk-execution-fcd8`. **Chưa** Phase 5 cho đến khi Tomas confirm.
 
 ---
 

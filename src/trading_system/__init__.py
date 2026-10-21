@@ -1,3 +1,3 @@
-"""Trading System — Phase 1–3 (nền tảng, chỉ báo, tín hiệu)."""
+"""Trading System — Phase 1–4 (nền tảng → risk/execution paper)."""
 
-__version__ = "0.3.0"
+__version__ = "0.4.0"

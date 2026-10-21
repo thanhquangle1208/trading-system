@@ -11,7 +11,7 @@ from trading_system.settings import Settings, get_settings
 log = get_logger("storage.db")
 
 SCHEMA_PATH = Path(__file__).with_name("schema.sql")
-SCHEMA_VERSION = "1"
+SCHEMA_VERSION = "2"
 
 
 class Database:
@@ -30,6 +30,7 @@ class Database:
     def init_schema(self) -> None:
         sql = SCHEMA_PATH.read_text(encoding="utf-8")
         self._conn.executescript(sql)
+        self._migrate_phase4_columns()
         self._conn.execute(
             "INSERT INTO schema_meta(key, value) VALUES(?, ?) "
             "ON CONFLICT(key) DO UPDATE SET value=excluded.value",
@@ -37,6 +38,22 @@ class Database:
         )
         self._conn.commit()
         log.info("SQLite schema sẵn sàng (%s) version=%s", self.path, SCHEMA_VERSION)
+
+    def _migrate_phase4_columns(self) -> None:
+        """Thêm cột risk vào DB cũ (Phase 1) nếu thiếu."""
+        existing = {
+            row[1]
+            for row in self._conn.execute("PRAGMA table_info(paper_orders)").fetchall()
+        }
+        alters = [
+            ("stop_loss", "ALTER TABLE paper_orders ADD COLUMN stop_loss REAL"),
+            ("take_profit_1", "ALTER TABLE paper_orders ADD COLUMN take_profit_1 REAL"),
+            ("take_profit_2", "ALTER TABLE paper_orders ADD COLUMN take_profit_2 REAL"),
+            ("market_type", "ALTER TABLE paper_orders ADD COLUMN market_type TEXT DEFAULT 'spot'"),
+        ]
+        for name, stmt in alters:
+            if name not in existing:
+                self._conn.execute(stmt)
 
     def ensure_paper_account(self, name: str, balance: float, currency: str = "USDT") -> int:
         cur = self._conn.execute("SELECT id FROM paper_accounts WHERE name = ?", (name,))
@@ -68,16 +85,49 @@ class Database:
         price: float,
         status: str = "filled",
         rating: int | None = None,
+        stop_loss: float | None = None,
+        take_profit_1: float | None = None,
+        take_profit_2: float | None = None,
+        market_type: str = "spot",
     ) -> int:
         cur = self._conn.execute(
             """
-            INSERT INTO paper_orders(account_id, symbol, side, quantity, price, status, rating)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO paper_orders(
+                account_id, symbol, side, quantity, price, status, rating,
+                stop_loss, take_profit_1, take_profit_2, market_type
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
-            (account_id, symbol, side, quantity, price, status, rating),
+            (
+                account_id,
+                symbol,
+                side,
+                quantity,
+                price,
+                status,
+                rating,
+                stop_loss,
+                take_profit_1,
+                take_profit_2,
+                market_type,
+            ),
         )
         self._conn.commit()
         return int(cur.lastrowid)
+
+    def count_open_paper_orders(self, account_id: int) -> int:
+        cur = self._conn.execute(
+            "SELECT COUNT(*) AS c FROM paper_orders WHERE account_id = ? AND status = 'open'",
+            (account_id,),
+        )
+        return int(cur.fetchone()["c"])
+
+    def count_paper_orders(self, account_id: int) -> int:
+        cur = self._conn.execute(
+            "SELECT COUNT(*) AS c FROM paper_orders WHERE account_id = ?",
+            (account_id,),
+        )
+        return int(cur.fetchone()["c"])
 
     def save_candles(
         self,

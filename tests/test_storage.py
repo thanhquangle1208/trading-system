@@ -8,7 +8,7 @@ from trading_system.storage.db import Database
 def test_schema_init_and_paper_account(tmp_path: Path) -> None:
     db = Database(tmp_path / "test.db")
     db.init_schema()
-    assert db.schema_version() == "1"
+    assert db.schema_version() == "2"
 
     account_id = db.ensure_paper_account("default", 1000.0)
     assert account_id > 0

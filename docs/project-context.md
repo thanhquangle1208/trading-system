@@ -39,8 +39,8 @@ Ngắn gọn cho agent / phiên sau. Cập nhật khi Tomas chốt quyết đị
 
 ## Trạng thái code
 
-- Phase 1–2 xong
-- Phase 3 confluence + rating trên nhánh `cursor/phase-3-signals-fcd8` — chờ Tomas duyệt trước Phase 4
+- Phase 1–3 xong
+- Phase 4 risk + paper trên nhánh `cursor/phase-4-risk-execution-fcd8` — chờ Tomas duyệt trước Phase 5
 
 ## Tài liệu liên quan
 
