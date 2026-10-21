@@ -2,7 +2,7 @@
 
 **Đọc file này trước** khi làm bất kỳ việc gì trong repo. Sau đó đọc: `preferences.md` (newbie) → `beginner-next-steps.md` → `architecture-roadmap.md` → `project-context.md` → `cost-estimate.md`.
 
-> **Trạng thái:** Tomas **OK Phase 1–5** (2026-10-21). Phase 5 trên nhánh `cursor/phase-5-backtest-fcd8`. **Chưa** Phase 6 cho đến khi Tomas confirm.
+> **Trạng thái:** Tomas **OK Phase 1–6** (2026-10-21). Phase 6 trên nhánh `cursor/phase-6-notify-dashboard-fcd8`. Lõi 6 phase xong — **Pine** là add-on sau, chờ Tomas confirm.
 
 ---
 

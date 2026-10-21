@@ -1,5 +1,5 @@
-# Phase 1: skeleton. Template đầy đủ + multi-route → Phase 6.
-enabled: false
+# Phase 6 — Telegram templates + routing (bắt đầu 1 kênh)
+enabled: true
 provider: telegram
 
 channels:
@@ -8,5 +8,14 @@ channels:
     chat_id_env: TELEGRAM_CHAT_ID
     enabled: true
 
-# Scale thêm kênh sau; routing theo TF / method ở Phase 6
-routes: []
+# Scale thêm kênh sau — ví dụ:
+# routes:
+#   - match: { timeframe: H1, strategy_id: btc_confluence_wyckoff }
+#     channel_id: main
+routes:
+  - match: {}   # mặc định: mọi tín hiệu → main
+    channel_id: main
+
+template:
+  include_rating_bar: true
+  rating_label: "Độ tin cậy"

@@ -15,8 +15,9 @@ Bot giao dịch cá nhân của Tomas: theo dõi **BTC** nhiều khung thời gi
 | **2** | Plugin chỉ báo + **Wyckoff cơ bản** | Xong |
 | **3** | Confluence AND + score ≥ 60 + **Độ tin cậy** rating | Xong |
 | **4** | Risk (ATR sizing, SL/TP, kill switch) + paper | Xong |
-| **5** | Backtest no look-ahead + phí + Optuna/walk-forward | **Đang / vừa xong — chờ Tomas duyệt** |
-| **6** | Telegram templates + dashboard | Chưa |
+| **5** | Backtest no look-ahead + phí + Optuna/walk-forward | Xong |
+| **6** | Telegram templates + dashboard localhost | **Đang / vừa xong — chờ Tomas duyệt** |
+| Add-on | Pine Script (sau Phase 6) | Chưa |
 | Add-on | **Pine Script** sau Phase 6; DEX adapter sau | Chưa |
 
 Đọc bàn giao: **[docs/HANDOFF.md](docs/HANDOFF.md)** · Newbie xem **[docs/beginner-next-steps.md](docs/beginner-next-steps.md)** và **[docs/preferences.md](docs/preferences.md)**

@@ -10,7 +10,7 @@ from trading_system.execution.paper import PaperBroker
 from trading_system.indicators.atr import Atr
 from trading_system.indicators.registry import list_indicators
 from trading_system.logging_setup import get_logger, setup_logging
-from trading_system.notify.telegram_skeleton import TelegramNotifierSkeleton
+from trading_system.notify.telegram import TelegramNotifier
 from trading_system.risk.engine import RiskEngine
 from trading_system.settings import get_settings
 from trading_system.signals.confluence import evaluate_strategy
@@ -101,10 +101,10 @@ def main() -> None:
     else:
         log.info("Không đặt paper — plan bị từ chối")
 
-    TelegramNotifierSkeleton(settings).send_test()
+    TelegramNotifier(settings).send_test()  # dry-run nếu chưa có token
     adapter.close()
     db.close()
-    log.info("Phase 1–4 smoke xong.")
+    log.info("Phase 1–6 smoke xong. Dashboard: python -m trading_system.dashboard")
 
 
 if __name__ == "__main__":

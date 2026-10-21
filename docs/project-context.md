@@ -39,8 +39,8 @@ Ngắn gọn cho agent / phiên sau. Cập nhật khi Tomas chốt quyết đị
 
 ## Trạng thái code
 
-- Phase 1–4 xong
-- Phase 5 backtest trên nhánh `cursor/phase-5-backtest-fcd8` — chờ Tomas duyệt trước Phase 6
+- Phase 1–6 xong trên nhánh `cursor/phase-6-notify-dashboard-fcd8`
+- Add-on tiếp theo (chờ confirm): Pine Script; DEX sau
 
 ## Tài liệu liên quan
 
