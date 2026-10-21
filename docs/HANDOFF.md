@@ -46,6 +46,7 @@ Giải thích và tài liệu bằng **tiếng Việt**, chậm rãi, dễ hiể
 | Pine Script | **Có làm** — add-on **sau Phase 6** |
 | Phase 1 | Tomas đã **OK Phase 1** (2026-10-21) |
 | Phase 2 phạm vi | Chỉ báo thường **+ Wyckoff cơ bản** — Tomas **OK Phase 2** (2026-10-21) |
+| Phase 3 | Confluence + rating — Tomas **OK Phase 3** (2026-10-21) |
 
 ### Ghi chú leverage (khi sau này làm Perp)
 
