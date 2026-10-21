@@ -1,0 +1,38 @@
+//@version=5
+// Trading System — Wyckoff cơ bản (range / spring / upthrust)
+// Bản TV đơn giản — không phải full methodology. Khớp hướng Phase 2 Python.
+indicator("TS Wyckoff Basic", overlay=true, max_labels_count=100)
+
+lookback = input.int(30, "Lookback range", minval=10)
+piercePct = input.float(0.2, "Pierce %", step=0.05) / 100.0
+
+// Range từ lookback nến trước (dịch 1 nến — giống hướng Python)
+highestHigh = ta.highest(high, lookback)[1]
+lowestLow   = ta.lowest(low, lookback)[1]
+
+pHigh = plot(highestHigh, "Range High", color=color.new(color.red, 30))
+pLow  = plot(lowestLow, "Range Low", color=color.new(color.lime, 30))
+fill(pHigh, pLow, color=color.new(color.blue, 92), title="Range")
+
+spring = low < lowestLow * (1 - piercePct) and close >= lowestLow
+upthrust = high > highestHigh * (1 + piercePct) and close <= highestHigh
+inRange = close >= lowestLow and close <= highestHigh
+
+plotshape(spring, title="Spring", style=shape.triangleup, location=location.belowbar, color=color.lime, size=size.small, text="Spring")
+plotshape(upthrust, title="Upthrust", style=shape.triangledown, location=location.abovebar, color=color.red, size=size.small, text="UT")
+
+avgVol = ta.sma(volume, lookback)
+volClimax = volume >= avgVol * 1.5
+
+phase = spring ? "accumulation_spring" : upthrust ? "distribution_upthrust" : inRange ? "ranging" : close > highestHigh ? "markup_or_breakout" : close < lowestLow ? "markdown_or_breakdown" : "unclear"
+
+var table t = table.new(position.bottom_right, 2, 4, bgcolor=color.new(color.black, 70))
+if barstate.islast
+    table.cell(t, 0, 0, "Phase", text_color=color.gray)
+    table.cell(t, 1, 0, phase, text_color=color.aqua)
+    table.cell(t, 0, 1, "Spring", text_color=color.gray)
+    table.cell(t, 1, 1, spring ? "YES" : "no", text_color=spring ? color.lime : color.gray)
+    table.cell(t, 0, 2, "Upthrust", text_color=color.gray)
+    table.cell(t, 1, 2, upthrust ? "YES" : "no", text_color=upthrust ? color.red : color.gray)
+    table.cell(t, 0, 3, "Vol climax", text_color=color.gray)
+    table.cell(t, 1, 3, volClimax ? "YES" : "no", text_color=volClimax ? color.orange : color.gray)

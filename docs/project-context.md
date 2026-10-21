@@ -39,8 +39,9 @@ Ngắn gọn cho agent / phiên sau. Cập nhật khi Tomas chốt quyết đị
 
 ## Trạng thái code
 
-- Phase 1–6 xong trên nhánh `cursor/phase-6-notify-dashboard-fcd8`
-- Add-on tiếp theo (chờ confirm): Pine Script; DEX sau
+- Phase 1–6 xong
+- Pine add-on: `optional/pine/` (EMA/RSI, confluence, Wyckoff + hướng dẫn TV)
+- Tiếp theo (chờ confirm): DEX / live / việc khác
 
 ## Tài liệu liên quan
 
