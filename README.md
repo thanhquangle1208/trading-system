@@ -1,61 +1,125 @@
 # Hệ thống giao dịch (Trading System)
 
-Repo này là **bộ tài liệu + (sau này) mã nguồn** cho bot giao dịch cá nhân của Tomas: theo dõi **BTC** nhiều khung thời gian, tín hiệu khi chỉ báo **đồng thuận**, quản lý rủi ro, chạy **paper / backtest** trước rồi mới **live**, báo **Telegram** và xem trên **dashboard** máy nhà.
+Bot giao dịch cá nhân của Tomas: theo dõi **BTC** nhiều khung thời gian, tín hiệu khi chỉ báo **đồng thuận** (ngưỡng **60/100**), **Độ tin cậy** 1–10, **paper / backtest** trước live, **Telegram** + dashboard máy nhà.
 
-> Hiện **chưa có code Phase 1**. Chỉ có đề xuất kiến trúc và hướng dẫn bàn giao. Đọc **HANDOFF** trước khi làm gì thêm.
-
----
-
-## Bắt đầu từ đâu? (quan trọng)
-
-1. Mở nhánh Git: **`cursor/architecture-roadmap-abd1`**
-2. Đọc file bàn giao trước tiên:
-
-### → [docs/HANDOFF.md](docs/HANDOFF.md) ← đọc file này trước
-
-Sau đó lần lượt:
-
-| Thứ tự | File | Nội dung |
-|--------|------|----------|
-| 1 | [docs/HANDOFF.md](docs/HANDOFF.md) | Tóm tắt dự án, quyết định đã chốt, câu hỏi còn mở, trạng thái phase |
-| 2 | [docs/architecture-roadmap.md](docs/architecture-roadmap.md) | Kiến trúc đầy đủ + lộ trình 6 phase |
-| 3 | [docs/project-context.md](docs/project-context.md) | Ngữ cảnh ngắn cho agent / phiên sau |
-| 4 | [docs/cost-estimate.md](docs/cost-estimate.md) | Dự toán chi phí (ưu tiên ~$0 với paper + máy nhà) |
-| 5 | [docs/preferences.md](docs/preferences.md) | Cách làm việc Tomas muốn (tiếng Việt, duyệt trước khi code, …) |
+**Sàn đầu:** Bybit (spot) qua ccxt · **Timezone:** Asia/Ho_Chi_Minh · **Paper:** 1.000 USDT
 
 ---
 
-## Tiếp tục trong Cursor Repositories
-
-1. Trong Cursor: **Repositories** → mở repo này.
-2. Checkout nhánh **`cursor/architecture-roadmap-abd1`** (nhánh có tài liệu mới nhất; `main` thường đang đứng sau).
-3. Mở **chat mới** trong repo đó và bảo agent đọc `docs/HANDOFF.md` trước.
-4. **Chưa** bảo agent code Phase 1 trừ khi bạn đã trả lời câu hỏi còn mở (hoặc chủ động bỏ qua) và nói rõ **“OK Phase 1”**.
-
-Hướng dẫn ngắn + câu prompt mẫu: xem tài liệu Project store `docs/repo-switch-guide.md` (nếu còn dùng Project), hoặc copy prompt trong `docs/HANDOFF.md`.
-
----
-
-## Lộ trình (tóm tắt)
+## Trạng thái
 
 | Phase | Nội dung | Trạng thái |
 |-------|----------|------------|
-| Kiến trúc | Layers, CEX/DEX, TV hai hướng, rating, notifier | Đã viết trên nhánh này |
-| **1** | Nền tảng: cấu trúc, `.env`, logging, SQLite, Bybit (ccxt), paper skeleton | **Chưa bắt đầu** |
-| 2 | Plugin chỉ báo | Chưa |
-| 3 | Watchlist multi-TF + confluence + **rating** | Chưa |
-| 4 | Risk + execution (paper/live) | Chưa |
-| 5 | Backtest multi-TF + Optuna | Chưa |
-| 6 | Telegram templates + dashboard | Chưa |
+| Kiến trúc | Layers, CEX/DEX, TV, rating, notifier | Đã chốt |
+| **1** | Nền tảng: cấu trúc, `.env`, logging, SQLite, Bybit/mock, paper skeleton | Xong |
+| **2** | Plugin chỉ báo + **Wyckoff cơ bản** | Xong |
+| **3** | Confluence AND + score ≥ 60 + **Độ tin cậy** rating | Xong |
+| **4** | Risk (ATR sizing, SL/TP, kill switch) + paper | Xong |
+| **5** | Backtest no look-ahead + phí + Optuna/walk-forward | **Đang / vừa xong — chờ Tomas duyệt** |
+| **6** | Telegram templates + dashboard | Chưa |
+| Add-on | **Pine Script** sau Phase 6; DEX adapter sau | Chưa |
 
-**Add-on sau:** Pine Script (TradingView); DEX adapter riêng.
+Đọc bàn giao: **[docs/HANDOFF.md](docs/HANDOFF.md)** · Newbie xem **[docs/beginner-next-steps.md](docs/beginner-next-steps.md)** và **[docs/preferences.md](docs/preferences.md)**
 
 ---
 
-## Chạy code sau này
+## Phase 1 — chạy nhanh (máy bạn)
 
-Khi Phase 1 xong sẽ bổ sung lệnh cụ thể (tạo môi trường Python, copy `.env.example`, chạy test). **Hiện chưa có ứng dụng để khởi động.**
+### 1) Tạo môi trường Python
+
+```bash
+cd trading-system
+python3 -m venv .venv
+source .venv/bin/activate   # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+### 2) File bí mật
+
+```bash
+cp .env.example .env
+```
+
+Mặc định `MOCK_EXCHANGE=true` — **không cần** Bybit/Telegram key để chạy smoke + test.
+
+Khi có key Bybit testnet: điền `BYBIT_API_KEY` / `BYBIT_API_SECRET`, đặt `MOCK_EXCHANGE=false`, `EXCHANGE_TESTNET=true`.
+
+### 3) Chạy test
+
+```bash
+pytest
+```
+
+### 4) Smoke Phase 1–4
+
+```bash
+python -m trading_system
+```
+
+Sẽ: mock → confluence → **risk plan** (size/SL/TP hoặc reject) → paper nếu được duyệt.
+
+### Phase 4 — risk & paper
+
+- `%` rủi ro + ATR sizing, SL / TP1 (partial) / TP2 (runner)
+- Kill switch, max lệnh, trần lỗ ngày
+- Perp: thiếu SL → từ chối (khung sẵn, Spot đang dùng)
+- Live stub — **chưa** bật tiền thật
+- Config: `configs/risk.yaml` · code: `src/trading_system/risk/`
+
+### Phase 5 — backtest
+
+```bash
+python -m trading_system.backtest
+```
+
+- Không nhìn trước tương lai (vào lệnh ở bar sau tín hiệu)
+- Phí + slippage (+ funding=0 với spot)
+- Metrics: PnL, winrate, drawdown, fees
+- Walk-forward train/test + Optuna tối ưu `score_threshold`
+- Config: `configs/backtest.yaml` · code: `src/trading_system/backtest/`
+
+### Phase 3 — tín hiệu
+
+- Strategy YAML: `configs/strategies/btc_confluence_wyckoff.yaml`
+- Luật: mọi **required** phải đúng (AND) **và** score ≥ 60 → `fired`
+- `rating` = **Độ tin cậy** 1–10 (chỉ khi fired)
+- Engine: `src/trading_system/signals/`
+
+### Phase 2 — chỉ báo có gì?
+
+Plugin trong `src/trading_system/indicators/`: EMA 34/89, RSI, MACD, Bollinger, VWAP, ATR, Volume, market structure, S/R, mẫu nến, **Wyckoff cơ bản** (spring / upthrust / pha đơn giản). Lấy qua `get_indicator("rsi")` — xem `tests/test_indicators_math.py`.
+
+---
+
+## Cấu trúc (Phase 1)
+
+```
+configs/          # YAML: watchlist, exchanges, risk, notify, strategies
+src/trading_system/
+  data/           # ExchangeAdapter + Bybit (ccxt) + Mock + DEX placeholder
+  storage/        # SQLite
+  execution/      # PaperBroker skeleton
+  notify/         # Telegram skeleton (chưa gửi tin thật)
+  …               # stubs Phase 2–6
+optional/         # Pine sau Phase 6
+tests/
+docs/
+```
+
+---
 
 ## Bảo mật
 
-Không commit API key / Telegram token. Dùng `.env` (mẫu `.env.example` sẽ có ở Phase 1).
+Không commit `.env`, API key, Telegram token. Chỉ commit `.env.example`.
+
+---
+
+## Tài liệu
+
+| File | Nội dung |
+|------|----------|
+| [docs/HANDOFF.md](docs/HANDOFF.md) | Đọc trước |
+| [docs/architecture-roadmap.md](docs/architecture-roadmap.md) | Kiến trúc 6 phase |
+| [docs/project-context.md](docs/project-context.md) | Ngữ cảnh ngắn |
+| [docs/cost-estimate.md](docs/cost-estimate.md) | Chi phí |
+| [docs/preferences.md](docs/preferences.md) | Cách làm việc |

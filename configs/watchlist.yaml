@@ -1,0 +1,9 @@
+# Cặp & khung thời gian theo dõi
+timezone: Asia/Ho_Chi_Minh
+symbols:
+  - BTC/USDT
+timeframes:
+  - M15
+  - H1
+  - H4
+  - D1

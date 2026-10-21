@@ -1,0 +1,12 @@
+# Phase 1: skeleton. Template đầy đủ + multi-route → Phase 6.
+enabled: false
+provider: telegram
+
+channels:
+  - id: main
+    display_name: "Tomas — tín hiệu chính"
+    chat_id_env: TELEGRAM_CHAT_ID
+    enabled: true
+
+# Scale thêm kênh sau; routing theo TF / method ở Phase 6
+routes: []
