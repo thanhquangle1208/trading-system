@@ -49,13 +49,21 @@ Khi có key Bybit testnet: điền `BYBIT_API_KEY` / `BYBIT_API_SECRET`, đặt 
 pytest
 ```
 
-### 4) Smoke Phase 1–3
+### 4) Smoke Phase 1–4
 
 ```bash
 python -m trading_system
 ```
 
-Sẽ: mock nến → confluence strategy `btc_confluence_wyckoff` → score/rating → lưu signal nếu fired → paper order mẫu.
+Sẽ: mock → confluence → **risk plan** (size/SL/TP hoặc reject) → paper nếu được duyệt.
+
+### Phase 4 — risk & paper
+
+- `%` rủi ro + ATR sizing, SL / TP1 (partial) / TP2 (runner)
+- Kill switch, max lệnh, trần lỗ ngày
+- Perp: thiếu SL → từ chối (khung sẵn, Spot đang dùng)
+- Live stub — **chưa** bật tiền thật
+- Config: `configs/risk.yaml` · code: `src/trading_system/risk/`
 
 ### Phase 3 — tín hiệu
 
