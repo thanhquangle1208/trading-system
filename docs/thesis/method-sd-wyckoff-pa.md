@@ -1,6 +1,6 @@
 # Phương pháp thesis — Supply/Demand + Wyckoff + Price Action + Trend line
 
-**Trạng thái:** Bản đề xuất chờ Tomas duyệt. Chưa viết Pine.
+**Trạng thái:** Tomas đã **OK phương pháp** (2026-10-21). Đã chốt **TP 2R**, **TF 5m**, **volume bắt buộc**. Pine T1 đã có trong `pine/`.
 
 Agent **có thể tự học / research** các khái niệm này từ tài liệu chuẩn (Wyckoff, S/D confluence, price action) rồi đề xuất luật giao dịch đơn giản → bạn duyệt → mới code. Không cần bạn biết code.
 
@@ -109,7 +109,7 @@ Không có PA xác nhận → **không vào** (giảm lệnh nhiễu).
 2. Giá chạm / vào **Demand** còn fresh (hoặc LPS sau SOS).  
 3. Demand gần **trend line hỗ trợ** (confluence) — nếu lệch quá xa thì bỏ hoặc hạ điểm.  
 4. **PA xác nhận** trên TF đang trade (5m lúc học).  
-5. SL dưới đáy zone / dưới Spring; TP theo **R** (đề xuất mặc định **2R–3R**, input chỉnh được; ảnh từng có 5R).
+5. SL dưới đáy zone / dưới Spring; TP **2R** (đã chốt; input vẫn cho phép đổi sau).
 
 ### Điều kiện SHORT (AND)
 
@@ -149,8 +149,8 @@ Mỗi trụ khớp = điểm; chỉ vào khi điểm ≥ ngưỡng (vd. **3/4 tr
 
 | Bước | Việc | Ghi chú |
 |------|------|---------|
-| **T0** | Chốt doc này + T0 tổng | Chờ “OK phương pháp” / “OK T0” |
-| **T1** | Pine: pivot + trend line + mũi tên theo trend | Nền tảng hướng |
+| **T0** | Chốt doc này + T0 tổng | **OK** |
+| **T1** | Pine: pivot + trend line + volume + mũi tên | **Đã viết** `pine/T1_trendline_volume.pine` |
 | **T2** | Pine: S/D zones (RBR/DBD…) | Như ô Supply/Demand trên ảnh |
 | **T3** | Pine: Spring/UT subset + PA confirm → tín hiệu | Confluence thật |
 | **T4** | Hộp lệnh VN + SL/TP/Qty/phí | Giống ảnh |
@@ -169,11 +169,11 @@ Mỗi trụ khớp = điểm; chỉ vào khi điểm ≥ ngưỡng (vd. **3/4 tr
 
 ---
 
-## 10. Câu hỏi nhanh cho Tomas (trả lời ngắn)
+## 10. Câu hỏi — đã trả lời (2026-10-21)
 
-1. Đồng ý **4 trụ confluence** như trên không?  
-2. TP mặc định lúc đầu: **2R**, **3R**, hay **5R** (như ảnh)?  
-3. Bắt đầu TF **5m** như ảnh, hay **15m** cho đỡ nhiễu khi học S/D+Wyckoff?  
-4. Volume: có muốn dùng làm **điều kiện bắt buộc** ngay, hay để **sau**?
+1. 4 trụ — **Đồng ý**  
+2. TP — **2R**  
+3. TF — **5m**  
+4. Volume — **Bắt buộc**  
 
-Sau khi bạn OK → agent cập nhật `T0-trading-thesis.md` / HANDOFF và mới viết Pine theo từng bước.
+Xem [`decisions-locked.md`](./decisions-locked.md).

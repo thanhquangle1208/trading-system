@@ -1,0 +1,152 @@
+// This Pine Script™ code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © Tomas Le — Trading Thesis T1 (draft)
+// Phương pháp: Trend line + volume bắt buộc (nền cho S/D + Wyckoff + PA ở T2–T3)
+// Chart khuyến nghị: BINANCE:BTCUSDT.P · khung 5 phút · vốn paper $10k · TP sau này = 2R
+
+//@version=5
+indicator("Thesis T1 — Trendline + Volume", overlay=true, max_lines_count=50, max_labels_count=100)
+
+//===== Inputs =====
+pivotLeft   = input.int(3, "Pivot trái (bars)", minval=1, maxval=20, group="Trendline")
+pivotRight  = input.int(3, "Pivot phải (bars)", minval=1, maxval=20, group="Trendline")
+maxLines    = input.int(2, "Số trendline mỗi phía", minval=1, maxval=5, group="Trendline")
+extendBars  = input.int(30, "Kéo dài trendline (bars)", minval=5, maxval=200, group="Trendline")
+tolPct      = input.float(0.15, "Gần trendline trong % giá", minval=0.05, maxval=1.0, step=0.05, group="Tín hiệu T1") / 100.0
+
+volLen      = input.int(20, "SMA Volume", minval=5, maxval=100, group="Volume (bắt buộc)")
+volMult     = input.float(1.0, "Volume ≥ SMA ×", minval=0.5, maxval=3.0, step=0.1, group="Volume (bắt buộc)")
+
+showSignals = input.bool(true, "Hiện mũi tên tín hiệu T1", group="Hiển thị")
+showPivots  = input.bool(false, "Hiện điểm pivot", group="Hiển thị")
+
+//===== Volume filter (bắt buộc theo Tomas) =====
+volSma = ta.sma(volume, volLen)
+volOk  = volume >= volSma * volMult
+
+//===== Pivots =====
+ph = ta.pivothigh(high, pivotLeft, pivotRight)
+pl = ta.pivotlow(low, pivotLeft, pivotRight)
+
+plotshape(showPivots and not na(ph), title="Pivot High", style=shape.triangledown, location=location.abovebar, color=color.new(color.orange, 30), size=size.tiny, offset=-pivotRight)
+plotshape(showPivots and not na(pl), title="Pivot Low", style=shape.triangleup, location=location.belowbar, color=color.new(color.teal, 30), size=size.tiny, offset=-pivotRight)
+
+var float[] phPrices = array.new_float()
+var int[]   phBars   = array.new_int()
+var float[] plPrices = array.new_float()
+var int[]   plBars   = array.new_int()
+
+if not na(ph)
+    array.unshift(phPrices, ph)
+    array.unshift(phBars, bar_index - pivotRight)
+    if array.size(phPrices) > 10
+        array.pop(phPrices)
+        array.pop(phBars)
+
+if not na(pl)
+    array.unshift(plPrices, pl)
+    array.unshift(plBars, bar_index - pivotRight)
+    if array.size(plPrices) > 10
+        array.pop(plPrices)
+        array.pop(plBars)
+
+//===== Vẽ / cập nhật trendlines =====
+var line[] resLines = array.new_line()
+var line[] supLines = array.new_line()
+
+f_clear(line[] lines) =>
+    sz = array.size(lines)
+    if sz > 0
+        for i = 0 to sz - 1
+            line.delete(array.get(lines, i))
+        array.clear(lines)
+
+f_draw_pair(line[] lines, int[] barsArr, float[] pricesArr, color col, bool isSupport) =>
+    n = array.size(pricesArr)
+    if n >= 2
+        limit = math.min(maxLines, n - 1)
+        for i = 0 to limit - 1
+            x1 = array.get(barsArr, i + 1)
+            y1 = array.get(pricesArr, i + 1)
+            x2 = array.get(barsArr, i)
+            y2 = array.get(pricesArr, i)
+            slopeOk = isSupport ? (y2 > y1) : (y2 < y1)
+            if slopeOk and x2 > x1
+                slope = (y2 - y1) / (x2 - x1)
+                xEnd = x2 + extendBars
+                yEnd = y2 + slope * extendBars
+                ln = line.new(x1, y1, xEnd, yEnd, xloc=xloc.bar_index, extend=extend.none, color=col, width=2)
+                array.push(lines, ln)
+
+if not na(ph) or not na(pl)
+    f_clear(resLines)
+    f_clear(supLines)
+    f_draw_pair(resLines, phBars, phPrices, color.new(color.orange, 0), false)
+    f_draw_pair(supLines, plBars, plPrices, color.new(color.teal, 0), true)
+
+//===== Hướng xu hướng thô (T1) =====
+var int bias = 0  // 1 = up, -1 = down, 0 = sideway
+
+if array.size(plPrices) >= 2 and array.size(phPrices) >= 2
+    lastPl = array.get(plPrices, 0)
+    prevPl = array.get(plPrices, 1)
+    lastPh = array.get(phPrices, 0)
+    prevPh = array.get(phPrices, 1)
+    hh = lastPh > prevPh
+    hl = lastPl > prevPl
+    lh = lastPh < prevPh
+    ll = lastPl < prevPl
+    if hh and hl
+        bias := 1
+    else if lh and ll
+        bias := -1
+    else
+        bias := 0
+
+f_line_price_at(int x1, float y1, int x2, float y2, int xNow) =>
+    y1 + (y2 - y1) / (x2 - x1) * (xNow - x1)
+
+nearSupport = false
+nearResist  = false
+
+if array.size(plPrices) >= 2
+    x1 = array.get(plBars, 1)
+    y1 = array.get(plPrices, 1)
+    x2 = array.get(plBars, 0)
+    y2 = array.get(plPrices, 0)
+    if x2 > x1 and y2 > y1
+        lvl = f_line_price_at(x1, y1, x2, y2, bar_index)
+        nearSupport := math.abs(close - lvl) / close <= tolPct or (low <= lvl and close >= lvl)
+
+if array.size(phPrices) >= 2
+    x1 = array.get(phBars, 1)
+    y1 = array.get(phPrices, 1)
+    x2 = array.get(phBars, 0)
+    y2 = array.get(phPrices, 0)
+    if x2 > x1 and y2 < y1
+        lvl = f_line_price_at(x1, y1, x2, y2, bar_index)
+        nearResist := math.abs(close - lvl) / close <= tolPct or (high >= lvl and close <= lvl)
+
+// Tín hiệu T1 = hướng + gần line + VOLUME (S/D + PA + Spring ở T2/T3)
+longSig  = showSignals and bias == 1 and nearSupport and volOk
+shortSig = showSignals and bias == -1 and nearResist and volOk
+
+plotshape(longSig, title="Long T1", style=shape.triangleup, location=location.belowbar, color=color.new(color.aqua, 0), size=size.small, text="L")
+plotshape(shortSig, title="Short T1", style=shape.triangledown, location=location.abovebar, color=color.new(color.fuchsia, 0), size=size.small, text="S")
+
+bgcolor(bias == 1 ? color.new(color.teal, 94) : bias == -1 ? color.new(color.orange, 94) : na, title="Bias nền")
+
+var table info = table.new(position.top_right, 2, 5, bgcolor=color.new(color.black, 20), border_width=1, border_color=color.purple)
+if barstate.islast
+    table.cell(info, 0, 0, "THESIS T1", text_color=color.white, text_size=size.small)
+    table.cell(info, 1, 0, "Trend+Vol", text_color=color.silver, text_size=size.small)
+    table.cell(info, 0, 1, "Bias", text_color=color.gray, text_size=size.small)
+    table.cell(info, 1, 1, bias == 1 ? "UPTREND" : bias == -1 ? "DOWNTREND" : "SIDEWAY", text_color=bias == 1 ? color.lime : bias == -1 ? color.orange : color.gray, text_size=size.small)
+    table.cell(info, 0, 2, "Volume OK", text_color=color.gray, text_size=size.small)
+    table.cell(info, 1, 2, volOk ? "CÓ" : "KHÔNG", text_color=volOk ? color.lime : color.red, text_size=size.small)
+    table.cell(info, 0, 3, "TP (sau)", text_color=color.gray, text_size=size.small)
+    table.cell(info, 1, 3, "2R", text_color=color.yellow, text_size=size.small)
+    table.cell(info, 0, 4, "TF gợi ý", text_color=color.gray, text_size=size.small)
+    table.cell(info, 1, 4, "5m", text_color=color.aqua, text_size=size.small)
+
+alertcondition(longSig, title="T1 Long", message="Thesis T1 LONG: uptrend + gần support + volume OK")
+alertcondition(shortSig, title="T1 Short", message="Thesis T1 SHORT: downtrend + gần resistance + volume OK")

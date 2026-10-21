@@ -13,8 +13,9 @@ Ngắn gọn cho agent / phiên sau. Cập nhật khi Tomas chốt quyết đị
 - **Làm trước:** Trading Thesis trên **TradingView + Pine Script** (viết lại từ đầu).
 - Phương pháp: **Supply/Demand + Wyckoff + Price Action + Trend line** (confluence) — [`thesis/method-sd-wyckoff-pa.md`](./thesis/method-sd-wyckoff-pa.md).
 - Mục tiêu UI: giống ảnh — zones + hộp LONG/SHORT + bảng **THỐNG KÊ** tiếng Việt.
-- Chart: **BINANCE:BTCUSDT.P**; vốn paper thesis **$10.000**; logic **vừa làm vừa research**.
-- Tài liệu bước: [`thesis/T0-trading-thesis.md`](./thesis/T0-trading-thesis.md).
+- Chart: **BINANCE:BTCUSDT.P**; vốn paper thesis **$10.000**; TF **5m**; TP **2R**; **volume bắt buộc**.
+- Phương pháp **đã OK**; khóa: [`thesis/decisions-locked.md`](./thesis/decisions-locked.md).
+- Pine T1: `pine/T1_trendline_volume.pine` + [`../pine/README.md`](../pine/README.md).
 - **Pine** = thứ tích hợp vào chart TV. **Python không vẽ được lên chart TV.**
 
 ## Mục tiêu sản phẩm (dài hạn — bot, hoãn)

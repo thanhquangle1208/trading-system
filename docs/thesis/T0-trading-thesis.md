@@ -1,6 +1,6 @@
 # T0 — Trading Thesis (chốt trước khi viết Pine)
 
-**Trạng thái:** Bản nháp chờ Tomas duyệt. Chưa có script Pine trong repo.
+**Trạng thái:** Tomas **OK phương pháp** + chốt TP **2R** / TF **5m** / **volume bắt buộc**. Pine T1: `pine/T1_trendline_volume.pine`.
 
 Mục tiêu giai đoạn này: **làm thesis trên TradingView giống ảnh** (hộp lệnh + bảng THỐNG KÊ), **hoãn bot / Telegram / Bybit API**.
 
@@ -66,7 +66,7 @@ Python bot = **bước sau**, khi thesis đã rõ và bạn muốn lệnh thật
 | Thành phần | Đề xuất v0 |
 |------------|------------|
 | SL | Ngoài zone / ngoài Spring–UT |
-| TP | Theo **R** (chờ Tomas chọn 2R / 3R / 5R) |
+| TP | **2R** (đã chốt) |
 | Đảo chiều | Đóng hết rồi mở chiều mới |
 | Vốn | $10.000 |
 | Risk / lệnh | ~1% vốn |
@@ -111,15 +111,14 @@ Agent sẽ gửi script từng bước; bạn chỉ cần copy–paste.
 
 ---
 
-## 6. Còn mở (chờ Tomas — xem thêm method §10)
+## 6. Đã chốt / còn chỉnh khi chạy T1
 
-- TP mặc định: **2R / 3R / 5R**?  
-- TF học: giữ **5m** hay bắt đầu **15m** (ít nhiễu)?  
-- Volume bắt buộc ngay hay để sau?  
-- Tham số pivot / độ rộng zone — chỉnh khi có Pine  
+**Đã chốt:** phương pháp 4 trụ; TP **2R**; TF **5m**; volume **bắt buộc**.
+
+**Chỉnh khi nhìn chart:** pivot length, % gần trendline, hệ số volume — Tomas phản hồi sau khi dán T1.
 
 ---
 
 ## English summary
 
-Pause bot. Thesis method: **Supply/Demand + Wyckoff (subset) + Price Action + Trend lines** with confluence. Pine from scratch on BINANCE:BTCUSDT.P, $10k. Full Wyckoff phases come gradually; automate a practical subset first.
+Method approved: S/D + Wyckoff + PA + trendlines. TP **2R**, TF **5m**, volume required. T1 Pine lives in `pine/T1_trendline_volume.pine`.
