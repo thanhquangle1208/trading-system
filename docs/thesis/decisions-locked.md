@@ -25,8 +25,10 @@ Cập nhật khi Tomas trả lời. Agent đọc file này trước khi viết P
 | T2 S/D filter | Xong |
 | T3 Wyckoff/PA | OK UX; PnL fail vì phí |
 | T3b Optimize | Xong (chống phí) |
-| **T3c WR-first** | **Dùng** — `pine/T3c_wr60_tp15.pine` |
-| TP | Tomas chọn **1.5R** để ưu tiên WR ~60% (lệch tạm so với 2R cũ) |
+| T3c WR-first | Quá siết → 0 lệnh |
+| **T3d Balanced** | **Dùng** — `pine/T3d_balanced_wr.pine` |
+| TP | **1.5R** (ưu tiên WR) |
 | Học từ lệnh lãi | Doc `learn-from-winners.md` |
 | Phân tích phí T3 | Doc `optimize-from-t3-stats.md` |
 | Hướng WR60 | Doc `wr60-tp15-path.md` |
+| Vì sao 0 lệnh T3c | Doc `why-zero-trades-t3c.md` |

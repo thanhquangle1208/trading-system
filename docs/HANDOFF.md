@@ -2,7 +2,7 @@
 
 **Đọc file này trước** khi làm bất kỳ việc gì trong repo. Sau đó đọc: `architecture-roadmap.md` → `project-context.md` → `cost-estimate.md` → `preferences.md` → **`thesis/T0-trading-thesis.md`** (nếu làm thesis).
 
-> **Trạng thái hiện tại (2026-10-22):** Bot Phase 1 **hoãn**. Tomas chọn **ưu tiên WR ~60%**, TP **1.5R** → **`pine/T3c_wr60_tp15.pine`**. Xem `thesis/wr60-tp15-path.md`. Chart học **BTCUSDT.P · 5m**.
+> **Trạng thái hiện tại (2026-10-22):** Bot Phase 1 **hoãn**. T3c bị **0 lệnh** (siết quá) → **`pine/T3d_balanced_wr.pine`**. Giải thích: `thesis/why-zero-trades-t3c.md`. Vẫn TP **1.5R** + Spring/UT. Chart học **BTCUSDT.P · 5m**.
 
 ---
 

@@ -4,24 +4,30 @@
 
 | File | Khi nào |
 |------|---------|
-| **`T3c_wr60_tp15.pine`** ← **DÙNG CÁI NÀY** | Ưu tiên **WR ~60%**, TP **1.5R** |
-| `T3b_optimize_thongke.pine` | Chống phí ăn PnL (TP cao hơn) |
-| `T3_wyckoff_pa_thongke.pine` | T3 gốc |
+| **`T3d_balanced_wr.pine`** ← **DÙNG CÁI NÀY** | T3c bị **0 lệnh** — bản nới cân bằng, vẫn TP 1.5R + Spring/UT |
+| `T3c_wr60_tp15.pine` | Quá siết (HTF + knife + reject bắt buộc) |
+| `T3b_optimize_thongke.pine` | Chống phí |
 | `T2_sd_thongke.pine` | S/D |
 
-Doc: [`docs/thesis/wr60-tp15-path.md`](../docs/thesis/wr60-tp15-path.md)
+Vì sao 0 lệnh: [`docs/thesis/why-zero-trades-t3c.md`](../docs/thesis/why-zero-trades-t3c.md)
 
-## T3c khác gì?
+## T3d nới gì so với T3c?
 
-- TP mặc định **1.5R**  
-- **Chỉ Spring / Upthrust** + reject wick mạnh  
-- Lọc **HTF 15m** + chống dao rơi  
-- Volume / cooldown siết hơn  
-- Giữ sàn SL + fee cap  
+| Lọc | T3c | T3d |
+|-----|-----|-----|
+| PA | Bắt buộc reject mạnh | Reject **hoặc** engulf |
+| Volume | ×1.8 | ×1.2 |
+| HTF 15m | Bật | **Tắt** (bật lại sau) |
+| Chống dao rơi | Bật (chặn Spring) | **Tắt** |
+| Cooldown | 48 | 24 |
+| TP | 1.5R | 1.5R (giữ) |
+| Spring/UT | Có | Có |
+
+Góc phải dưới: dòng **Debug** giải thích Sp/UT chưa thành lệnh.
 
 ## Cách dán
 
-1. Remove script cũ.  
+1. Remove T3c.  
 2. **BTCUSDT.P · 5m**.  
-3. Dán `T3c_wr60_tp15.pine` → Add to chart.  
-4. Xem **Win Rate** (xanh khi ≥ 60%) và Net / Phí.
+3. Dán `T3d_balanced_wr.pine` → Add to chart.  
+4. Có lệnh rồi mới siết từng lọc (HTF → knife → volume).
