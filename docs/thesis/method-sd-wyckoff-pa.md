@@ -151,8 +151,8 @@ Mỗi trụ khớp = điểm; chỉ vào khi điểm ≥ ngưỡng (vd. **3/4 tr
 |------|------|---------|
 | **T0** | Chốt doc này + T0 tổng | **OK** |
 | **T1 / T1c** | Trend + volume + THỐNG KÊ trên chart | Xong — nhiều lệnh |
-| **T2** | S/D zones + lọc vào lệnh | **Đã viết** `pine/T2_sd_thongke.pine` |
-| **T3** | Pine: Spring/UT subset + PA confirm → tín hiệu | Confluence thật |
+| **T2** | S/D zones + lọc vào lệnh | Xong `pine/T2_sd_thongke.pine` |
+| **T3** | Spring/UT + PA confirm | **Đã viết** `pine/T3_wyckoff_pa_thongke.pine` |
 | **T4** | Hộp lệnh VN + SL/TP/Qty/phí | Giống ảnh |
 | **T5** | Bảng THỐNG KÊ | Giống ảnh |
 | **T6** | Research chỉnh tham số trên BTCUSDT.P 5m | Vừa làm vừa học |

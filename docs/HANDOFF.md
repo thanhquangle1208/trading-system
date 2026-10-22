@@ -2,7 +2,7 @@
 
 **Đọc file này trước** khi làm bất kỳ việc gì trong repo. Sau đó đọc: `architecture-roadmap.md` → `project-context.md` → `cost-estimate.md` → `preferences.md` → **`thesis/T0-trading-thesis.md`** (nếu làm thesis).
 
-> **Trạng thái hiện tại (2026-10-22):** Bot Phase 1 **hoãn**. Phương pháp OK. **T1c** đúng UX THỐNG KÊ trên chart. Tomas: quá nhiều lệnh → **T2** `pine/T2_sd_thongke.pine` (Supply/Demand filter). Dùng T2; chart học **BTCUSDT.P · 5m**.
+> **Trạng thái hiện tại (2026-10-22):** Bot Phase 1 **hoãn**. Tomas **OK T3**. Script hiện tại: **`pine/T3_wyckoff_pa_thongke.pine`** (S/D + Spring/UT + PA + THỐNG KÊ). Chart học **BTCUSDT.P · 5m**.
 
 ---
 
@@ -87,9 +87,9 @@ Trả lời khi quay lại bot; agent cập nhật `project-context.md`.
 |------|------------|
 | Kiến trúc bot / roadmap | Đã có trong docs; **bot chưa code** |
 | **T0** + method | **OK** (Tomas duyệt) |
-| **T1c** | UX THỐNG KÊ trên chart — OK; nhiều lệnh |
-| **T2** S/D + THỐNG KÊ | **`pine/T2_sd_thongke.pine`** ← dùng cái này |
-| **T3+** | Wyckoff Spring/UT + PA siết thêm; học từ lệnh WIN |
+| **T1c / T2** | Nền UX + S/D — tham khảo |
+| **T3** Wyckoff/PA + THỐNG KÊ | **`pine/T3_wyckoff_pa_thongke.pine`** ← dùng cái này |
+| **T4+** | Siết theo lệnh WIN; tinh chỉnh tham số |
 | **Phase 1–6** bot | **HOÃN** |
 
 **Quy tắc agent:** Phương pháp đã OK → được viết T1. T2+ cần Tomas OK từng bước (hoặc bảo “tiếp T2”). Không scaffold Phase 1 bot cho đến “OK Phase 1”.

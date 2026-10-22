@@ -22,7 +22,7 @@ Cập nhật khi Tomas trả lời. Agent đọc file này trước khi viết P
 | T1 indicator | Đã viết; Tomas: **quá nhiều mũi tên** |
 | T1b strategy | Có — nhưng panel dưới ≠ ảnh mẫu |
 | T1c overlay THỐNG KÊ | OK UX; nhiều lệnh |
-| T2 S/D filter + THỐNG KÊ | **Dùng** — `pine/T2_sd_thongke.pine` |
+| T2 S/D filter | Xong |
+| T3 Wyckoff Spring/UT + PA | **Dùng** — `pine/T3_wyckoff_pa_thongke.pine` (OK T3) |
 | Học từ lệnh lãi | Doc `learn-from-winners.md` |
 | Phân biệt 2 bảng | Doc `thongke-tren-chart.md` |
-| T3 Wyckoff/PA | Chưa |
