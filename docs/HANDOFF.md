@@ -87,9 +87,9 @@ Trả lời khi quay lại bot; agent cập nhật `project-context.md`.
 |------|------------|
 | Kiến trúc bot / roadmap | Đã có trong docs; **bot chưa code** |
 | **T0** + method | **OK** (Tomas duyệt) |
-| **T3 / T3b** | Tham khảo (phí / optimize) |
-| **T3c** WR-first TP 1.5R | **`pine/T3c_wr60_tp15.pine`** ← dùng cái này |
-| **Tiếp** | Đo WR trên BTCUSDT.P 5m; chỉnh nếu < 55% hoặc quá ít lệnh |
+| **T3c** | WR-first quá siết → 0 lệnh |
+| **T3d** Balanced | **`pine/T3d_balanced_wr.pine`** ← dùng cái này |
+| **Tiếp** | Có lệnh → đo WR; siết từng lớp (HTF/knife) nếu cần |
 | **Phase 1–6** bot | **HOÃN** |
 
 **Quy tắc agent:** Phương pháp đã OK → được viết T1. T2+ cần Tomas OK từng bước (hoặc bảo “tiếp T2”). Không scaffold Phase 1 bot cho đến “OK Phase 1”.
