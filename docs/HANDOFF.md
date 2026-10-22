@@ -2,7 +2,7 @@
 
 **Đọc file này trước** khi làm bất kỳ việc gì trong repo. Sau đó đọc: `architecture-roadmap.md` → `project-context.md` → `cost-estimate.md` → `preferences.md` → **`thesis/T0-trading-thesis.md`** (nếu làm thesis).
 
-> **Trạng thái hiện tại (2026-10-22):** Bot Phase 1 **hoãn**. Phương pháp OK (TP **2R**, TF **5m**, volume bắt buộc). Tomas nhầm **Strategy Tester (panel dưới)** với bảng mẫu → dùng **`pine/T1c_overlay_thongke.pine`** (indicator): bảng **THỐNG KÊ trên chart** góc phải + hộp lệnh. Xem `docs/thesis/thongke-tren-chart.md`.
+> **Trạng thái hiện tại (2026-10-22):** Bot Phase 1 **hoãn**. Phương pháp OK. **T1c** đúng UX THỐNG KÊ trên chart. Tomas: quá nhiều lệnh → **T2** `pine/T2_sd_thongke.pine` (Supply/Demand filter). Dùng T2; chart học **BTCUSDT.P · 5m**.
 
 ---
 
@@ -87,9 +87,9 @@ Trả lời khi quay lại bot; agent cập nhật `project-context.md`.
 |------|------------|
 | Kiến trúc bot / roadmap | Đã có trong docs; **bot chưa code** |
 | **T0** + method | **OK** (Tomas duyệt) |
-| **T1** indicator (nhiều tín hiệu) | `pine/T1_trendline_volume.pine` — tham khảo |
-| **T1b** strategy + THỐNG KÊ | **`pine/T1b_strategy_thongke.pine`** ← dùng cái này; chờ Tomas dán & phản hồi |
-| **T2+** | S/D zones, Spring/PA confluence, siết lọc theo WIN |
+| **T1 / T1b** | Tham khảo — T1b = Strategy Tester dưới chart (không phải ảnh mẫu) |
+| **T1c** THỐNG KÊ trên chart | **`pine/T1c_overlay_thongke.pine`** ← dùng cái này (giống ảnh mẫu) |
+| **T2+** | S/D zones, Spring/PA, siết lọc theo WIN |
 | **Phase 1–6** bot | **HOÃN** |
 
 **Quy tắc agent:** Phương pháp đã OK → được viết T1. T2+ cần Tomas OK từng bước (hoặc bảo “tiếp T2”). Không scaffold Phase 1 bot cho đến “OK Phase 1”.

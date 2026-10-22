@@ -2,23 +2,33 @@
 
 ## Dùng file nào?
 
-| File | Loại | Khi nào dùng |
-|------|------|----------------|
-| **`T1c_overlay_thongke.pine`** ← **DÙNG CÁI NÀY** | Indicator | Bảng **THỐNG KÊ trên chart** + hộp lệnh — **giống ảnh mẫu** |
-| `T1b_strategy_thongke.pine` | Strategy | Có panel Strategy Tester **dưới** chart (không phải bảng mẫu) |
-| `T1_trendline_volume.pine` | Indicator | Bản cũ, nhiều mũi tên |
+| File | Khi nào |
+|------|---------|
+| **`T2_sd_thongke.pine`** ← **DÙNG CÁI NÀY** | T2: ô Supply/Demand + ít lệnh hơn + THỐNG KÊ trên chart |
+| `T1c_overlay_thongke.pine` | Bản trước (chưa lọc S/D — nhiều lệnh) |
+| `T1b_strategy_thongke.pine` | Strategy Tester panel dưới (không phải ảnh mẫu) |
+| `T1_trendline_volume.pine` | Chỉ trendline (cũ) |
 
-Giải thích 2 loại bảng: [`docs/thesis/thongke-tren-chart.md`](../docs/thesis/thongke-tren-chart.md)
+## T2 lọc lệnh thế nào?
+
+Chỉ vào lệnh khi **đủ cả**:
+
+1. **Bias** SuperTrend đúng hướng (up → chỉ LONG, down → chỉ SHORT)  
+2. Giá **chạm Demand** (LONG) hoặc **Supply** (SHORT)  
+3. **Volume** ≥ SMA × hệ số  
+4. Nến xác nhận (xanh/đỏ) — bật mặc định  
+5. **Cooldown** giữa 2 lệnh  
+
+→ Ít lệnh hơn T1c; zone **fresh** hết hạn sau khi đã trade.
+
+## Cách dán T2
+
+1. **Remove** T1c / script cũ trên chart.  
+2. Chart: **BINANCE:BTCUSDT.P** · khung **5** (đừng test thesis trên coin lạ / TF khác nếu đang so với ảnh mẫu).  
+3. Dán toàn bộ `T2_sd_thongke.pine` → Add to chart.  
+4. Thấy: ô xanh **Demand** / cam **Supply**, bảng **THỐNG KÊ** góc phải, hộp WIN/LOSS.  
+5. Nếu vẫn nhiều lệnh: tăng `Cooldown`, tăng `Pivot zone`, tăng `Volume ≥ SMA ×`.
 
 ## Đã chốt
 
-Chart **BINANCE:BTCUSDT.P** · TF **5m** · vốn **$10k** · TP **2R** · volume **bắt buộc**.
-
-## Cách dán T1c (giống ảnh mẫu)
-
-1. Gỡ hết script Thesis cũ trên chart (Remove).  
-2. Đóng panel Strategy Tester phía dưới nếu đang mở (không cần).  
-3. Symbol **BTCUSDT.P** (Binance) · khung **5**.  
-4. Pine Editor → dán toàn bộ `T1c_overlay_thongke.pine` → Save → **Add to chart**.  
-5. Nhìn **góc phải trên** chart: bảng tím **THỐNG KÊ** (Vốn ban đầu, Win Rate, Max DD…).  
-6. Trên nến: hộp LONG/SHORT / WIN/LOSS.
+Vốn $10k · TP **2R** · volume bắt buộc · phương pháp S/D + Wyckoff + PA + Trend.
