@@ -150,8 +150,8 @@ Mỗi trụ khớp = điểm; chỉ vào khi điểm ≥ ngưỡng (vd. **3/4 tr
 | Bước | Việc | Ghi chú |
 |------|------|---------|
 | **T0** | Chốt doc này + T0 tổng | **OK** |
-| **T1** | Pine: pivot + trend line + volume + mũi tên | **Đã viết** `pine/T1_trendline_volume.pine` |
-| **T2** | Pine: S/D zones (RBR/DBD…) | Như ô Supply/Demand trên ảnh |
+| **T1 / T1c** | Trend + volume + THỐNG KÊ trên chart | Xong — nhiều lệnh |
+| **T2** | S/D zones + lọc vào lệnh | **Đã viết** `pine/T2_sd_thongke.pine` |
 | **T3** | Pine: Spring/UT subset + PA confirm → tín hiệu | Confluence thật |
 | **T4** | Hộp lệnh VN + SL/TP/Qty/phí | Giống ảnh |
 | **T5** | Bảng THỐNG KÊ | Giống ảnh |

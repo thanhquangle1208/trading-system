@@ -87,9 +87,9 @@ Trả lời khi quay lại bot; agent cập nhật `project-context.md`.
 |------|------------|
 | Kiến trúc bot / roadmap | Đã có trong docs; **bot chưa code** |
 | **T0** + method | **OK** (Tomas duyệt) |
-| **T1 / T1b** | Tham khảo — T1b = Strategy Tester dưới chart (không phải ảnh mẫu) |
-| **T1c** THỐNG KÊ trên chart | **`pine/T1c_overlay_thongke.pine`** ← dùng cái này (giống ảnh mẫu) |
-| **T2+** | S/D zones, Spring/PA, siết lọc theo WIN |
+| **T1c** | UX THỐNG KÊ trên chart — OK; nhiều lệnh |
+| **T2** S/D + THỐNG KÊ | **`pine/T2_sd_thongke.pine`** ← dùng cái này |
+| **T3+** | Wyckoff Spring/UT + PA siết thêm; học từ lệnh WIN |
 | **Phase 1–6** bot | **HOÃN** |
 
 **Quy tắc agent:** Phương pháp đã OK → được viết T1. T2+ cần Tomas OK từng bước (hoặc bảo “tiếp T2”). Không scaffold Phase 1 bot cho đến “OK Phase 1”.
