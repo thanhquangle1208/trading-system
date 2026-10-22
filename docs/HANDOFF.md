@@ -2,7 +2,7 @@
 
 **Đọc file này trước** khi làm bất kỳ việc gì trong repo. Sau đó đọc: `architecture-roadmap.md` → `project-context.md` → `cost-estimate.md` → `preferences.md` → **`thesis/T0-trading-thesis.md`** (nếu làm thesis).
 
-> **Trạng thái hiện tại (2026-10-22):** Bot Phase 1 **hoãn**. T3 Gross lãi nhưng Net lỗ vì **phí >> Gross** → **`pine/T3b_optimize_thongke.pine`** (sàn SL, fee cap, Chỉ Spring/UT). Xem `thesis/optimize-from-t3-stats.md`. Chart học **BTCUSDT.P · 5m**.
+> **Trạng thái hiện tại (2026-10-22):** Bot Phase 1 **hoãn**. Tomas chọn **ưu tiên WR ~60%**, TP **1.5R** → **`pine/T3c_wr60_tp15.pine`**. Xem `thesis/wr60-tp15-path.md`. Chart học **BTCUSDT.P · 5m**.
 
 ---
 
@@ -87,9 +87,9 @@ Trả lời khi quay lại bot; agent cập nhật `project-context.md`.
 |------|------------|
 | Kiến trúc bot / roadmap | Đã có trong docs; **bot chưa code** |
 | **T0** + method | **OK** (Tomas duyệt) |
-| **T3** | Wyckoff/PA — Gross + / Net − (phí) |
-| **T3b** Optimize phí/SL | **`pine/T3b_optimize_thongke.pine`** ← dùng cái này |
-| **Tiếp** | So T3b vs T3; học từ lệnh WIN nếu WR vẫn thấp |
+| **T3 / T3b** | Tham khảo (phí / optimize) |
+| **T3c** WR-first TP 1.5R | **`pine/T3c_wr60_tp15.pine`** ← dùng cái này |
+| **Tiếp** | Đo WR trên BTCUSDT.P 5m; chỉnh nếu < 55% hoặc quá ít lệnh |
 | **Phase 1–6** bot | **HOÃN** |
 
 **Quy tắc agent:** Phương pháp đã OK → được viết T1. T2+ cần Tomas OK từng bước (hoặc bảo “tiếp T2”). Không scaffold Phase 1 bot cho đến “OK Phase 1”.

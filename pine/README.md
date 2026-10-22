@@ -4,24 +4,24 @@
 
 | File | Khi nào |
 |------|---------|
-| **`T3b_optimize_thongke.pine`** ← **DÙNG CÁI NÀY** | Sau khi T3 Gross lãi nhưng Net lỗ vì **phí** |
-| `T3_wyckoff_pa_thongke.pine` | Bản T3 gốc (dễ bị phí ăn) |
-| `T2_sd_thongke.pine` | S/D filter |
-| `T1c_overlay_thongke.pine` | UX THỐNG KÊ ban đầu |
+| **`T3c_wr60_tp15.pine`** ← **DÙNG CÁI NÀY** | Ưu tiên **WR ~60%**, TP **1.5R** |
+| `T3b_optimize_thongke.pine` | Chống phí ăn PnL (TP cao hơn) |
+| `T3_wyckoff_pa_thongke.pine` | T3 gốc |
+| `T2_sd_thongke.pine` | S/D |
 
-Phân tích số liệu T3: [`docs/thesis/optimize-from-t3-stats.md`](../docs/thesis/optimize-from-t3-stats.md)
+Doc: [`docs/thesis/wr60-tp15-path.md`](../docs/thesis/wr60-tp15-path.md)
 
-## T3b sửa gì?
+## T3c khác gì?
 
-1. **Sàn SL tối thiểu** (ATR + % giá) → Qty không nổ  
-2. **Bỏ lệnh** nếu phí ước tính > 25% risk  
-3. Mặc định **Chỉ Spring/UT**, cooldown 36, volume ×1.5  
-4. TP mặc định **2.5R** (Settings đổi lại **2R** nếu muốn giữ quyết định cũ)  
-5. Dòng bảng **Phí / |Gross|** — mục tiêu < 100%
+- TP mặc định **1.5R**  
+- **Chỉ Spring / Upthrust** + reject wick mạnh  
+- Lọc **HTF 15m** + chống dao rơi  
+- Volume / cooldown siết hơn  
+- Giữ sàn SL + fee cap  
 
 ## Cách dán
 
-1. Remove T3 cũ.  
-2. **BTCUSDT.P · 5m** (Binance).  
-3. Dán `T3b_optimize_thongke.pine` → Add to chart.  
-4. So: Gross vs Tổng phí; Net có còn âm vì phí không.
+1. Remove script cũ.  
+2. **BTCUSDT.P · 5m**.  
+3. Dán `T3c_wr60_tp15.pine` → Add to chart.  
+4. Xem **Win Rate** (xanh khi ≥ 60%) và Net / Phí.
