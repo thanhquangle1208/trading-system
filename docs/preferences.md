@@ -11,3 +11,4 @@
 - Thesis: viết Pine từ đầu; chart BINANCE:BTCUSDT.P; vốn $10k; logic vừa làm vừa research. (2026-10-21)
 - Phương pháp thesis: Supply/Demand + Wyckoff + Price Action + Trend line (confluence); agent tự research rồi đề xuất trước khi code. (2026-10-21)
 - Đã OK phương pháp: TP **2R**, TF **5m**, volume **bắt buộc**. (2026-10-21)
+- Khi Tomas cần script Pine: **chỉ gửi link GitHub** (raw +/hoặc blob trên nhánh đang làm). **Không** dán toàn bộ source từng dòng vào chat. (2026-10-23)
