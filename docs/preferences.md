@@ -12,3 +12,5 @@
 - Phương pháp thesis: Supply/Demand + Wyckoff + Price Action + Trend line (confluence); agent tự research rồi đề xuất trước khi code. (2026-10-21)
 - Đã OK phương pháp: TP **2R**, TF **5m**, volume **bắt buộc**. (2026-10-21)
 - Khi Tomas cần script Pine: **chỉ gửi link GitHub** (raw +/hoặc blob trên nhánh đang làm). **Không** dán toàn bộ source từng dòng vào chat. (2026-10-23)
+- Scanner cảnh báo: Perp; tin Telegram **tiếng Việt** (Vùng Mua/Bán/Vùng giá); thang **điểm /10** (không ABC); `/scan` một lần rồi tự theo dõi đến khi tắt máy; không dùng LLM để quét giá. (2026-10-23)
+- Giải thích cho Tomas kiểu newbie: từng bước, chậm, không giả định biết BotFather/API. (2026-10-23)

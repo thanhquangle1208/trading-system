@@ -2,7 +2,7 @@
 
 **Đọc file này trước** khi làm bất kỳ việc gì trong repo. Sau đó đọc: `architecture-roadmap.md` → `project-context.md` → `cost-estimate.md` → `preferences.md` → **`thesis/T0-trading-thesis.md`** (nếu làm thesis).
 
-> **Trạng thái hiện tại (2026-10-23):** Bot Phase 1 **hoãn**. Script hiện tại: **`pine/T3e.pine`** (**Thesis T3E** — đã **bỏ Trendline**). TP **1.5R** + Spring/UT + S/D. Chart học **BTCUSDT.P · 5m**.
+> **Trạng thái hiện tại (2026-10-23):** Script chart: **`pine/T3e.pine`** (Thesis T3E, không TL). **Scanner Telegram** (Vùng Mua/Bán H1–W1): quyết định đã khóa, **chưa code** — xem [`scanner/telegram-sd-alerts.md`](./scanner/telegram-sd-alerts.md). Bot Phase 1 đầy đủ vẫn **hoãn**.
 
 ---
 
@@ -88,9 +88,9 @@ Trả lời khi quay lại bot; agent cập nhật `project-context.md`.
 | Kiến trúc bot / roadmap | Đã có trong docs; **bot chưa code** |
 | **T0** + method | **OK** (Tomas duyệt) |
 | **T3d** | Balanced (không TL) |
-| **T3e** | **`pine/T3e.pine`** ← dùng cái này (**không** Trendline; Tomas bỏ TL) |
-| **Tiếp** | Đo lệnh/WR trên T3E không TL |
-| **Phase 1–6** bot | **HOÃN** |
+| **T3e** | **`pine/T3e.pine`** ← chart (**không** Trendline) |
+| **Scanner TG** | Docs khóa — [`scanner/telegram-sd-alerts.md`](./scanner/telegram-sd-alerts.md); chờ token + “OK code scanner” |
+| **Phase 1–6** bot đủ | **HOÃN** (scanner chỉ là cảnh báo, chưa execution) |
 
 **Quy tắc agent:** Phương pháp đã OK → được viết T1. T2+ cần Tomas OK từng bước (hoặc bảo “tiếp T2”). Không scaffold Phase 1 bot cho đến “OK Phase 1”.
 

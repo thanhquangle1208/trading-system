@@ -30,6 +30,7 @@ Cập nhật khi Tomas trả lời. Agent đọc file này trước khi viết P
 | **T3e** | **Dùng** — `pine/T3e.pine` (đã bỏ Trendline) |
 | TP | **1.5R** (ưu tiên WR) |
 | Trendline | **Bỏ** (2026-10-23) — Tomas: không hiệu quả; bản cũ `T3e_trendline.pine` chỉ giữ tham khảo |
+| 2026-10-23 | Scanner TG | Perp Binance→Bybit; TF H1/H4/D1/W1; điểm /10; scan 1 lần rồi watch; xem `docs/scanner/telegram-sd-alerts.md` |
 | Học từ lệnh lãi | Doc `learn-from-winners.md` |
 | Phân tích phí T3 | Doc `optimize-from-t3-stats.md` |
 | Hướng WR60 | Doc `wr60-tp15-path.md` |
