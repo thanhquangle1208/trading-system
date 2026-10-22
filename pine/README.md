@@ -20,14 +20,15 @@ Script dán vào **TradingView → Pine Editor**. Không chạy bằng Python.
 | **`T1b_strategy_thongke.pine`** ← **dùng cái này** | Ít lệnh hơn; mỗi mũi tên = 1 lệnh có SL/TP; hộp PnL; bảng **THỐNG KÊ** giống ảnh mẫu |
 | `T1_trendline_volume.pine` | Bản cũ (nhiều mũi tên, chỉ báo tín hiệu) — để tham khảo |
 
-## Cách dán (T1b)
+## Cách dán (T1b) — quan trọng
 
-1. TradingView → symbol **BTCUSDT.P** (Binance) → khung **5**  
-2. **Pine Editor** → xóa code cũ → dán toàn bộ `T1b_strategy_thongke.pine`  
-3. **Save** → **Add to chart**  
-4. Góc phải: bảng **THỐNG KÊ**  
-5. Trên nến: hộp LONG/SHORT + khi đóng hiện WIN/LOSS  
-6. Tab **Strategy Tester** (dưới chart) để đối chiếu số liệu  
+1. Symbol đúng: **BTCUSDT.P** (Binance), **không** dùng Bitstamp Weekly để học thesis.  
+2. Khung: **5** (5 phút).  
+3. **Gỡ** bản T1b cũ trên chart (nút … cạnh tên indicator → Remove).  
+4. Pine Editor → **xóa hết** → dán lại toàn bộ file mới → **Save** → **Add to chart**.  
+5. Bảng **THỐNG KÊ** nằm **góc phải trên** (tím đậm, chữ to).  
+6. Nếu vẫn không thấy: mở Settings (bánh răng) của script → nhóm **Hiển thị** → bật **Bảng THỐNG KÊ** → thử đổi **Vị trí bảng** sang `Middle right`.  
+7. Tab **Strategy Tester** (dưới chart) vẫn có số liệu ngay cả khi bảng bị che.
 
 Nếu vẫn còn nhiều lệnh: tăng **Cooldown**, tăng **Volume ≥ SMA ×**, hoặc tăng **ATR multiplier**.
 
