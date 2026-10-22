@@ -25,9 +25,21 @@ Kháng cự (TL↓): cần **Lower High** (đỉnh sau thấp hơn).
 Trước: xóa đường rồi chỉ vẽ lại khi vừa có pivot mới; nếu cặp mới không phải HL/LH → **mất hết đường**.  
 Nay: vẽ lại **mỗi nến**, tìm cặp HL/LH hợp lệ, chấm điểm pivot TL, Debug hiện số đáy/đỉnh + có/chưa TL.
 
+## Vì sao có 2 đường teal song song?
+
+Settings **Số trendline mỗi phía** mặc định = **2**.
+
+| Đường | Ý nghĩa |
+|-------|---------|
+| TL↑ **mới** (thường sát giá hơn) | Nối 2 đáy Higher Low gần nhất — dễ nhìn, có chấm tròn |
+| TL↑ **thứ 2** (thường thấp hơn) | Cặp HL **khác** (thường pivot cũ hơn) → kéo dài về phía phải; đoạn nhìn thấy có thể **không** đi qua 2 đáy rõ trên màn hình → trông “chả nối gì” |
+
+Không phải bug vẽ lệch: script cố ý vẽ tối đa N đường. Muốn chỉ 1 đường rõ: Settings → **Số trendline mỗi phía = 1**.
+
 ## Việc Tomas làm
 
-1. Dán lại file `pine/T3e_trendline.pine` mới nhất.  
+1. Dán lại file `pine/T3e_trendline.pine` mới nhất (tên chart: **Thesis T3E**).  
 2. Bật **Chấm điểm pivot dùng cho TL**.  
 3. Nhìn Debug: `TL đáy:X đỉnh:Y có TL↑/chưa TL↑`.  
-4. Nếu muốn nhạy hơn: giảm pivot trái/phải xuống **2** (mặc định mới).
+4. Nếu muốn nhạy hơn: giảm pivot trái/phải xuống **2** (mặc định mới).  
+5. Nếu đường thứ 2 gây rối: đặt **Số trendline mỗi phía = 1**.

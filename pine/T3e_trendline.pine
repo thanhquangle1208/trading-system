@@ -1,10 +1,38 @@
 // This Pine Script™ code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
-// © Tomas Le — Thesis T3e: T3d + Trendline (đường xu hướng từ pivot)
-// Fix: luôn vẽ lại TL mỗi nến; tìm cặp HL/LH hợp lệ (không chỉ 2 pivot mới nhất)
-// Sp/Demand ≠ điểm TL — TL dùng pivot riêng. Chart học: BTCUSDT.P 5m; test BNB cũng được
+// © Tomas Le
+//
+// =============================================================================
+// DESCRIPTION (chỉ ghi chú — không chạy, không đổi logic)
+// =============================================================================
+// Tên trên chart: Thesis T3E
+//
+// Script này dùng gì (các “chỉ báo” / khối logic):
+//   1) SuperTrend     — hướng bias (lên/xuống), đường bậc thang xanh/cam
+//   2) Supply/Demand  — ô vùng cung–cầu từ pivot zone
+//   3) Volume         — bắt buộc: volume ≥ SMA × hệ số
+//   4) Wyckoff/PA     — Spring (LONG) / Upthrust (SHORT) + reject wick hoặc engulf
+//   5) Trendline      — nối Higher Low (teal) / Lower High (cam); pivot TL ≠ Sp/Demand
+//   6) Risk           — SL (zone + sàn ATR/%), TP theo R, phí, bảng THỐNG KÊ
+//
+// Dùng như nào:
+//   - Chart học mặc định: BINANCE:BTCUSDT.P · 5m (test coin khác cũng được)
+//   - Dán script → Add to chart → nhìn mũi tên L/S, ô S/D, TL, bảng THỐNG KÊ
+//   - Settings: nhóm Trendline / Risk / Lọc WR — chỉnh dần theo paper
+//   - Sp / Demand / SuperTrend ≠ điểm nối trendline (chấm tròn mới là pivot TL)
+//
+// Rules vào lệnh (tóm tắt — AND, thiếu 1 = không vào):
+//   LONG:  gần Demand + Spring + volume OK + (ST lên nếu bật) + cooldown
+//          + (gần TL hỗ trợ nếu bật requireTL) + phí không vượt % risk
+//   SHORT: gần Supply + Upthrust + tương tự chiều ngược
+//   TP mặc định 1.5R (WR-first); vốn paper $10k; risk ~1%/lệnh
+//   Lọc “bắt buộc gần trendline” mặc định TẮT (chỉ vẽ TL)
+//
+// Lưu ý TL: mặc định vẽ tối đa 2 đường mỗi phía (Settings → Số trendline mỗi phía).
+// Đường thứ 2 = cặp pivot HL/LH khác (thường cũ hơn), dễ trông “không nối gì”.
+// =============================================================================
 
 //@version=5
-indicator("Thesis T3e — Trendline + THỐNG KÊ", overlay=true,
+indicator("Thesis T3E", shorttitle="Thesis T3E", overlay=true,
      max_labels_count=500, max_lines_count=100, max_boxes_count=200)
 
 //===== Inputs =====

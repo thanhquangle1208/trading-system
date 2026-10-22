@@ -4,7 +4,7 @@
 
 | File | Khi nào |
 |------|---------|
-| **`T3e_trendline.pine`** ← **DÙNG CÁI NÀY** | T3d + **Trendline** (đường xu hướng) |
+| **`T3e_trendline.pine`** ← **DÙNG CÁI NÀY** | Tên trên chart: **Thesis T3E** (T3d + Trendline) |
 | `T3d_balanced_wr.pine` | Balanced trước khi có TL |
 | `T3c_wr60_tp15.pine` | Quá siết |
 | `T2_sd_thongke.pine` | S/D |
