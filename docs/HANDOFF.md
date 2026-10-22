@@ -1,8 +1,8 @@
 # HANDOFF — Trading System
 
-**Đọc file này trước** khi làm bất kỳ việc gì trong repo. Sau đó đọc: `architecture-roadmap.md` → `project-context.md` → `cost-estimate.md` → `preferences.md`.
+**Đọc file này trước** khi làm bất kỳ việc gì trong repo. Sau đó đọc: `architecture-roadmap.md` → `project-context.md` → `cost-estimate.md` → `preferences.md` → **`thesis/T0-trading-thesis.md`** (nếu làm thesis).
 
-> **Trạng thái:** Kiến trúc đã được xây theo hướng Tomas duyệt (B trước A/Pine; Python; Bybit/ccxt; …) nhưng **Phase 1 CHƯA bắt đầu**. Không viết code giao dịch / scaffold Phase 1 cho đến khi Tomas nói rõ **“OK Phase 1”** và trả lời (hoặc tạm bỏ qua có chủ đích) các câu hỏi còn mở.
+> **Trạng thái hiện tại (2026-10-23):** Bot Phase 1 **hoãn**. Script hiện tại: **`pine/T3e_trendline.pine`** (T3d + Trendline). TP **1.5R** + Spring/UT + S/D. Lọc “gần TL” mặc định **tắt**. Chart học **BTCUSDT.P · 5m**.
 
 ---
 
@@ -10,101 +10,116 @@
 
 Hệ thống giao dịch cá nhân của **Tomas Le** (người mới bắt đầu, chưa có nền tảng code):
 
-- Theo dõi **BTC**, nhiều khung thời gian (**M15, H1, H4, D1**).
-- Tín hiệu khi nhiều chỉ báo **đồng thuận** (confluence: điều kiện AND bắt buộc + điểm ≥ ngưỡng).
-- Mỗi tín hiệu/lệnh có **`rating` 1–10** (rủi ro / độ tin cậy — nhãn chưa chốt).
-- Quản lý rủi ro rõ ràng; chạy **paper + backtest lịch sử** trước, **live sau**.
-- Báo **Telegram** (nhiều kênh, tên method/chỉ báo tùy chỉnh) + **dashboard localhost**.
-- Sàn: **CEX qua ccxt, Bybit trước**; DEX là hướng sau (adapter riêng).
+- **Ngắn hạn (đang làm):** chốt **thesis** trên TV — chart **BINANCE:BTCUSDT.P**, vốn paper **$10k**, logic vừa làm vừa research.
+- **Dài hạn (hoãn):** bot Python (ccxt, Bybit…), paper/live, Telegram, dashboard localhost — xem roadmap Phase 1–6.
 
-Giải thích và tài liệu bằng **tiếng Việt**, chậm rãi, dễ hiểu. Mỗi phase: đề xuất → Tomas duyệt → mới code; mỗi phase có **tests + README**.
+Giải thích và tài liệu bằng **tiếng Việt**, chậm rãi, dễ hiểu. Mỗi bước: đề xuất → Tomas duyệt → mới code.
+
+---
+
+## Hiểu đúng: “tích hợp vào chart TV”
+
+| Công cụ | Vai trò |
+|---------|---------|
+| **Pine Script** | Code **chạy bên trong TradingView** → vẽ mũi tên, hộp LONG/SHORT, bảng THỐNG KÊ **trên chart** như ảnh |
+| **Python bot** | Chạy **ngoài** TV (máy bạn) → lấy giá API, đặt lệnh, Telegram — **không** vẽ được vào chart TV |
+
+Muốn UI như ảnh → làm **Pine**. Bot là bước sau khi thesis đã rõ.
+
+Chi tiết: [`thesis/T0-trading-thesis.md`](./thesis/T0-trading-thesis.md).
 
 ---
 
 ## Quyết định đã chốt (locked)
 
+### Thesis / Pine (ưu tiên hiện tại)
+
 | Mục | Quyết định |
 |-----|------------|
-| TradingView | **B trước** (dashboard / backtest Python) — **A (Pine) tùy chọn sau**; không inject Python vào TV |
-| Ngôn ngữ | **Python** (ccxt, backtest, Optuna) |
-| Sàn đầu | **Bybit** qua **ccxt** (CEX); Binance/CEX khác sau cùng interface |
-| DEX | Adapter riêng, **sau**; Phase 1 chỉ để chỗ cắm |
-| DB đầu | **SQLite** → Postgres sau khi cần |
-| Chế độ chạy | **Paper + historical backtest trước live**; không dùng tiền thật để thử chỉ báo |
-| Chi phí | **Ít opex**: paper + máy nhà ~$0/tháng; không tự thuê VPS / TV Pro / domain trừ khi Tomas yêu cầu |
-| Kiến trúc | **Modular / plugins** (chỉ báo, adapter sàn); strategy bằng **YAML/JSON** |
-| Rating | Có — field `rating` 1–10; tính/lưu Phase 3; hiện Telegram Phase 6 |
-| Notifier | Template + **`display_name`** + multi-route (channel / TF / method) — Phase 6 |
-| CEX / DEX | **CEX có ngay** trong kiến trúc; **DEX sau** |
-| Code Phase 1–6 | **Chưa** — chờ “OK Phase 1” + câu trả lời còn lại |
+| Ưu tiên | **Pine thesis trước**; **bot Phase 1 hoãn** |
+| Script | **Viết lại từ đầu** |
+| Logic | Vừa làm vừa research (bắt đầu đơn giản) |
+| Vốn paper thesis | **$10.000** |
+| Chart | **BINANCE:BTCUSDT.P** (perp) |
+| TF học | **5m** (đã chốt) |
+| TP | **2R** (đã chốt) |
+| Volume | **Bắt buộc** (đã chốt) |
+| Phương pháp | **S/D + Wyckoff + PA + Trend line** — **OK** — [`thesis/method-sd-wyckoff-pa.md`](./thesis/method-sd-wyckoff-pa.md) |
+| Quyết định khóa | [`thesis/decisions-locked.md`](./thesis/decisions-locked.md) |
 
-Chi tiết đầy đủ: [`architecture-roadmap.md`](./architecture-roadmap.md). Chi phí: [`cost-estimate.md`](./cost-estimate.md).
+### Kiến trúc bot dài hạn (vẫn giữ, chưa code)
 
----
+| Mục | Quyết định |
+|-----|------------|
+| TradingView dài hạn | **A (Pine)** đang làm trước để chốt thesis; **B (Python dashboard)** khi làm bot |
+| Ngôn ngữ bot | **Python** (ccxt, backtest, Optuna) |
+| Sàn bot đầu | **Bybit** qua **ccxt** (sau thesis) |
+| DEX | Adapter riêng, **sau** |
+| DB đầu | **SQLite** → Postgres sau |
+| Chế độ | Paper + backtest trước live |
+| Chi phí | Ít opex; máy nhà; không tự thuê VPS/TV Pro trừ khi Tomas yêu cầu |
+| Rating / Notifier | Thiết kế giữ nguyên — triển khai khi làm bot |
+| Code Phase 1–6 | **Chưa** — chờ “OK Phase 1” sau khi thesis ổn |
 
-## Câu hỏi vẫn chờ Tomas
-
-Trả lời ngắn trong chat là đủ; agent cập nhật `project-context.md`.
-
-1. **Spot hay Perp** làm primary trước? (có thể hỗ trợ cả hai sau.)
-2. **Vốn paper** khởi điểm (USDT)? ví dụ 1.000 / 5.000 / 10.000
-3. **Timezone:** `Asia/Ho_Chi_Minh` hay UTC?
-4. **Bybit API** (key/secret, quyền) đã tạo chưa? Paper dùng testnet không?
-5. **Telegram** bot token + chat ID sẵn chưa?
-6. **`rating`:** nhãn **“Rủi ro”** (số cao = rủi ro cao) hay **“Độ tin cậy”** (số cao = tin hơn)?
-7. **Một hay nhiều** kênh Telegram từ đầu?
-8. **Ngưỡng score confluence** mặc định? (ví dụ 60/100 — đổi được trong YAML)
-9. **Leverage tối đa** nếu làm perp trước? (ví dụ 2x–5x)
-10. **Pine Script:** làm sau Phase 6 hay chỉ cần dashboard Python?
+Chi tiết bot: [`architecture-roadmap.md`](./architecture-roadmap.md). Chi phí: [`cost-estimate.md`](./cost-estimate.md).
 
 ---
 
-## Trạng thái phase
+## Câu hỏi vẫn mở (bot — không chặn thesis)
 
-| Phase | Trạng thái |
-|-------|------------|
-| Kiến trúc / roadmap | Đã viết & đẩy Git — hướng đã rõ; chờ xác nhận cuối + câu hỏi |
-| **Phase 1** (repo skeleton, `.env`, logging, SQLite, Bybit read, paper skeleton) | **CHƯA bắt đầu** |
-| Phase 2–6 | Chưa |
+Trả lời khi quay lại bot; agent cập nhật `project-context.md`.
 
-**Quy tắc agent:** Không scaffold / không code Phase 1 cho đến khi Tomas gửi kiểu **“OK Phase 1”** (và tốt nhất là trả lời mục câu hỏi). Có thể cập nhật tài liệu nếu được hỏi.
+1. Spot hay Perp primary cho **bot** (thesis đang dùng perp chart Binance)
+2. Timezone: `Asia/Ho_Chi_Minh` hay UTC?
+3. Bybit API / testnet sẵn chưa?
+4. Telegram bot + chat ID; một hay nhiều kênh?
+5. `rating`: “Rủi ro” hay “Độ tin cậy”?
+6. Ngưỡng confluence mặc định?
+7. Leverage tối đa (perp bot)?
+
+**Thesis — còn research dần:** công thức trend/entry/TP R / phí % / zone Supply-Demand sớm hay để T4 — xem T0 §6.
+
+---
+
+## Trạng thái phase / bước
+
+| Bước | Trạng thái |
+|------|------------|
+| Kiến trúc bot / roadmap | Đã có trong docs; **bot chưa code** |
+| **T0** + method | **OK** (Tomas duyệt) |
+| **T3d** | Balanced (không TL) |
+| **T3e** + Trendline | **`pine/T3e_trendline.pine`** ← dùng cái này |
+| **Tiếp** | Đo lệnh/WR; có thể bật “bắt buộc gần TL” sau |
+| **Phase 1–6** bot | **HOÃN** |
+
+**Quy tắc agent:** Phương pháp đã OK → được viết T1. T2+ cần Tomas OK từng bước (hoặc bảo “tiếp T2”). Không scaffold Phase 1 bot cho đến “OK Phase 1”.
 
 ---
 
 ## Nhánh Git & commit gần đây
 
-- **Nhánh làm việc:** `cursor/architecture-roadmap-abd1`
-- **`main`:** thường **đứng sau** nhánh này (chỉ có commit khởi tạo). Tomas mở nhánh trên **Repositories** hoặc merge bằng PR sau — **không force-merge** trừ khi Tomas yêu cầu.
-- **Commit gần đây (kiến trúc, không có code Phase 1):**
-  - `docs: add cost estimate and link from README`
-  - `Expand architecture for CEX/DEX, TV tracks, rating, notifier templates`
-  - `Add Vietnamese architecture roadmap for Trading System`
-  - (+ commit handoff pack này)
+- **Nhánh thesis:** `cursor/trading-thesis-pine-43e3`
+- **Nhánh kiến trúc cũ:** `cursor/architecture-roadmap-abd1`
+- **`main`:** có thể đứng sau các nhánh feature — không force-merge trừ khi Tomas yêu cầu.
 
 ---
 
 ## Instruction cho agent (bắt buộc)
 
-**Before coding, read HANDOFF + architecture-roadmap + project-context + cost-estimate + preferences.**
+**Before coding, read HANDOFF + architecture-roadmap + project-context + cost-estimate + preferences + thesis/T0.**
 
-1. Đọc hết các file trên trong `docs/`.
-2. Không bắt đầu Phase 1 nếu Tomas chưa nói OK.
-3. Giải thích tiếng Việt, rõ ràng, giả định người mới.
-4. Sau mỗi lần làm: commit + push nhánh để agent khác tiếp tục được.
-5. Ưu tiên làm việc qua **Git repository** (Repositories), không dựa vào Project chat store.
+1. Giải thích tiếng Việt, rõ ràng, giả định người mới.
+2. Ưu tiên hiện tại = **thesis Pine**; bot chỉ khi Tomas mở lại.
+3. Mỗi bước T0→T5: đề xuất → duyệt → code.
+4. Sau mỗi lần làm: commit + push nhánh.
+5. Ưu tiên làm việc qua **Git repository**.
 
 ---
 
 ## English summary (for other AIs)
 
-**What:** Beginner-friendly multi-TF BTC trading system (confluence + rating + risk + paper/backtest before live + Telegram + localhost dashboard). Owner: Tomas Le; prefer Vietnamese explanations.
+**Now:** Method approved (S/D+Wyckoff+PA+trendline). TP **2R**, TF **5m**, volume required. T1 Pine in `pine/T1_trendline_volume.pine`. Bot still paused.
 
-**Locked:** Track **B before A/Pine**; **Python**; **Bybit/ccxt** (CEX yes, DEX later); **SQLite**; paper + historical backtest before live; **low opex**; modular plugins; signal **rating**; notifier **display_name** / multi-route; no Phase 1–6 code yet.
+**Next:** Tomas pastes T1 on TV; then “OK T2” for S/D zones. “OK Phase 1” later for bot.
 
-**Open (wait on Tomas):** Spot vs Perp primary; paper capital; timezone; API/Telegram readiness; rating label “Rủi ro” vs “Độ tin cậy”; 1 vs many TG channels; confluence score threshold; max leverage (if perp first); Pine after Phase 6 or Python-only.
-
-**Phase status:** Architecture direction approved in docs; **Phase 1 NOT started**. Wait for explicit **“OK Phase 1”** plus answers (or conscious deferrals).
-
-**Branch:** `cursor/architecture-roadmap-abd1` (ahead of `main`). Do not force-merge to `main` unless asked.
-
-**Must-read before any code:** this file, then `architecture-roadmap.md`, `project-context.md`, `cost-estimate.md`, `preferences.md`.
+**Branch:** `cursor/trading-thesis-pine-43e3`.
