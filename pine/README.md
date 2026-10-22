@@ -4,37 +4,24 @@
 
 | File | Khi nào |
 |------|---------|
-| **`T3_wyckoff_pa_thongke.pine`** ← **DÙNG CÁI NÀY** | T3: S/D + Spring/UT + PA + THỐNG KÊ (siết nhất hiện tại) |
-| `T2_sd_thongke.pine` | T2: S/D filter (chưa Spring/PA) |
-| `T1c_overlay_thongke.pine` | Chỉ bias + volume — nhiều lệnh |
-| `T1b_strategy_thongke.pine` | Strategy Tester panel dưới |
+| **`T3b_optimize_thongke.pine`** ← **DÙNG CÁI NÀY** | Sau khi T3 Gross lãi nhưng Net lỗ vì **phí** |
+| `T3_wyckoff_pa_thongke.pine` | Bản T3 gốc (dễ bị phí ăn) |
+| `T2_sd_thongke.pine` | S/D filter |
+| `T1c_overlay_thongke.pine` | UX THỐNG KÊ ban đầu |
 
-## T3 lọc lệnh thế nào?
+Phân tích số liệu T3: [`docs/thesis/optimize-from-t3-stats.md`](../docs/thesis/optimize-from-t3-stats.md)
 
-| Trụ | Điều kiện |
-|-----|-----------|
-| Bias | SuperTrend đúng hướng |
-| S/D | Chạm **Demand** (LONG) / **Supply** (SHORT) |
-| Wyckoff | **Spring** (đâm dưới Demand rồi đóng lại) hoặc **Upthrust** (đâm trên Supply rồi đóng lại) — tùy chế độ |
-| PA | Reject wick hoặc Engulfing (bắt buộc mặc định) |
-| Volume | ≥ SMA × hệ số |
-| Cooldown | Có |
+## T3b sửa gì?
 
-**Chế độ vào lệnh** (Settings → Wyckoff / PA):
-
-1. `Zone+PA hoặc Spring/UT` — mặc định  
-2. `Chỉ Spring/UT` — ít lệnh nhất  
-3. `Zone+PA (như T2+PA)` — không bắt buộc Spring  
-
-Kim cương **Sp** / **UT** trên chart = sự kiện Wyckoff.
+1. **Sàn SL tối thiểu** (ATR + % giá) → Qty không nổ  
+2. **Bỏ lệnh** nếu phí ước tính > 25% risk  
+3. Mặc định **Chỉ Spring/UT**, cooldown 36, volume ×1.5  
+4. TP mặc định **2.5R** (Settings đổi lại **2R** nếu muốn giữ quyết định cũ)  
+5. Dòng bảng **Phí / |Gross|** — mục tiêu < 100%
 
 ## Cách dán
 
-1. Remove script cũ (T2/T1c).  
-2. Chart: **BINANCE:BTCUSDT.P** · **5m**.  
-3. Dán `T3_wyckoff_pa_thongke.pine` → Add to chart.  
-4. So **Tổng lệnh** / Win Rate với T2.
-
-## Đã chốt
-
-Vốn $10k · TP **2R** · volume bắt buộc · 4 trụ S/D + Wyckoff + PA + Trend.
+1. Remove T3 cũ.  
+2. **BTCUSDT.P · 5m** (Binance).  
+3. Dán `T3b_optimize_thongke.pine` → Add to chart.  
+4. So: Gross vs Tổng phí; Net có còn âm vì phí không.

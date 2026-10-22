@@ -23,6 +23,8 @@ Cập nhật khi Tomas trả lời. Agent đọc file này trước khi viết P
 | T1b strategy | Có — nhưng panel dưới ≠ ảnh mẫu |
 | T1c overlay THỐNG KÊ | OK UX; nhiều lệnh |
 | T2 S/D filter | Xong |
-| T3 Wyckoff Spring/UT + PA | **Dùng** — `pine/T3_wyckoff_pa_thongke.pine` (OK T3) |
+| T3 Wyckoff/PA | OK UX; PnL fail vì phí |
+| T3b Optimize | **Dùng** — `pine/T3b_optimize_thongke.pine` |
+| TP | Đã chốt 2R; T3b mặc định 2.5R để cứu expectancy — đổi lại 2R trong Settings nếu muốn |
 | Học từ lệnh lãi | Doc `learn-from-winners.md` |
-| Phân biệt 2 bảng | Doc `thongke-tren-chart.md` |
+| Phân tích phí T3 | Doc `optimize-from-t3-stats.md` |

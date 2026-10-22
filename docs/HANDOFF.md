@@ -87,9 +87,9 @@ Trả lời khi quay lại bot; agent cập nhật `project-context.md`.
 |------|------------|
 | Kiến trúc bot / roadmap | Đã có trong docs; **bot chưa code** |
 | **T0** + method | **OK** (Tomas duyệt) |
-| **T1c / T2** | Nền UX + S/D — tham khảo |
-| **T3** Wyckoff/PA + THỐNG KÊ | **`pine/T3_wyckoff_pa_thongke.pine`** ← dùng cái này |
-| **T4+** | Siết theo lệnh WIN; tinh chỉnh tham số |
+| **T3** | Wyckoff/PA — Gross + / Net − (phí) |
+| **T3b** Optimize phí/SL | **`pine/T3b_optimize_thongke.pine`** ← dùng cái này |
+| **Tiếp** | So T3b vs T3; học từ lệnh WIN nếu WR vẫn thấp |
 | **Phase 1–6** bot | **HOÃN** |
 
 **Quy tắc agent:** Phương pháp đã OK → được viết T1. T2+ cần Tomas OK từng bước (hoặc bảo “tiếp T2”). Không scaffold Phase 1 bot cho đến “OK Phase 1”.
