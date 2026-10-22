@@ -23,7 +23,7 @@
 Settings nhóm **Trendline**:
 
 - **Vẽ trendline** — mặc định bật  
-- **Chấm điểm pivot dùng cho TL** — bật để thấy điểm script đang nối  
+- **Chấm điểm pivot dùng cho TL** — mặc định **tắt** (UI gọn); bật khi muốn debug điểm đang nối  
 - **Bắt buộc gần trendline khi vào lệnh** — mặc định **TẮT**
 
 ## Cách dán

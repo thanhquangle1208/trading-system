@@ -39,7 +39,7 @@ Không phải bug vẽ lệch: script cố ý vẽ tối đa N đường. Muốn
 ## Việc Tomas làm
 
 1. Dán lại file `pine/T3e_trendline.pine` mới nhất (tên chart: **Thesis T3E**).  
-2. Bật **Chấm điểm pivot dùng cho TL**.  
+2. (Tuỳ chọn) Bật **Chấm điểm pivot dùng cho TL** nếu muốn debug — mặc định **tắt**.  
 3. Nhìn Debug: `TL đáy:X đỉnh:Y có TL↑/chưa TL↑`.  
 4. Nếu muốn nhạy hơn: giảm pivot trái/phải xuống **2** (mặc định mới).  
 5. Nếu đường thứ 2 gây rối: đặt **Số trendline mỗi phía = 1**.

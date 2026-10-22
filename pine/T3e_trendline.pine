@@ -63,7 +63,7 @@ tlMaxLines   = input.int(2, "Số trendline mỗi phía", minval=1, maxval=5, gr
 tlExtend     = input.int(80, "Kéo dài trendline (bars)", minval=5, maxval=300, group="Trendline")
 tlTolPct     = input.float(0.20, "Gần trendline trong % giá", minval=0.05, maxval=1.0, step=0.05, group="Trendline") / 100.0
 showTL       = input.bool(true, "Vẽ trendline trên chart", group="Trendline")
-showTLMarks  = input.bool(true, "Chấm điểm pivot dùng cho TL", group="Trendline")
+showTLMarks  = input.bool(false, "Chấm điểm pivot dùng cho TL (mặc định tắt — chỉ bật khi debug)", group="Trendline")
 requireTL    = input.bool(false, "Bắt buộc gần trendline khi vào lệnh (mặc định TẮT)", group="Trendline")
 
 slAtrMult    = input.float(1.5, "SL đệm ATR × (ngoài zone)", minval=0.1, step=0.1, group="Risk")
