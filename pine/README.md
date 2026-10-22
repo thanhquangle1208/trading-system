@@ -1,37 +1,24 @@
 # Pine Scripts — Trading Thesis
 
-Script dán vào **TradingView → Pine Editor**. Không chạy bằng Python.
+## Dùng file nào?
 
-## Đã chốt (Tomas)
+| File | Loại | Khi nào dùng |
+|------|------|----------------|
+| **`T1c_overlay_thongke.pine`** ← **DÙNG CÁI NÀY** | Indicator | Bảng **THỐNG KÊ trên chart** + hộp lệnh — **giống ảnh mẫu** |
+| `T1b_strategy_thongke.pine` | Strategy | Có panel Strategy Tester **dưới** chart (không phải bảng mẫu) |
+| `T1_trendline_volume.pine` | Indicator | Bản cũ, nhiều mũi tên |
 
-| Mục | Giá trị |
-|-----|---------|
-| Phương pháp | S/D + Wyckoff + PA + Trend line |
-| Chart | **BINANCE:BTCUSDT.P** |
-| TF | **5m** |
-| TP | **2R** |
-| Volume | **Bắt buộc** |
-| Vốn paper | $10.000 |
+Giải thích 2 loại bảng: [`docs/thesis/thongke-tren-chart.md`](../docs/thesis/thongke-tren-chart.md)
 
-## Nên dùng file nào?
+## Đã chốt
 
-| File | Khi nào |
-|------|---------|
-| **`T1b_strategy_thongke.pine`** ← **dùng cái này** | Ít lệnh hơn; mỗi mũi tên = 1 lệnh có SL/TP; hộp PnL; bảng **THỐNG KÊ** giống ảnh mẫu |
-| `T1_trendline_volume.pine` | Bản cũ (nhiều mũi tên, chỉ báo tín hiệu) — để tham khảo |
+Chart **BINANCE:BTCUSDT.P** · TF **5m** · vốn **$10k** · TP **2R** · volume **bắt buộc**.
 
-## Cách dán (T1b) — quan trọng
+## Cách dán T1c (giống ảnh mẫu)
 
-1. Symbol đúng: **BTCUSDT.P** (Binance), **không** dùng Bitstamp Weekly để học thesis.  
-2. Khung: **5** (5 phút).  
-3. **Gỡ** bản T1b cũ trên chart (nút … cạnh tên indicator → Remove).  
-4. Pine Editor → **xóa hết** → dán lại toàn bộ file mới → **Save** → **Add to chart**.  
-5. Bảng **THỐNG KÊ** nằm **góc phải trên** (tím đậm, chữ to).  
-6. Nếu vẫn không thấy: mở Settings (bánh răng) của script → nhóm **Hiển thị** → bật **Bảng THỐNG KÊ** → thử đổi **Vị trí bảng** sang `Middle right`.  
-7. Tab **Strategy Tester** (dưới chart) vẫn có số liệu ngay cả khi bảng bị che.
-
-Nếu vẫn còn nhiều lệnh: tăng **Cooldown**, tăng **Volume ≥ SMA ×**, hoặc tăng **ATR multiplier**.
-
-## Học từ lệnh lãi
-
-Xem [`docs/thesis/learn-from-winners.md`](../docs/thesis/learn-from-winners.md): nhìn hộp WIN → tìm điểm chung → bảo agent thêm lọc.
+1. Gỡ hết script Thesis cũ trên chart (Remove).  
+2. Đóng panel Strategy Tester phía dưới nếu đang mở (không cần).  
+3. Symbol **BTCUSDT.P** (Binance) · khung **5**.  
+4. Pine Editor → dán toàn bộ `T1c_overlay_thongke.pine` → Save → **Add to chart**.  
+5. Nhìn **góc phải trên** chart: bảng tím **THỐNG KÊ** (Vốn ban đầu, Win Rate, Max DD…).  
+6. Trên nến: hộp LONG/SHORT / WIN/LOSS.

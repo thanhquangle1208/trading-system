@@ -2,7 +2,7 @@
 
 **Đọc file này trước** khi làm bất kỳ việc gì trong repo. Sau đó đọc: `architecture-roadmap.md` → `project-context.md` → `cost-estimate.md` → `preferences.md` → **`thesis/T0-trading-thesis.md`** (nếu làm thesis).
 
-> **Trạng thái hiện tại (2026-10-21):** Bot Phase 1 **hoãn**. Phương pháp OK (TP **2R**, TF **5m**, volume bắt buộc). Tomas phản hồi T1 **quá nhiều mũi tên** → đã thêm **`pine/T1b_strategy_thongke.pine`**: strategy ít lệnh hơn + hộp PnL + bảng **THỐNG KÊ** giống ảnh mẫu. Quy trình học từ lệnh lãi: `docs/thesis/learn-from-winners.md`.
+> **Trạng thái hiện tại (2026-10-22):** Bot Phase 1 **hoãn**. Phương pháp OK (TP **2R**, TF **5m**, volume bắt buộc). Tomas nhầm **Strategy Tester (panel dưới)** với bảng mẫu → dùng **`pine/T1c_overlay_thongke.pine`** (indicator): bảng **THỐNG KÊ trên chart** góc phải + hộp lệnh. Xem `docs/thesis/thongke-tren-chart.md`.
 
 ---
 
