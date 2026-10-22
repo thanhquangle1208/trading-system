@@ -26,8 +26,10 @@ Cập nhật khi Tomas trả lời. Agent đọc file này trước khi viết P
 | T3 Wyckoff/PA | OK UX; PnL fail vì phí |
 | T3b Optimize | Xong (chống phí) |
 | T3c WR-first | Quá siết → 0 lệnh |
-| **T3d Balanced** | **Dùng** — `pine/T3d_balanced_wr.pine` |
+| T3d Balanced | Xong |
+| **T3e + Trendline** | **Dùng** — `pine/T3e_trendline.pine` |
 | TP | **1.5R** (ưu tiên WR) |
+| Trendline lọc lệnh | Mặc định **chỉ vẽ**; `requireTL` tắt |
 | Học từ lệnh lãi | Doc `learn-from-winners.md` |
 | Phân tích phí T3 | Doc `optimize-from-t3-stats.md` |
 | Hướng WR60 | Doc `wr60-tp15-path.md` |

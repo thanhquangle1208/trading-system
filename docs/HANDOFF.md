@@ -2,7 +2,7 @@
 
 **Đọc file này trước** khi làm bất kỳ việc gì trong repo. Sau đó đọc: `architecture-roadmap.md` → `project-context.md` → `cost-estimate.md` → `preferences.md` → **`thesis/T0-trading-thesis.md`** (nếu làm thesis).
 
-> **Trạng thái hiện tại (2026-10-22):** Bot Phase 1 **hoãn**. T3c bị **0 lệnh** (siết quá) → **`pine/T3d_balanced_wr.pine`**. Giải thích: `thesis/why-zero-trades-t3c.md`. Vẫn TP **1.5R** + Spring/UT. Chart học **BTCUSDT.P · 5m**.
+> **Trạng thái hiện tại (2026-10-23):** Bot Phase 1 **hoãn**. Script hiện tại: **`pine/T3e_trendline.pine`** (T3d + Trendline). TP **1.5R** + Spring/UT + S/D. Lọc “gần TL” mặc định **tắt**. Chart học **BTCUSDT.P · 5m**.
 
 ---
 
@@ -87,9 +87,9 @@ Trả lời khi quay lại bot; agent cập nhật `project-context.md`.
 |------|------------|
 | Kiến trúc bot / roadmap | Đã có trong docs; **bot chưa code** |
 | **T0** + method | **OK** (Tomas duyệt) |
-| **T3c** | WR-first quá siết → 0 lệnh |
-| **T3d** Balanced | **`pine/T3d_balanced_wr.pine`** ← dùng cái này |
-| **Tiếp** | Có lệnh → đo WR; siết từng lớp (HTF/knife) nếu cần |
+| **T3d** | Balanced (không TL) |
+| **T3e** + Trendline | **`pine/T3e_trendline.pine`** ← dùng cái này |
+| **Tiếp** | Đo lệnh/WR; có thể bật “bắt buộc gần TL” sau |
 | **Phase 1–6** bot | **HOÃN** |
 
 **Quy tắc agent:** Phương pháp đã OK → được viết T1. T2+ cần Tomas OK từng bước (hoặc bảo “tiếp T2”). Không scaffold Phase 1 bot cho đến “OK Phase 1”.
