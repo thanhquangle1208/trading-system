@@ -2,7 +2,7 @@
 
 **Đọc file này trước** khi làm bất kỳ việc gì trong repo. Sau đó đọc: `architecture-roadmap.md` → `project-context.md` → `cost-estimate.md` → `preferences.md` → **`thesis/T0-trading-thesis.md`** (nếu làm thesis).
 
-> **Trạng thái hiện tại (2026-10-22):** Bot Phase 1 **hoãn**. Tomas **OK T3**. Script hiện tại: **`pine/T3_wyckoff_pa_thongke.pine`** (S/D + Spring/UT + PA + THỐNG KÊ). Chart học **BTCUSDT.P · 5m**.
+> **Trạng thái hiện tại (2026-10-22):** Bot Phase 1 **hoãn**. T3 Gross lãi nhưng Net lỗ vì **phí >> Gross** → **`pine/T3b_optimize_thongke.pine`** (sàn SL, fee cap, Chỉ Spring/UT). Xem `thesis/optimize-from-t3-stats.md`. Chart học **BTCUSDT.P · 5m**.
 
 ---
 
