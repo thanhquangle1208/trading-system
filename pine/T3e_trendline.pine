@@ -1,7 +1,7 @@
 // This Pine Script™ code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
 // © Tomas Le — Thesis T3e: T3d + Trendline (đường xu hướng từ pivot)
-// Thêm: vẽ trendline hỗ trợ (teal) / kháng cự (cam); tuỳ chọn lọc gần line khi vào lệnh
-// Chart: BINANCE:BTCUSDT.P · 5m · vốn $10k · TP 1.5R
+// Fix: luôn vẽ lại TL mỗi nến; tìm cặp HL/LH hợp lệ (không chỉ 2 pivot mới nhất)
+// Sp/Demand ≠ điểm TL — TL dùng pivot riêng. Chart học: BTCUSDT.P 5m; test BNB cũng được
 
 //@version=5
 indicator("Thesis T3e — Trendline + THỐNG KÊ", overlay=true,
@@ -29,12 +29,13 @@ htfTf        = input.timeframe("15", "Khung HTF", group="Lọc WR")
 blockKnife   = input.bool(false, "Chống dao rơi — T3c bật dễ chặn Spring", group="Lọc WR")
 needStAlign  = input.bool(true, "SuperTrend 5m cùng hướng", group="Lọc WR")
 
-tlPivotL     = input.int(3, "Trendline pivot trái", minval=1, maxval=20, group="Trendline")
-tlPivotR     = input.int(3, "Trendline pivot phải", minval=1, maxval=20, group="Trendline")
+tlPivotL     = input.int(2, "Trendline pivot trái", minval=1, maxval=20, group="Trendline")
+tlPivotR     = input.int(2, "Trendline pivot phải", minval=1, maxval=20, group="Trendline")
 tlMaxLines   = input.int(2, "Số trendline mỗi phía", minval=1, maxval=5, group="Trendline")
-tlExtend     = input.int(40, "Kéo dài trendline (bars)", minval=5, maxval=200, group="Trendline")
+tlExtend     = input.int(80, "Kéo dài trendline (bars)", minval=5, maxval=300, group="Trendline")
 tlTolPct     = input.float(0.20, "Gần trendline trong % giá", minval=0.05, maxval=1.0, step=0.05, group="Trendline") / 100.0
 showTL       = input.bool(true, "Vẽ trendline trên chart", group="Trendline")
+showTLMarks  = input.bool(true, "Chấm điểm pivot dùng cho TL", group="Trendline")
 requireTL    = input.bool(false, "Bắt buộc gần trendline khi vào lệnh (mặc định TẮT)", group="Trendline")
 
 slAtrMult    = input.float(1.5, "SL đệm ATR × (ngoài zone)", minval=0.1, step=0.1, group="Risk")
@@ -84,38 +85,53 @@ f_tl_clear(line[] lines) =>
             line.delete(array.get(lines, i))
         array.clear(lines)
 
+// Tìm cặp pivot hợp lệ: Support = đáy sau CAO HƠN đáy trước (HL); Resist = đỉnh sau THẤP HƠN (LH)
+// Không chỉ lấy 2 pivot mới nhất (trước đây dễ = 0 đường nếu cặp mới là LL/HH)
 f_tl_draw(line[] lines, int[] barsArr, float[] pricesArr, color col, bool isSupport) =>
     n = array.size(pricesArr)
+    drawn = 0
     if n >= 2
-        limit = math.min(tlMaxLines, n - 1)
-        for i = 0 to limit - 1
-            x1 = array.get(barsArr, i + 1)
-            y1 = array.get(pricesArr, i + 1)
+        for i = 0 to n - 2
+            if drawn >= tlMaxLines
+                break
             x2 = array.get(barsArr, i)
             y2 = array.get(pricesArr, i)
-            slopeOk = isSupport ? (y2 > y1) : (y2 < y1)
-            if slopeOk and x2 > x1
-                slope = (y2 - y1) / (x2 - x1)
-                xEnd = x2 + tlExtend
-                yEnd = y2 + slope * tlExtend
-                ln = line.new(x1, y1, xEnd, yEnd, xloc=xloc.bar_index, extend=extend.none, color=col, width=2)
-                array.push(lines, ln)
+            found = false
+            for j = i + 1 to n - 1
+                x1 = array.get(barsArr, j)
+                y1 = array.get(pricesArr, j)
+                slopeOk = isSupport ? (y2 > y1) : (y2 < y1)
+                if slopeOk and x2 > x1
+                    slope = (y2 - y1) / (x2 - x1)
+                    xEnd = math.max(x2 + tlExtend, bar_index + 5)
+                    yEnd = y2 + slope * (xEnd - x2)
+                    ln = line.new(x1, y1, xEnd, yEnd, xloc=xloc.bar_index, extend=extend.none, color=col, width=3, style=line.style_solid)
+                    array.push(lines, ln)
+                    drawn += 1
+                    found := true
+                    break
+            if found
+                continue
 
 if not na(phTl)
     array.unshift(phTlPrices, phTl)
     array.unshift(phTlBars, bar_index - tlPivotR)
-    if array.size(phTlPrices) > 10
+    if array.size(phTlPrices) > 12
         array.pop(phTlPrices)
         array.pop(phTlBars)
 
 if not na(plTl)
     array.unshift(plTlPrices, plTl)
     array.unshift(plTlBars, bar_index - tlPivotR)
-    if array.size(plTlPrices) > 10
+    if array.size(plTlPrices) > 12
         array.pop(plTlPrices)
         array.pop(plTlBars)
 
-if showTL and (not na(phTl) or not na(plTl))
+plotshape(showTLMarks and not na(plTl), title="TL pivot low", style=shape.circle, location=location.belowbar, color=color.new(#26a69a, 0), size=size.tiny, offset=-tlPivotR)
+plotshape(showTLMarks and not na(phTl), title="TL pivot high", style=shape.circle, location=location.abovebar, color=color.new(#ff9800, 0), size=size.tiny, offset=-tlPivotR)
+
+// Vẽ lại MỖI nến (không chỉ khi vừa có pivot mới) — tránh mất đường
+if showTL
     f_tl_clear(resTL)
     f_tl_clear(supTL)
     f_tl_draw(resTL, phTlBars, phTlPrices, color.new(#ff9800, 0), false)
@@ -128,24 +144,55 @@ nearTLSupport = false
 nearTLResist  = false
 var float tlSupLvl = na
 var float tlResLvl = na
+var int   tlSupX1 = na
+var int   tlSupX2 = na
+var float tlSupY1 = na
+var float tlSupY2 = na
+var int   tlResX1 = na
+var int   tlResX2 = na
+var float tlResY1 = na
+var float tlResY2 = na
 
+// Cặp hỗ trợ / kháng cự “mới nhất hợp lệ” cho near-TL
 if array.size(plTlPrices) >= 2
-    x1 = array.get(plTlBars, 1)
-    y1 = array.get(plTlPrices, 1)
-    x2 = array.get(plTlBars, 0)
-    y2 = array.get(plTlPrices, 0)
-    if x2 > x1 and y2 > y1
-        tlSupLvl := f_tl_price(x1, y1, x2, y2, bar_index)
-        nearTLSupport := math.abs(close - tlSupLvl) / close <= tlTolPct or (low <= tlSupLvl and close >= tlSupLvl)
+    for i = 0 to array.size(plTlPrices) - 2
+        y2 = array.get(plTlPrices, i)
+        x2 = array.get(plTlBars, i)
+        done = false
+        for j = i + 1 to array.size(plTlPrices) - 1
+            y1 = array.get(plTlPrices, j)
+            x1 = array.get(plTlBars, j)
+            if y2 > y1 and x2 > x1
+                tlSupX1 := x1
+                tlSupY1 := y1
+                tlSupX2 := x2
+                tlSupY2 := y2
+                tlSupLvl := f_tl_price(x1, y1, x2, y2, bar_index)
+                nearTLSupport := math.abs(close - tlSupLvl) / close <= tlTolPct or (low <= tlSupLvl and close >= tlSupLvl)
+                done := true
+                break
+        if done
+            break
 
 if array.size(phTlPrices) >= 2
-    x1 = array.get(phTlBars, 1)
-    y1 = array.get(phTlPrices, 1)
-    x2 = array.get(phTlBars, 0)
-    y2 = array.get(phTlPrices, 0)
-    if x2 > x1 and y2 < y1
-        tlResLvl := f_tl_price(x1, y1, x2, y2, bar_index)
-        nearTLResist := math.abs(close - tlResLvl) / close <= tlTolPct or (high >= tlResLvl and close <= tlResLvl)
+    for i = 0 to array.size(phTlPrices) - 2
+        y2 = array.get(phTlPrices, i)
+        x2 = array.get(phTlBars, i)
+        done = false
+        for j = i + 1 to array.size(phTlPrices) - 1
+            y1 = array.get(phTlPrices, j)
+            x1 = array.get(phTlBars, j)
+            if y2 < y1 and x2 > x1
+                tlResX1 := x1
+                tlResY1 := y1
+                tlResX2 := x2
+                tlResY2 := y2
+                tlResLvl := f_tl_price(x1, y1, x2, y2, bar_index)
+                nearTLResist := math.abs(close - tlResLvl) / close <= tlTolPct or (high >= tlResLvl and close <= tlResLvl)
+                done := true
+                break
+        if done
+            break
 
 tlLongOk  = not requireTL or nearTLSupport
 tlShortOk = not requireTL or nearTLResist
@@ -305,7 +352,8 @@ if barstate.islast
         why := not volOk ? "UT có nhưng Volume yếu" : not paShort ? "UT có nhưng thiếu PA" : not stShortOk ? "UT có nhưng SuperTrend chưa down" : not htfShortOk ? "UT có nhưng HTF chưa đồng thuận" : not shortKnifeOk ? "UT có nhưng bị lọc đuổi giá" : not tlShortOk ? "UT có nhưng chưa gần trendline kháng cự" : not coolOk ? "UT có nhưng đang cooldown" : "UT có nhưng bị fee/SL cap"
     else if not spring and not upthrust
         why := "Chưa có Spring/UT hợp lệ gần đây"
-    table.cell(dbg, 0, 0, "Debug: " + why, text_color=#ffe082, text_size=size.small, bgcolor=#12081f)
+    string tlInfo = " | TL đáy:" + str.tostring(array.size(plTlPrices)) + " đỉnh:" + str.tostring(array.size(phTlPrices)) + (array.size(supTL) > 0 ? " có TL↑" : " chưa TL↑") + (array.size(resTL) > 0 ? " có TL↓" : " chưa TL↓")
+    table.cell(dbg, 0, 0, "Debug: " + why + tlInfo, text_color=#ffe082, text_size=size.small, bgcolor=#12081f)
 
 //===== Mô phỏng lệnh + THỐNG KÊ =====
 var float equity   = na
