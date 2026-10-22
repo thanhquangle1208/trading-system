@@ -27,9 +27,9 @@ Cập nhật khi Tomas trả lời. Agent đọc file này trước khi viết P
 | T3b Optimize | Xong (chống phí) |
 | T3c WR-first | Quá siết → 0 lệnh |
 | T3d Balanced | Xong |
-| **T3e + Trendline** | **Dùng** — `pine/T3e_trendline.pine` |
+| **T3e** | **Dùng** — `pine/T3e.pine` (đã bỏ Trendline) |
 | TP | **1.5R** (ưu tiên WR) |
-| Trendline lọc lệnh | Mặc định **chỉ vẽ**; `requireTL` tắt |
+| Trendline | **Bỏ** (2026-10-23) — Tomas: không hiệu quả; bản cũ `T3e_trendline.pine` chỉ giữ tham khảo |
 | Học từ lệnh lãi | Doc `learn-from-winners.md` |
 | Phân tích phí T3 | Doc `optimize-from-t3-stats.md` |
 | Hướng WR60 | Doc `wr60-tp15-path.md` |

@@ -2,7 +2,7 @@
 
 **Đọc file này trước** khi làm bất kỳ việc gì trong repo. Sau đó đọc: `architecture-roadmap.md` → `project-context.md` → `cost-estimate.md` → `preferences.md` → **`thesis/T0-trading-thesis.md`** (nếu làm thesis).
 
-> **Trạng thái hiện tại (2026-10-23):** Bot Phase 1 **hoãn**. Script hiện tại: **`pine/T3e_trendline.pine`** (T3d + Trendline). TP **1.5R** + Spring/UT + S/D. Lọc “gần TL” mặc định **tắt**. Chart học **BTCUSDT.P · 5m**.
+> **Trạng thái hiện tại (2026-10-23):** Bot Phase 1 **hoãn**. Script hiện tại: **`pine/T3e.pine`** (**Thesis T3E** — đã **bỏ Trendline**). TP **1.5R** + Spring/UT + S/D. Chart học **BTCUSDT.P · 5m**.
 
 ---
 
@@ -88,8 +88,8 @@ Trả lời khi quay lại bot; agent cập nhật `project-context.md`.
 | Kiến trúc bot / roadmap | Đã có trong docs; **bot chưa code** |
 | **T0** + method | **OK** (Tomas duyệt) |
 | **T3d** | Balanced (không TL) |
-| **T3e** + Trendline | **`pine/T3e_trendline.pine`** ← dùng cái này |
-| **Tiếp** | Đo lệnh/WR; có thể bật “bắt buộc gần TL” sau |
+| **T3e** | **`pine/T3e.pine`** ← dùng cái này (**không** Trendline; Tomas bỏ TL) |
+| **Tiếp** | Đo lệnh/WR trên T3E không TL |
 | **Phase 1–6** bot | **HOÃN** |
 
 **Quy tắc agent:** Phương pháp đã OK → được viết T1. T2+ cần Tomas OK từng bước (hoặc bảo “tiếp T2”). Không scaffold Phase 1 bot cho đến “OK Phase 1”.
@@ -118,8 +118,8 @@ Trả lời khi quay lại bot; agent cập nhật `project-context.md`.
 
 ## English summary (for other AIs)
 
-**Now:** Method approved (S/D+Wyckoff+PA+trendline). TP **2R**, TF **5m**, volume required. T1 Pine in `pine/T1_trendline_volume.pine`. Bot still paused.
+**Now:** Current script `pine/T3e.pine` (Thesis T3E). Trendline **removed** (Tomas: not effective). S/D + Spring/UT + PA + TP 1.5R. Bot still paused.
 
-**Next:** Tomas pastes T1 on TV; then “OK T2” for S/D zones. “OK Phase 1” later for bot.
+**Next:** Paste T3e on TV; measure WR/Net. “OK Phase 1” later for bot.
 
 **Branch:** `cursor/trading-thesis-pine-43e3`.

@@ -1,6 +1,10 @@
 // This Pine Script™ code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
 // © Tomas Le
 //
+// *** DEPRECATED (2026-10-23) *** Không dùng bản này.
+// Tomas: Trendline không hiệu quả → script hiện tại = pine/T3e.pine (không TL).
+// File này chỉ giữ tham khảo lịch sử.
+//
 // =============================================================================
 // DESCRIPTION (chỉ ghi chú — không chạy, không đổi logic)
 // =============================================================================
@@ -18,7 +22,7 @@
 //   - Chart học mặc định: BINANCE:BTCUSDT.P · 5m (test coin khác cũng được)
 //   - Dán script → Add to chart → nhìn mũi tên L/S, ô S/D, TL, bảng THỐNG KÊ
 //   - Settings: nhóm Trendline / Risk / Lọc WR — chỉnh dần theo paper
-//   - Sp / Demand / SuperTrend ≠ điểm nối trendline (chấm tròn mới là pivot TL)
+//   - Sp / Demand / SuperTrend ≠ điểm nối trendline (pivot TL vẫn tính; chấm tròn mặc định TẮT)
 //
 // Rules vào lệnh (tóm tắt — AND, thiếu 1 = không vào):
 //   LONG:  gần Demand + Spring + volume OK + (ST lên nếu bật) + cooldown
