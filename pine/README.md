@@ -4,31 +4,37 @@
 
 | File | Khi nào |
 |------|---------|
-| **`T2_sd_thongke.pine`** ← **DÙNG CÁI NÀY** | T2: ô Supply/Demand + ít lệnh hơn + THỐNG KÊ trên chart |
-| `T1c_overlay_thongke.pine` | Bản trước (chưa lọc S/D — nhiều lệnh) |
-| `T1b_strategy_thongke.pine` | Strategy Tester panel dưới (không phải ảnh mẫu) |
-| `T1_trendline_volume.pine` | Chỉ trendline (cũ) |
+| **`T3_wyckoff_pa_thongke.pine`** ← **DÙNG CÁI NÀY** | T3: S/D + Spring/UT + PA + THỐNG KÊ (siết nhất hiện tại) |
+| `T2_sd_thongke.pine` | T2: S/D filter (chưa Spring/PA) |
+| `T1c_overlay_thongke.pine` | Chỉ bias + volume — nhiều lệnh |
+| `T1b_strategy_thongke.pine` | Strategy Tester panel dưới |
 
-## T2 lọc lệnh thế nào?
+## T3 lọc lệnh thế nào?
 
-Chỉ vào lệnh khi **đủ cả**:
+| Trụ | Điều kiện |
+|-----|-----------|
+| Bias | SuperTrend đúng hướng |
+| S/D | Chạm **Demand** (LONG) / **Supply** (SHORT) |
+| Wyckoff | **Spring** (đâm dưới Demand rồi đóng lại) hoặc **Upthrust** (đâm trên Supply rồi đóng lại) — tùy chế độ |
+| PA | Reject wick hoặc Engulfing (bắt buộc mặc định) |
+| Volume | ≥ SMA × hệ số |
+| Cooldown | Có |
 
-1. **Bias** SuperTrend đúng hướng (up → chỉ LONG, down → chỉ SHORT)  
-2. Giá **chạm Demand** (LONG) hoặc **Supply** (SHORT)  
-3. **Volume** ≥ SMA × hệ số  
-4. Nến xác nhận (xanh/đỏ) — bật mặc định  
-5. **Cooldown** giữa 2 lệnh  
+**Chế độ vào lệnh** (Settings → Wyckoff / PA):
 
-→ Ít lệnh hơn T1c; zone **fresh** hết hạn sau khi đã trade.
+1. `Zone+PA hoặc Spring/UT` — mặc định  
+2. `Chỉ Spring/UT` — ít lệnh nhất  
+3. `Zone+PA (như T2+PA)` — không bắt buộc Spring  
 
-## Cách dán T2
+Kim cương **Sp** / **UT** trên chart = sự kiện Wyckoff.
 
-1. **Remove** T1c / script cũ trên chart.  
-2. Chart: **BINANCE:BTCUSDT.P** · khung **5** (đừng test thesis trên coin lạ / TF khác nếu đang so với ảnh mẫu).  
-3. Dán toàn bộ `T2_sd_thongke.pine` → Add to chart.  
-4. Thấy: ô xanh **Demand** / cam **Supply**, bảng **THỐNG KÊ** góc phải, hộp WIN/LOSS.  
-5. Nếu vẫn nhiều lệnh: tăng `Cooldown`, tăng `Pivot zone`, tăng `Volume ≥ SMA ×`.
+## Cách dán
+
+1. Remove script cũ (T2/T1c).  
+2. Chart: **BINANCE:BTCUSDT.P** · **5m**.  
+3. Dán `T3_wyckoff_pa_thongke.pine` → Add to chart.  
+4. So **Tổng lệnh** / Win Rate với T2.
 
 ## Đã chốt
 
-Vốn $10k · TP **2R** · volume bắt buộc · phương pháp S/D + Wyckoff + PA + Trend.
+Vốn $10k · TP **2R** · volume bắt buộc · 4 trụ S/D + Wyckoff + PA + Trend.

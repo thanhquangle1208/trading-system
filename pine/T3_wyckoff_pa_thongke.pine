@@ -1,0 +1,414 @@
+// This Pine Script™ code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © Tomas Le — Thesis T3: S/D + Wyckoff Spring/UT + Price Action + volume + THỐNG KÊ trên chart
+// Siết hơn T2: cần PA (reject/engulf) và ưu tiên Spring/Upthrust tại zone
+// Chart học: BINANCE:BTCUSDT.P · 5m · vốn $10k · TP 2R
+
+//@version=5
+indicator("Thesis T3 — Wyckoff/PA + THỐNG KÊ", overlay=true,
+     max_labels_count=500, max_lines_count=100, max_boxes_count=200)
+
+//===== Inputs =====
+atrLen       = input.int(10, "ATR length", minval=1, group="SuperTrend")
+atrMult      = input.float(3.0, "ATR multiplier", minval=0.5, step=0.1, group="SuperTrend")
+
+pivotLen     = input.int(5, "Pivot zone (bars)", minval=2, maxval=20, group="Supply / Demand")
+depAtr       = input.float(1.0, "Xác nhận zone: giá chạy xa ≥ ATR ×", minval=0.3, step=0.1, group="Supply / Demand")
+maxZones     = input.int(8, "Số zone tối đa mỗi phía", minval=2, maxval=20, group="Supply / Demand")
+maxTouches   = input.int(1, "Zone hết hạn sau N lần chạm", minval=1, maxval=5, group="Supply / Demand")
+showZones    = input.bool(true, "Vẽ ô Supply / Demand", group="Supply / Demand")
+
+volLen       = input.int(20, "SMA Volume", minval=5, group="Volume (bắt buộc)")
+volMult      = input.float(1.2, "Volume ≥ SMA ×", minval=0.5, step=0.1, group="Volume (bắt buộc)")
+cooldownBars = input.int(20, "Cooldown giữa 2 lệnh (nến)", minval=0, group="Lọc lệnh")
+
+wickMult     = input.float(1.2, "Reject: bóng ≥ body ×", minval=0.5, step=0.1, group="Wyckoff / PA (T3)")
+requirePA    = input.bool(true, "Bắt buộc PA (reject hoặc engulfing)", group="Wyckoff / PA (T3)")
+entryMode    = input.string("Zone+PA hoặc Spring/UT", "Chế độ vào lệnh", options=["Zone+PA hoặc Spring/UT", "Chỉ Spring/UT", "Zone+PA (như T2+PA)"], group="Wyckoff / PA (T3)")
+showSpringMk = input.bool(true, "Đánh dấu Spring / UT trên chart", group="Wyckoff / PA (T3)")
+
+slAtrMult    = input.float(1.5, "SL đệm ATR × (ngoài zone)", minval=0.1, step=0.1, group="Risk")
+tpR          = input.float(2.0, "TP (R)", minval=0.5, step=0.5, group="Risk")
+riskPct      = input.float(1.0, "Risk % vốn / lệnh", minval=0.1, step=0.1, group="Risk")
+initCapIn    = input.float(10000.0, "Vốn ban đầu ($)", minval=100, group="Risk")
+feePctSide   = input.float(0.055, "Phí % / phía", minval=0.0, step=0.001, group="Risk")
+
+showEntryLab = input.bool(false, "Hộp Entry (dễ rối — mặc định tắt)", group="Hiển thị")
+showExitLab  = input.bool(true, "Hộp kết quả WIN/LOSS", group="Hiển thị")
+showTable    = input.bool(true, "Bảng THỐNG KÊ trên chart", group="Hiển thị")
+showArrows   = input.bool(true, "Mũi tên L/S", group="Hiển thị")
+
+//===== SuperTrend = bias =====
+atr = ta.atr(atrLen)
+src = hl2
+var float up = na
+var float dn = na
+var int stDir = 1
+up := src - atrMult * atr
+dn := src + atrMult * atr
+up := nz(close[1] > nz(up[1], up) ? math.max(up, up[1]) : up, up)
+dn := nz(close[1] < nz(dn[1], dn) ? math.min(dn, dn[1]) : dn, dn)
+stDir := close > nz(dn[1], dn) ? 1 : close < nz(up[1], up) ? -1 : stDir
+plot(stDir == 1 ? up : dn, "SuperTrend", color=stDir == 1 ? color.aqua : color.orange, linewidth=2)
+
+volOk = volume >= ta.sma(volume, volLen) * volMult
+
+//===== Supply / Demand zones (pivot + chạy xa) =====
+ph = ta.pivothigh(high, pivotLen, pivotLen)
+pl = ta.pivotlow(low, pivotLen, pivotLen)
+
+var float[] dTop = array.new_float()
+var float[] dBot = array.new_float()
+var int[]   dTou = array.new_int()
+var box[]   dBox = array.new_box()
+var label[] dLab = array.new_label()
+
+var float[] sTop = array.new_float()
+var float[] sBot = array.new_float()
+var int[]   sTou = array.new_int()
+var box[]   sBox = array.new_box()
+var label[] sLab = array.new_label()
+
+f_trim(float[] tops, float[] bots, int[] tous, box[] boxes, label[] labs) =>
+    while array.size(tops) > maxZones
+        box.delete(array.shift(boxes))
+        label.delete(array.shift(labs))
+        array.shift(tops)
+        array.shift(bots)
+        array.shift(tous)
+
+f_kill(int idx, float[] tops, float[] bots, int[] tous, box[] boxes, label[] labs) =>
+    box.delete(array.get(boxes, idx))
+    label.delete(array.get(labs, idx))
+    array.remove(tops, idx)
+    array.remove(bots, idx)
+    array.remove(tous, idx)
+    array.remove(boxes, idx)
+    array.remove(labs, idx)
+
+// Tạo Demand khi pivot low + giá đã chạy lên đủ xa
+if not na(pl)
+    float zBot = low[pivotLen]
+    float zTop = math.max(open[pivotLen], close[pivotLen])
+    if zTop <= zBot
+        zTop := zBot + atr * 0.15
+    if close >= zTop + atr * depAtr
+        b = showZones ? box.new(bar_index - pivotLen, zTop, bar_index + 30, zBot, xloc=xloc.bar_index, border_color=color.new(#00bcd4, 30), bgcolor=color.new(#00bcd4, 82), extend=extend.right) : box.new(bar_index - pivotLen, zTop, bar_index - pivotLen, zBot, bgcolor=color.new(color.white, 100), border_color=color.new(color.white, 100))
+        lb = showZones ? label.new(bar_index + 2, zTop, "Demand", style=label.style_none, textcolor=color.new(#00bcd4, 0), size=size.small) : label.new(bar_index, zTop, "", style=label.style_none, textcolor=color.new(color.white, 100))
+        array.push(dBox, b)
+        array.push(dLab, lb)
+        array.push(dTop, zTop)
+        array.push(dBot, zBot)
+        array.push(dTou, 0)
+        f_trim(dTop, dBot, dTou, dBox, dLab)
+
+// Tạo Supply khi pivot high + giá đã chạy xuống đủ xa
+if not na(ph)
+    float zTop = high[pivotLen]
+    float zBot = math.min(open[pivotLen], close[pivotLen])
+    if zTop <= zBot
+        zBot := zTop - atr * 0.15
+    if close <= zBot - atr * depAtr
+        b = showZones ? box.new(bar_index - pivotLen, zTop, bar_index + 30, zBot, xloc=xloc.bar_index, border_color=color.new(#ff9800, 30), bgcolor=color.new(#ff9800, 82), extend=extend.right) : box.new(bar_index - pivotLen, zTop, bar_index - pivotLen, zBot, bgcolor=color.new(color.white, 100), border_color=color.new(color.white, 100))
+        lb = showZones ? label.new(bar_index + 2, zBot, "Supply", style=label.style_none, textcolor=color.new(#ff9800, 0), size=size.small) : label.new(bar_index, zBot, "", style=label.style_none, textcolor=color.new(color.white, 100))
+        array.push(sBox, b)
+        array.push(sLab, lb)
+        array.push(sTop, zTop)
+        array.push(sBot, zBot)
+        array.push(sTou, 0)
+        f_trim(sTop, sBot, sTou, sBox, sLab)
+
+// Chạm / thủng zone (chạm chỉ đánh dấu; hết hạn khi vào lệnh hoặc thủng)
+var float touchDemTop = na
+var float touchDemBot = na
+var float touchSupTop = na
+var float touchSupBot = na
+var int   touchDemIdx = na
+var int   touchSupIdx = na
+nearDemand = false
+nearSupply = false
+
+if array.size(dTop) > 0
+    for i = array.size(dTop) - 1 to 0
+        float zt = array.get(dTop, i)
+        float zb = array.get(dBot, i)
+        if close < zb
+            f_kill(i, dTop, dBot, dTou, dBox, dLab)
+        else if low <= zt and high >= zb
+            nearDemand := true
+            touchDemTop := zt
+            touchDemBot := zb
+            touchDemIdx := i
+
+if array.size(sTop) > 0
+    for i = array.size(sTop) - 1 to 0
+        float zt = array.get(sTop, i)
+        float zb = array.get(sBot, i)
+        if close > zt
+            f_kill(i, sTop, sBot, sTou, sBox, sLab)
+        else if low <= zt and high >= zb
+            nearSupply := true
+            touchSupTop := zt
+            touchSupBot := zb
+            touchSupIdx := i
+
+var int lastEntryBar = na
+coolOk = na(lastEntryBar) or (bar_index - lastEntryBar >= cooldownBars)
+
+//===== T3: Wyckoff Spring / Upthrust + Price Action =====
+// Spring: đâm dưới đáy Demand rồi đóng lại trong/trên zone
+spring = nearDemand and not na(touchDemBot) and low < touchDemBot and close >= touchDemBot and close > open
+// Upthrust: đâm trên đỉnh Supply rồi đóng lại trong/dưới zone
+upthrust = nearSupply and not na(touchSupTop) and high > touchSupTop and close <= touchSupTop and close < open
+
+barRange = high - low
+bodyLen  = math.abs(close - open)
+lowerWick = math.min(open, close) - low
+upperWick = high - math.max(open, close)
+midBar = (high + low) / 2.0
+
+rejectLong  = barRange > 0 and bodyLen >= 0 and lowerWick >= bodyLen * wickMult and close >= midBar
+rejectShort = barRange > 0 and bodyLen >= 0 and upperWick >= bodyLen * wickMult and close <= midBar
+bullEng = close > open and close[1] < open[1] and close >= open[1] and open <= close[1]
+bearEng = close < open and close[1] > open[1] and close <= open[1] and open >= close[1]
+paLong  = rejectLong or bullEng
+paShort = rejectShort or bearEng
+
+paLongOk  = not requirePA or paLong
+paShortOk = not requirePA or paShort
+
+zonePaLong  = nearDemand and paLongOk
+zonePaShort = nearSupply and paShortOk
+springOk    = spring and paLongOk
+utOk        = upthrust and paShortOk
+
+longSetup = entryMode == "Chỉ Spring/UT" ? springOk : entryMode == "Zone+PA (như T2+PA)" ? zonePaLong : (zonePaLong or springOk)
+shortSetup = entryMode == "Chỉ Spring/UT" ? utOk : entryMode == "Zone+PA (như T2+PA)" ? zonePaShort : (zonePaShort or utOk)
+
+// T3: bias + volume + cooldown + setup Wyckoff/PA tại S/D
+longSig  = stDir == 1 and volOk and coolOk and longSetup
+shortSig = stDir == -1 and volOk and coolOk and shortSetup
+
+plotshape(showSpringMk and spring, title="Spring", style=shape.diamond, location=location.belowbar, color=color.new(#00e5ff, 0), size=size.tiny, text="Sp")
+plotshape(showSpringMk and upthrust, title="Upthrust", style=shape.diamond, location=location.abovebar, color=color.new(#ffab40, 0), size=size.tiny, text="UT")
+
+//===== Mô phỏng lệnh + THỐNG KÊ =====
+var float equity   = na
+var float peakEq   = na
+var float maxDDpct = 0.0
+var int   posDir   = 0
+var float entryPx  = na
+var float slPx     = na
+var float tpPx     = na
+var float qty      = na
+var int   entryT   = na
+var int   nTrades  = 0
+var int   nWin     = 0
+var int   nLoss    = 0
+var float winSum   = 0.0
+var float lossSum  = 0.0
+var float feeSum   = 0.0
+var float grossSum = 0.0
+var float netSum   = 0.0
+var int   tFirst   = na
+var int   tLast    = na
+
+if barstate.isfirst
+    equity := initCapIn
+    peakEq := initCapIn
+
+feeOf(float px, float q) =>
+    px * q * feePctSide / 100.0 * 2.0
+
+if posDir != 0
+    bool hitSl = posDir == 1 ? low <= slPx : high >= slPx
+    bool hitTp = posDir == 1 ? high >= tpPx : low <= tpPx
+    if hitSl or hitTp
+        float exitPx = hitSl ? slPx : tpPx
+        string why = hitSl ? "SL" : "TP " + str.tostring(tpR) + "R"
+        float g = posDir == 1 ? (exitPx - entryPx) * qty : (entryPx - exitPx) * qty
+        float f = feeOf(entryPx, qty)
+        float n = g - f
+        grossSum += g
+        feeSum += f
+        netSum += n
+        equity += n
+        peakEq := math.max(peakEq, equity)
+        maxDDpct := math.max(maxDDpct, peakEq > 0 ? (peakEq - equity) / peakEq * 100.0 : 0.0)
+        nTrades += 1
+        if n > 0
+            nWin += 1
+            winSum += n
+        else
+            nLoss += 1
+            lossSum += math.abs(n)
+        if na(tFirst)
+            tFirst := entryT
+        tLast := time
+        if showExitLab
+            label.new(bar_index, posDir == 1 ? high : low,
+                 (posDir == 1 ? "LONG" : "SHORT") +
+                 "\nEntry: " + str.tostring(entryPx, format.mintick) +
+                 "\nSL: " + str.tostring(slPx, format.mintick) +
+                 "\nTP: " + str.tostring(tpPx, format.mintick) +
+                 "\nQty: " + str.tostring(qty, "#.###") +
+                 "\nGross: " + str.tostring(g, "#.##") +
+                 "\nNet P/L: " + str.tostring(n, "#.####") +
+                 "\nKết quả: " + (n > 0 ? "WIN" : "LOSS") + " (" + why + ")",
+                 style=posDir == 1 ? label.style_label_down : label.style_label_up,
+                 color=n > 0 ? color.new(#2e7d32, 5) : color.new(#c62828, 5),
+                 textcolor=color.white, size=size.normal)
+        posDir := 0
+
+atrPad = atr * slAtrMult
+
+// Đảo chiều
+if longSig and posDir == -1
+    float g = (entryPx - close) * qty
+    float f = feeOf(entryPx, qty)
+    float n = g - f
+    grossSum += g
+    feeSum += f
+    netSum += n
+    equity += n
+    peakEq := math.max(peakEq, equity)
+    maxDDpct := math.max(maxDDpct, peakEq > 0 ? (peakEq - equity) / peakEq * 100.0 : 0.0)
+    nTrades += 1
+    if n > 0
+        nWin += 1
+        winSum += n
+    else
+        nLoss += 1
+        lossSum += math.abs(n)
+    if na(tFirst)
+        tFirst := entryT
+    tLast := time
+    if showExitLab
+        label.new(bar_index, high, "Close Short before Long\nNet: " + str.tostring(n, "#.##") + "\n" + (n > 0 ? "WIN" : "LOSS"), style=label.style_label_up, color=n > 0 ? color.new(#2e7d32, 5) : color.new(#c62828, 5), textcolor=color.white, size=size.small)
+    posDir := 0
+
+if shortSig and posDir == 1
+    float g = (close - entryPx) * qty
+    float f = feeOf(entryPx, qty)
+    float n = g - f
+    grossSum += g
+    feeSum += f
+    netSum += n
+    equity += n
+    peakEq := math.max(peakEq, equity)
+    maxDDpct := math.max(maxDDpct, peakEq > 0 ? (peakEq - equity) / peakEq * 100.0 : 0.0)
+    nTrades += 1
+    if n > 0
+        nWin += 1
+        winSum += n
+    else
+        nLoss += 1
+        lossSum += math.abs(n)
+    if na(tFirst)
+        tFirst := entryT
+    tLast := time
+    if showExitLab
+        label.new(bar_index, low, "Close Long before Short\nNet: " + str.tostring(n, "#.##") + "\n" + (n > 0 ? "WIN" : "LOSS"), style=label.style_label_down, color=n > 0 ? color.new(#2e7d32, 5) : color.new(#c62828, 5), textcolor=color.white, size=size.small)
+    posDir := 0
+
+// Vào lệnh — SL ưu tiên ngoài zone
+enteredLong = false
+enteredShort = false
+
+if longSig and posDir == 0
+    // Spring: SL dưới low nến Spring; không thì dưới đáy Demand
+    float slCand = spring ? low - atrPad * 0.1 : not na(touchDemBot) ? touchDemBot - atrPad * 0.25 : close - atrPad
+    float risk = close - slCand
+    if risk <= 0
+        risk := atrPad
+        slCand := close - risk
+    float q = risk > 0 ? (equity * riskPct / 100.0) / risk : 0.0
+    if q > 0
+        posDir := 1
+        entryPx := close
+        slPx := slCand
+        tpPx := close + risk * tpR
+        qty := q
+        entryT := time
+        lastEntryBar := bar_index
+        enteredLong := true
+        if not na(touchDemIdx) and array.size(dTop) > touchDemIdx
+            array.set(dTou, touchDemIdx, array.get(dTou, touchDemIdx) + 1)
+            if array.get(dTou, touchDemIdx) >= maxTouches
+                f_kill(touchDemIdx, dTop, dBot, dTou, dBox, dLab)
+        if showEntryLab
+            string tagL = spring ? "LONG @ Spring" : "LONG @ Demand+PA"
+            label.new(bar_index, low, tagL + "\nEntry: " + str.tostring(entryPx, format.mintick) + "\nSL: " + str.tostring(slPx, format.mintick) + "\nTP: " + str.tostring(tpPx, format.mintick) + " (" + str.tostring(tpR) + "R)\nQty: " + str.tostring(qty, "#.###"), style=label.style_label_up, color=color.new(#1565c0, 10), textcolor=color.white, size=size.normal)
+
+if shortSig and posDir == 0
+    float slCand = upthrust ? high + atrPad * 0.1 : not na(touchSupTop) ? touchSupTop + atrPad * 0.25 : close + atrPad
+    float risk = slCand - close
+    if risk <= 0
+        risk := atrPad
+        slCand := close + risk
+    float q = risk > 0 ? (equity * riskPct / 100.0) / risk : 0.0
+    if q > 0
+        posDir := -1
+        entryPx := close
+        slPx := slCand
+        tpPx := close - risk * tpR
+        qty := q
+        entryT := time
+        lastEntryBar := bar_index
+        enteredShort := true
+        if not na(touchSupIdx) and array.size(sTop) > touchSupIdx
+            array.set(sTou, touchSupIdx, array.get(sTou, touchSupIdx) + 1)
+            if array.get(sTou, touchSupIdx) >= maxTouches
+                f_kill(touchSupIdx, sTop, sBot, sTou, sBox, sLab)
+        if showEntryLab
+            string tagS = upthrust ? "SHORT @ Upthrust" : "SHORT @ Supply+PA"
+            label.new(bar_index, high, tagS + "\nEntry: " + str.tostring(entryPx, format.mintick) + "\nSL: " + str.tostring(slPx, format.mintick) + "\nTP: " + str.tostring(tpPx, format.mintick) + " (" + str.tostring(tpR) + "R)\nQty: " + str.tostring(qty, "#.###"), style=label.style_label_down, color=color.new(#c62828, 10), textcolor=color.white, size=size.normal)
+
+plotshape(showArrows and enteredLong, "L", shape.triangleup, location.belowbar, color.aqua, size=size.tiny, text="L")
+plotshape(showArrows and enteredShort, "S", shape.triangledown, location.abovebar, color.fuchsia, size=size.tiny, text="S")
+
+//===== THỐNG KÊ =====
+var table tb = table.new(position.top_right, 2, 16, bgcolor=#12081f, border_width=2, border_color=#ab47bc, frame_width=2, frame_color=#ab47bc)
+
+f_d(int t) =>
+    na(t) ? "—" : str.tostring(dayofmonth(t), "00") + "/" + str.tostring(month(t), "00") + "/" + str.tostring(year(t))
+
+if showTable and barstate.islast
+    float wr = nTrades > 0 ? nWin * 100.0 / nTrades : 0.0
+    float pf = lossSum > 0 ? winSum / lossSum : (winSum > 0 ? 999.0 : 0.0)
+    float avgNet = nTrades > 0 ? netSum / nTrades : 0.0
+    float avgFee = nTrades > 0 ? feeSum / nTrades : 0.0
+    color ok = #69f0ae
+    color bad = #ff5252
+
+    table.cell(tb, 0, 0, "THỐNG KÊ", text_color=color.white, text_size=size.large, bgcolor=#6a1b9a)
+    table.cell(tb, 1, 0, "T3 Wyckoff/PA", text_color=#e1bee7, text_size=size.small, bgcolor=#6a1b9a)
+    table.cell(tb, 0, 1, "Từ ngày", text_color=#bdbdbd, text_size=size.normal, bgcolor=#12081f)
+    table.cell(tb, 1, 1, f_d(tFirst), text_color=color.white, text_size=size.normal, bgcolor=#12081f)
+    table.cell(tb, 0, 2, "Đến ngày", text_color=#bdbdbd, text_size=size.normal, bgcolor=#12081f)
+    table.cell(tb, 1, 2, f_d(tLast), text_color=color.white, text_size=size.normal, bgcolor=#12081f)
+    table.cell(tb, 0, 3, "Vốn ban đầu", text_color=#bdbdbd, text_size=size.normal, bgcolor=#12081f)
+    table.cell(tb, 1, 3, str.tostring(initCapIn, "#.##") + " $", text_color=color.white, text_size=size.normal, bgcolor=#12081f)
+    table.cell(tb, 0, 4, "Vốn hiện tại", text_color=#bdbdbd, text_size=size.normal, bgcolor=#6d4c00)
+    table.cell(tb, 1, 4, str.tostring(equity, "#.##") + " $", text_color=#ffee58, text_size=size.normal, bgcolor=#6d4c00)
+    table.cell(tb, 0, 5, "Tổng lệnh", text_color=#bdbdbd, text_size=size.normal, bgcolor=#12081f)
+    table.cell(tb, 1, 5, str.tostring(nTrades), text_color=color.white, text_size=size.normal, bgcolor=#12081f)
+    table.cell(tb, 0, 6, "Thắng / Thua", text_color=#bdbdbd, text_size=size.normal, bgcolor=#12081f)
+    table.cell(tb, 1, 6, str.tostring(nWin) + " / " + str.tostring(nLoss), text_color=color.white, text_size=size.normal, bgcolor=#12081f)
+    table.cell(tb, 0, 7, "Win Rate", text_color=#bdbdbd, text_size=size.normal, bgcolor=#12081f)
+    table.cell(tb, 1, 7, str.tostring(wr, "#.##") + "%", text_color=wr >= 50 ? ok : bad, text_size=size.normal, bgcolor=#12081f)
+    table.cell(tb, 0, 8, "Gross LN", text_color=#bdbdbd, text_size=size.normal, bgcolor=#12081f)
+    table.cell(tb, 1, 8, (grossSum >= 0 ? "+" : "") + str.tostring(grossSum, "#.##") + " $", text_color=grossSum >= 0 ? ok : bad, text_size=size.normal, bgcolor=#12081f)
+    table.cell(tb, 0, 9, "Net LN", text_color=#bdbdbd, text_size=size.normal, bgcolor=#12081f)
+    table.cell(tb, 1, 9, (netSum >= 0 ? "+" : "") + str.tostring(netSum, "#.##") + " $", text_color=netSum >= 0 ? ok : bad, text_size=size.normal, bgcolor=#12081f)
+    table.cell(tb, 0, 10, "Profit Factor", text_color=#bdbdbd, text_size=size.normal, bgcolor=#12081f)
+    table.cell(tb, 1, 10, str.tostring(pf, "#.##"), text_color=pf >= 1 ? ok : bad, text_size=size.normal, bgcolor=#12081f)
+    table.cell(tb, 0, 11, "Tổng phí", text_color=#bdbdbd, text_size=size.normal, bgcolor=#12081f)
+    table.cell(tb, 1, 11, "-" + str.tostring(feeSum, "#.##") + " $", text_color=color.white, text_size=size.normal, bgcolor=#12081f)
+    table.cell(tb, 0, 12, "LN TB/lệnh", text_color=#bdbdbd, text_size=size.normal, bgcolor=#12081f)
+    table.cell(tb, 1, 12, (avgNet >= 0 ? "+" : "") + str.tostring(avgNet, "#.####") + " $", text_color=avgNet >= 0 ? ok : bad, text_size=size.normal, bgcolor=#12081f)
+    table.cell(tb, 0, 13, "Max DD %", text_color=#bdbdbd, text_size=size.normal, bgcolor=#4a0000)
+    table.cell(tb, 1, 13, str.tostring(maxDDpct, "#.##") + "%", text_color=bad, text_size=size.normal, bgcolor=#4a0000)
+    table.cell(tb, 0, 14, "Phí TB/lệnh", text_color=#bdbdbd, text_size=size.normal, bgcolor=#12081f)
+    table.cell(tb, 1, 14, str.tostring(avgFee, "#.####") + " $", text_color=color.white, text_size=size.normal, bgcolor=#12081f)
+    table.cell(tb, 0, 15, "Lọc T3", text_color=#bdbdbd, text_size=size.normal, bgcolor=#12081f)
+    table.cell(tb, 1, 15, "S/D + Spring/UT + PA", text_color=#80deea, text_size=size.small, bgcolor=#12081f)
