@@ -1,0 +1,193 @@
+// This Pine Script™ code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © Tomas Le — Thesis T1b: hộp lệnh + bảng THỐNG KÊ (giống ảnh mẫu)
+// Chart đúng: BINANCE:BTCUSDT.P · khung 5 phút (không dùng Weekly Bitstamp để học thesis)
+// Dán vào Pine Editor → Add to chart → bảng nằm GÓC PHẢI TRÊN
+
+//@version=5
+strategy("Thesis T1b — THỐNG KÊ + hộp lệnh", overlay=true,
+     initial_capital=10000, currency=currency.USD,
+     commission_type=strategy.commission.percent, commission_value=0.055,
+     process_orders_on_close=true, pyramiding=0,
+     max_labels_count=500, max_lines_count=50, max_boxes_count=50)
+
+//===== Inputs =====
+atrLen       = input.int(10, "ATR length", minval=1, group="SuperTrend")
+atrMult      = input.float(3.0, "ATR multiplier", minval=0.5, step=0.1, group="SuperTrend")
+volLen       = input.int(20, "SMA Volume", minval=5, group="Volume (bắt buộc)")
+volMult      = input.float(1.2, "Volume ≥ SMA ×", minval=0.5, step=0.1, group="Volume (bắt buộc)")
+cooldownBars = input.int(12, "Cooldown giữa 2 lệnh (nến)", minval=0, group="Lọc lệnh")
+slAtrMult    = input.float(1.5, "SL = ATR ×", minval=0.5, step=0.1, group="Risk")
+tpR          = input.float(2.0, "TP (R)", minval=0.5, step=0.5, group="Risk")
+riskPct      = input.float(1.0, "Risk % vốn / lệnh", minval=0.1, step=0.1, group="Risk")
+feePctSide   = input.float(0.055, "Phí ước tính % / phía (label)", minval=0.0, step=0.001, group="Risk")
+showBoxes    = input.bool(true, "Hộp Entry/SL/TP/PnL", group="Hiển thị")
+showTable    = input.bool(true, "Bảng THỐNG KÊ", group="Hiển thị")
+tablePos     = input.string("Top right", "Vị trí bảng THỐNG KÊ", options=["Top right", "Middle right", "Bottom right", "Top left"], group="Hiển thị")
+
+f_pos(string p) =>
+    p == "Middle right" ? position.middle_right : p == "Bottom right" ? position.bottom_right : p == "Top left" ? position.top_left : position.top_right
+
+//===== SuperTrend =====
+atr = ta.atr(atrLen)
+src = hl2
+var float up = na
+var float dn = na
+var int stDir = 1
+
+up := src - atrMult * atr
+dn := src + atrMult * atr
+up := nz(close[1] > nz(up[1], up) ? math.max(up, up[1]) : up, up)
+dn := nz(close[1] < nz(dn[1], dn) ? math.min(dn, dn[1]) : dn, dn)
+stDir := close > nz(dn[1], dn) ? 1 : close < nz(up[1], up) ? -1 : stDir
+
+stLine = stDir == 1 ? up : dn
+plot(stLine, "SuperTrend", color=stDir == 1 ? color.aqua : color.orange, linewidth=2)
+
+stFlipUp   = stDir == 1 and stDir[1] == -1
+stFlipDown = stDir == -1 and stDir[1] == 1
+
+volOk = volume >= ta.sma(volume, volLen) * volMult
+var int lastEntryBar = na
+coolOk = na(lastEntryBar) or (bar_index - lastEntryBar >= cooldownBars)
+
+longCond  = stFlipUp and volOk and coolOk
+shortCond = stFlipDown and volOk and coolOk
+
+atrSl    = atr * slAtrMult
+riskCash = strategy.equity * riskPct / 100.0
+rawQty   = atrSl > 0 ? riskCash / atrSl : 0.0
+
+f_fee_est(float px, float q) =>
+    px * q * feePctSide / 100.0 * 2.0
+
+if longCond and rawQty > 0
+    if strategy.position_size < 0
+        strategy.close("Short", comment="Close Short before Long")
+    float slL = close - atrSl
+    float tpL = close + atrSl * tpR
+    strategy.entry("Long", strategy.long, qty=rawQty)
+    strategy.exit("XL", from_entry="Long", stop=slL, limit=tpL)
+    lastEntryBar := bar_index
+    if showBoxes
+        label.new(bar_index, low,
+             "LONG\nEntry: " + str.tostring(close, format.mintick) +
+             "\nSL: " + str.tostring(slL, format.mintick) +
+             "\nTP: " + str.tostring(tpL, format.mintick) + " (" + str.tostring(tpR) + "R)" +
+             "\nQty: " + str.tostring(rawQty, "#.###") +
+             "\nPhi est: " + str.tostring(f_fee_est(close, rawQty), "#.##"),
+             style=label.style_label_up, color=color.new(#1e88e5, 10), textcolor=color.white, size=size.normal)
+
+if shortCond and rawQty > 0
+    if strategy.position_size > 0
+        strategy.close("Long", comment="Close Long before Short")
+    float slS = close + atrSl
+    float tpS = close - atrSl * tpR
+    strategy.entry("Short", strategy.short, qty=rawQty)
+    strategy.exit("XS", from_entry="Short", stop=slS, limit=tpS)
+    lastEntryBar := bar_index
+    if showBoxes
+        label.new(bar_index, high,
+             "SHORT\nEntry: " + str.tostring(close, format.mintick) +
+             "\nSL: " + str.tostring(slS, format.mintick) +
+             "\nTP: " + str.tostring(tpS, format.mintick) + " (" + str.tostring(tpR) + "R)" +
+             "\nQty: " + str.tostring(rawQty, "#.###") +
+             "\nPhi est: " + str.tostring(f_fee_est(close, rawQty), "#.##"),
+             style=label.style_label_down, color=color.new(#e53935, 10), textcolor=color.white, size=size.normal)
+
+plotshape(longCond and rawQty > 0, title="Long", style=shape.triangleup, location=location.belowbar, color=color.aqua, size=size.small, text="L")
+plotshape(shortCond and rawQty > 0, title="Short", style=shape.triangledown, location=location.abovebar, color=color.fuchsia, size=size.small, text="S")
+
+//===== Cộng dồn thống kê mỗi khi đóng lệnh (ổn định hơn vòng for trên last bar) =====
+var int   nTrades   = 0
+var int   nWin      = 0
+var int   nLoss     = 0
+var float winSum    = 0.0
+var float lossSum   = 0.0
+var float feeSum    = 0.0
+var float grossSum  = 0.0
+var int   tFirst    = na
+var int   tLast     = na
+var float peakEq    = 10000.0
+var float maxDDpct  = 0.0
+
+newClosed = strategy.closedtrades > strategy.closedtrades[1]
+if newClosed
+    idx = strategy.closedtrades - 1
+    pft = strategy.closedtrades.profit(idx)
+    cms = strategy.closedtrades.commission(idx)
+    cmsAbs = math.abs(nz(cms, 0.0))
+    nTrades += 1
+    feeSum += cmsAbs
+    grossSum += pft + cmsAbs
+    if pft > 0
+        nWin += 1
+        winSum += pft
+    else
+        nLoss += 1
+        lossSum += math.abs(pft)
+    if na(tFirst)
+        tFirst := strategy.closedtrades.entry_time(idx)
+    tLast := strategy.closedtrades.exit_time(idx)
+    if showBoxes
+        isWin = pft > 0
+        side = strategy.closedtrades.size(idx) > 0 ? "LONG" : "SHORT"
+        label.new(bar_index, isWin ? high : low,
+             side + " đóng\nProfit: " + str.tostring(pft, "#.##") +
+             "\nKết quả: " + (isWin ? "WIN" : "LOSS"),
+             style=label.style_label_down,
+             color=isWin ? color.new(#43a047, 5) : color.new(#e53935, 5),
+             textcolor=color.white, size=size.normal)
+
+eqNow = strategy.initial_capital + strategy.netprofit
+peakEq := math.max(peakEq, eqNow)
+ddNow = peakEq > 0 ? (peakEq - eqNow) / peakEq * 100.0 : 0.0
+maxDDpct := math.max(maxDDpct, ddNow)
+
+//===== Bảng THỐNG KÊ — luôn vẽ lại trên bar cuối, màu đậm như ảnh mẫu =====
+var table stats = table.new(f_pos(tablePos), 2, 15,
+     bgcolor=#1a1030,
+     border_width=2,
+     border_color=#9c27b0,
+     frame_color=#9c27b0,
+     frame_width=2)
+
+f_date(int t) =>
+    na(t) ? "—" : str.tostring(dayofmonth(t), "00") + "/" + str.tostring(month(t), "00") + "/" + str.tostring(year(t))
+
+f_row(int r, string left, string right, color rightBg, color rightTxt) =>
+    table.cell(stats, 0, r, left, text_color=#cfcfcf, text_size=size.normal, bgcolor=#1a1030, text_halign=text.align_left)
+    table.cell(stats, 1, r, right, text_color=rightTxt, text_size=size.normal, bgcolor=rightBg, text_halign=text.align_right)
+
+if showTable and barstate.islast
+    net = strategy.netprofit
+    wr = nTrades > 0 ? nWin * 100.0 / nTrades : 0.0
+    pf = lossSum > 0 ? winSum / lossSum : (winSum > 0 ? 999.0 : 0.0)
+    avgNet = nTrades > 0 ? net / nTrades : 0.0
+    avgFee = nTrades > 0 ? feeSum / nTrades : 0.0
+    curCap = strategy.initial_capital + net
+    greenTxt = #00e676
+    redTxt = #ff5252
+    yellowBg = #5d4e00
+    hdrBg = #4a148c
+    rowBg = #1a1030
+
+    table.cell(stats, 0, 0, "THỐNG KÊ", text_color=color.white, text_size=size.large, bgcolor=hdrBg, text_halign=text.align_left)
+    table.cell(stats, 1, 0, "Thesis T1b", text_color=#e1bee7, text_size=size.normal, bgcolor=hdrBg, text_halign=text.align_right)
+
+    f_row(1, "Từ ngày", f_date(tFirst), rowBg, color.white)
+    f_row(2, "Đến ngày", f_date(tLast), rowBg, color.white)
+    f_row(3, "Vốn ban đầu", str.tostring(strategy.initial_capital, "#.##") + " $", rowBg, color.white)
+    f_row(4, "Vốn hiện tại", str.tostring(curCap, "#.##") + " $", yellowBg, #ffeb3b)
+    f_row(5, "Tổng lệnh", str.tostring(nTrades), rowBg, color.white)
+    f_row(6, "Thắng / Thua", str.tostring(nWin) + " / " + str.tostring(nLoss), rowBg, color.white)
+    f_row(7, "Win Rate", str.tostring(wr, "#.##") + "%", rowBg, wr >= 50 ? greenTxt : redTxt)
+    f_row(8, "Gross LN", (grossSum >= 0 ? "+" : "") + str.tostring(grossSum, "#.##") + " $", rowBg, grossSum >= 0 ? greenTxt : redTxt)
+    f_row(9, "Net LN", (net >= 0 ? "+" : "") + str.tostring(net, "#.##") + " $", rowBg, net >= 0 ? greenTxt : redTxt)
+    f_row(10, "Profit Factor", str.tostring(pf, "#.##"), rowBg, pf >= 1 ? greenTxt : redTxt)
+    f_row(11, "Tổng phí", "-" + str.tostring(feeSum, "#.##") + " $", rowBg, color.white)
+    f_row(12, "LN TB/lệnh", (avgNet >= 0 ? "+" : "") + str.tostring(avgNet, "#.####") + " $", rowBg, avgNet >= 0 ? greenTxt : redTxt)
+    f_row(13, "Max DD %", str.tostring(maxDDpct, "#.##") + "%", #4a0000, redTxt)
+    f_row(14, "Phí TB/lệnh", str.tostring(avgFee, "#.####") + " $", rowBg, color.white)
+else if not showTable and barstate.islast
+    // Ẩn bảng khi tắt input
+    table.clear(stats, 0, 0, 1, 14)

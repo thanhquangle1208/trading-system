@@ -1,0 +1,619 @@
+// This Pine Script™ code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © Tomas Le
+//
+// *** DEPRECATED (2026-10-23) *** Không dùng bản này.
+// Tomas: Trendline không hiệu quả → script hiện tại = pine/T3e.pine (không TL).
+// File này chỉ giữ tham khảo lịch sử.
+//
+// =============================================================================
+// DESCRIPTION (chỉ ghi chú — không chạy, không đổi logic)
+// =============================================================================
+// Tên trên chart: Thesis T3E
+//
+// Script này dùng gì (các “chỉ báo” / khối logic):
+//   1) SuperTrend     — hướng bias (lên/xuống), đường bậc thang xanh/cam
+//   2) Supply/Demand  — ô vùng cung–cầu từ pivot zone
+//   3) Volume         — bắt buộc: volume ≥ SMA × hệ số
+//   4) Wyckoff/PA     — Spring (LONG) / Upthrust (SHORT) + reject wick hoặc engulf
+//   5) Trendline      — nối Higher Low (teal) / Lower High (cam); pivot TL ≠ Sp/Demand
+//   6) Risk           — SL (zone + sàn ATR/%), TP theo R, phí, bảng THỐNG KÊ
+//
+// Dùng như nào:
+//   - Chart học mặc định: BINANCE:BTCUSDT.P · 5m (test coin khác cũng được)
+//   - Dán script → Add to chart → nhìn mũi tên L/S, ô S/D, TL, bảng THỐNG KÊ
+//   - Settings: nhóm Trendline / Risk / Lọc WR — chỉnh dần theo paper
+//   - Sp / Demand / SuperTrend ≠ điểm nối trendline (pivot TL vẫn tính; chấm tròn mặc định TẮT)
+//
+// Rules vào lệnh (tóm tắt — AND, thiếu 1 = không vào):
+//   LONG:  gần Demand + Spring + volume OK + (ST lên nếu bật) + cooldown
+//          + (gần TL hỗ trợ nếu bật requireTL) + phí không vượt % risk
+//   SHORT: gần Supply + Upthrust + tương tự chiều ngược
+//   TP mặc định 1.5R (WR-first); vốn paper $10k; risk ~1%/lệnh
+//   Lọc “bắt buộc gần trendline” mặc định TẮT (chỉ vẽ TL)
+//
+// Lưu ý TL: mặc định vẽ tối đa 2 đường mỗi phía (Settings → Số trendline mỗi phía).
+// Đường thứ 2 = cặp pivot HL/LH khác (thường cũ hơn), dễ trông “không nối gì”.
+// =============================================================================
+
+//@version=5
+indicator("Thesis T3E", shorttitle="Thesis T3E", overlay=true,
+     max_labels_count=500, max_lines_count=100, max_boxes_count=200)
+
+//===== Inputs =====
+atrLen       = input.int(10, "ATR length", minval=1, group="SuperTrend")
+atrMult      = input.float(3.0, "ATR multiplier", minval=0.5, step=0.1, group="SuperTrend")
+
+pivotLen     = input.int(5, "Pivot zone (bars)", minval=2, maxval=20, group="Supply / Demand")
+depAtr       = input.float(1.0, "Xác nhận zone: giá chạy xa ≥ ATR ×", minval=0.3, step=0.1, group="Supply / Demand")
+maxZones     = input.int(8, "Số zone tối đa mỗi phía", minval=2, maxval=20, group="Supply / Demand")
+maxTouches   = input.int(1, "Zone hết hạn sau N lần chạm", minval=1, maxval=5, group="Supply / Demand")
+showZones    = input.bool(true, "Vẽ ô Supply / Demand", group="Supply / Demand")
+
+volLen       = input.int(20, "SMA Volume", minval=5, group="Volume (bắt buộc)")
+volMult      = input.float(1.2, "Volume ≥ SMA ×", minval=0.5, step=0.1, group="Volume (bắt buộc)")
+cooldownBars = input.int(24, "Cooldown giữa 2 lệnh (nến)", minval=0, group="Lọc lệnh")
+
+wickMult     = input.float(1.2, "Reject: bóng ≥ body ×", minval=0.5, step=0.1, group="Wyckoff / PA")
+requireReject = input.bool(false, "Bắt buộc reject wick (tắt = reject HOẶC engulf)", group="Wyckoff / PA")
+showSpringMk = input.bool(true, "Đánh dấu Spring / UT trên chart", group="Wyckoff / PA")
+useHtf       = input.bool(false, "Lọc khung lớn (HTF) — T3c bật làm 0 lệnh", group="Lọc WR")
+htfTf        = input.timeframe("15", "Khung HTF", group="Lọc WR")
+blockKnife   = input.bool(false, "Chống dao rơi — T3c bật dễ chặn Spring", group="Lọc WR")
+needStAlign  = input.bool(true, "SuperTrend 5m cùng hướng", group="Lọc WR")
+
+tlPivotL     = input.int(2, "Trendline pivot trái", minval=1, maxval=20, group="Trendline")
+tlPivotR     = input.int(2, "Trendline pivot phải", minval=1, maxval=20, group="Trendline")
+tlMaxLines   = input.int(2, "Số trendline mỗi phía", minval=1, maxval=5, group="Trendline")
+tlExtend     = input.int(80, "Kéo dài trendline (bars)", minval=5, maxval=300, group="Trendline")
+tlTolPct     = input.float(0.20, "Gần trendline trong % giá", minval=0.05, maxval=1.0, step=0.05, group="Trendline") / 100.0
+showTL       = input.bool(true, "Vẽ trendline trên chart", group="Trendline")
+showTLMarks  = input.bool(false, "Chấm điểm pivot dùng cho TL (mặc định tắt — chỉ bật khi debug)", group="Trendline")
+requireTL    = input.bool(false, "Bắt buộc gần trendline khi vào lệnh (mặc định TẮT)", group="Trendline")
+
+slAtrMult    = input.float(1.5, "SL đệm ATR × (ngoài zone)", minval=0.1, step=0.1, group="Risk")
+minSlAtr     = input.float(1.0, "Sàn SL tối thiểu = ATR ×", minval=0.2, step=0.1, group="Risk / chống phí ăn")
+minSlPct     = input.float(0.35, "Sàn SL tối thiểu = % giá", minval=0.05, step=0.05, group="Risk / chống phí ăn")
+maxFeeRisk   = input.float(25.0, "Bỏ lệnh nếu phí > % risk", minval=5.0, maxval=80.0, step=1.0, group="Risk / chống phí ăn")
+tpR          = input.float(1.5, "TP (R) — WR-first", minval=0.5, step=0.5, group="Risk")
+riskPct      = input.float(1.0, "Risk % vốn / lệnh", minval=0.1, step=0.1, group="Risk")
+initCapIn    = input.float(10000.0, "Vốn ban đầu ($)", minval=100, group="Risk")
+feePctSide   = input.float(0.04, "Phí % / phía", minval=0.0, step=0.001, group="Risk")
+
+showEntryLab = input.bool(false, "Hộp Entry (dễ rối — mặc định tắt)", group="Hiển thị")
+showExitLab  = input.bool(true, "Hộp kết quả WIN/LOSS", group="Hiển thị")
+showTable    = input.bool(true, "Bảng THỐNG KÊ trên chart", group="Hiển thị")
+showArrows   = input.bool(true, "Mũi tên L/S", group="Hiển thị")
+
+//===== SuperTrend = bias =====
+atr = ta.atr(atrLen)
+src = hl2
+var float up = na
+var float dn = na
+var int stDir = 1
+up := src - atrMult * atr
+dn := src + atrMult * atr
+up := nz(close[1] > nz(up[1], up) ? math.max(up, up[1]) : up, up)
+dn := nz(close[1] < nz(dn[1], dn) ? math.min(dn, dn[1]) : dn, dn)
+stDir := close > nz(dn[1], dn) ? 1 : close < nz(up[1], up) ? -1 : stDir
+plot(stDir == 1 ? up : dn, "SuperTrend", color=stDir == 1 ? color.aqua : color.orange, linewidth=2)
+
+volOk = volume >= ta.sma(volume, volLen) * volMult
+
+//===== Trendline (pivot riêng — không lẫn pivot zone S/D) =====
+phTl = ta.pivothigh(high, tlPivotL, tlPivotR)
+plTl = ta.pivotlow(low, tlPivotL, tlPivotR)
+
+var float[] phTlPrices = array.new_float()
+var int[]   phTlBars   = array.new_int()
+var float[] plTlPrices = array.new_float()
+var int[]   plTlBars   = array.new_int()
+var line[]  resTL      = array.new_line()
+var line[]  supTL      = array.new_line()
+
+f_tl_clear(line[] lines) =>
+    sz = array.size(lines)
+    if sz > 0
+        for i = 0 to sz - 1
+            line.delete(array.get(lines, i))
+        array.clear(lines)
+
+// Tìm cặp pivot hợp lệ: Support = đáy sau CAO HƠN đáy trước (HL); Resist = đỉnh sau THẤP HƠN (LH)
+// Không chỉ lấy 2 pivot mới nhất (trước đây dễ = 0 đường nếu cặp mới là LL/HH)
+f_tl_draw(line[] lines, int[] barsArr, float[] pricesArr, color col, bool isSupport) =>
+    n = array.size(pricesArr)
+    drawn = 0
+    if n >= 2
+        for i = 0 to n - 2
+            if drawn >= tlMaxLines
+                break
+            x2 = array.get(barsArr, i)
+            y2 = array.get(pricesArr, i)
+            found = false
+            for j = i + 1 to n - 1
+                x1 = array.get(barsArr, j)
+                y1 = array.get(pricesArr, j)
+                slopeOk = isSupport ? (y2 > y1) : (y2 < y1)
+                if slopeOk and x2 > x1
+                    slope = (y2 - y1) / (x2 - x1)
+                    xEnd = math.max(x2 + tlExtend, bar_index + 5)
+                    yEnd = y2 + slope * (xEnd - x2)
+                    ln = line.new(x1, y1, xEnd, yEnd, xloc=xloc.bar_index, extend=extend.none, color=col, width=3, style=line.style_solid)
+                    array.push(lines, ln)
+                    drawn += 1
+                    found := true
+                    break
+            if found
+                continue
+
+if not na(phTl)
+    array.unshift(phTlPrices, phTl)
+    array.unshift(phTlBars, bar_index - tlPivotR)
+    if array.size(phTlPrices) > 12
+        array.pop(phTlPrices)
+        array.pop(phTlBars)
+
+if not na(plTl)
+    array.unshift(plTlPrices, plTl)
+    array.unshift(plTlBars, bar_index - tlPivotR)
+    if array.size(plTlPrices) > 12
+        array.pop(plTlPrices)
+        array.pop(plTlBars)
+
+plotshape(showTLMarks and not na(plTl), title="TL pivot low", style=shape.circle, location=location.belowbar, color=color.new(#26a69a, 0), size=size.tiny, offset=-tlPivotR)
+plotshape(showTLMarks and not na(phTl), title="TL pivot high", style=shape.circle, location=location.abovebar, color=color.new(#ff9800, 0), size=size.tiny, offset=-tlPivotR)
+
+// Vẽ lại MỖI nến (không chỉ khi vừa có pivot mới) — tránh mất đường
+if showTL
+    f_tl_clear(resTL)
+    f_tl_clear(supTL)
+    f_tl_draw(resTL, phTlBars, phTlPrices, color.new(#ff9800, 0), false)
+    f_tl_draw(supTL, plTlBars, plTlPrices, color.new(#26a69a, 0), true)
+
+f_tl_price(int x1, float y1, int x2, float y2, int xNow) =>
+    y1 + (y2 - y1) / (x2 - x1) * (xNow - x1)
+
+nearTLSupport = false
+nearTLResist  = false
+var float tlSupLvl = na
+var float tlResLvl = na
+var int   tlSupX1 = na
+var int   tlSupX2 = na
+var float tlSupY1 = na
+var float tlSupY2 = na
+var int   tlResX1 = na
+var int   tlResX2 = na
+var float tlResY1 = na
+var float tlResY2 = na
+
+// Cặp hỗ trợ / kháng cự “mới nhất hợp lệ” cho near-TL
+if array.size(plTlPrices) >= 2
+    for i = 0 to array.size(plTlPrices) - 2
+        y2 = array.get(plTlPrices, i)
+        x2 = array.get(plTlBars, i)
+        done = false
+        for j = i + 1 to array.size(plTlPrices) - 1
+            y1 = array.get(plTlPrices, j)
+            x1 = array.get(plTlBars, j)
+            if y2 > y1 and x2 > x1
+                tlSupX1 := x1
+                tlSupY1 := y1
+                tlSupX2 := x2
+                tlSupY2 := y2
+                tlSupLvl := f_tl_price(x1, y1, x2, y2, bar_index)
+                nearTLSupport := math.abs(close - tlSupLvl) / close <= tlTolPct or (low <= tlSupLvl and close >= tlSupLvl)
+                done := true
+                break
+        if done
+            break
+
+if array.size(phTlPrices) >= 2
+    for i = 0 to array.size(phTlPrices) - 2
+        y2 = array.get(phTlPrices, i)
+        x2 = array.get(phTlBars, i)
+        done = false
+        for j = i + 1 to array.size(phTlPrices) - 1
+            y1 = array.get(phTlPrices, j)
+            x1 = array.get(phTlBars, j)
+            if y2 < y1 and x2 > x1
+                tlResX1 := x1
+                tlResY1 := y1
+                tlResX2 := x2
+                tlResY2 := y2
+                tlResLvl := f_tl_price(x1, y1, x2, y2, bar_index)
+                nearTLResist := math.abs(close - tlResLvl) / close <= tlTolPct or (high >= tlResLvl and close <= tlResLvl)
+                done := true
+                break
+        if done
+            break
+
+tlLongOk  = not requireTL or nearTLSupport
+tlShortOk = not requireTL or nearTLResist
+
+//===== Supply / Demand zones (pivot + chạy xa) =====
+ph = ta.pivothigh(high, pivotLen, pivotLen)
+pl = ta.pivotlow(low, pivotLen, pivotLen)
+
+var float[] dTop = array.new_float()
+var float[] dBot = array.new_float()
+var int[]   dTou = array.new_int()
+var box[]   dBox = array.new_box()
+var label[] dLab = array.new_label()
+
+var float[] sTop = array.new_float()
+var float[] sBot = array.new_float()
+var int[]   sTou = array.new_int()
+var box[]   sBox = array.new_box()
+var label[] sLab = array.new_label()
+
+f_trim(float[] tops, float[] bots, int[] tous, box[] boxes, label[] labs) =>
+    while array.size(tops) > maxZones
+        box.delete(array.shift(boxes))
+        label.delete(array.shift(labs))
+        array.shift(tops)
+        array.shift(bots)
+        array.shift(tous)
+
+f_kill(int idx, float[] tops, float[] bots, int[] tous, box[] boxes, label[] labs) =>
+    box.delete(array.get(boxes, idx))
+    label.delete(array.get(labs, idx))
+    array.remove(tops, idx)
+    array.remove(bots, idx)
+    array.remove(tous, idx)
+    array.remove(boxes, idx)
+    array.remove(labs, idx)
+
+// Tạo Demand khi pivot low + giá đã chạy lên đủ xa
+if not na(pl)
+    float zBot = low[pivotLen]
+    float zTop = math.max(open[pivotLen], close[pivotLen])
+    if zTop <= zBot
+        zTop := zBot + atr * 0.15
+    if close >= zTop + atr * depAtr
+        b = showZones ? box.new(bar_index - pivotLen, zTop, bar_index + 30, zBot, xloc=xloc.bar_index, border_color=color.new(#00bcd4, 30), bgcolor=color.new(#00bcd4, 82), extend=extend.right) : box.new(bar_index - pivotLen, zTop, bar_index - pivotLen, zBot, bgcolor=color.new(color.white, 100), border_color=color.new(color.white, 100))
+        lb = showZones ? label.new(bar_index + 2, zTop, "Demand", style=label.style_none, textcolor=color.new(#00bcd4, 0), size=size.small) : label.new(bar_index, zTop, "", style=label.style_none, textcolor=color.new(color.white, 100))
+        array.push(dBox, b)
+        array.push(dLab, lb)
+        array.push(dTop, zTop)
+        array.push(dBot, zBot)
+        array.push(dTou, 0)
+        f_trim(dTop, dBot, dTou, dBox, dLab)
+
+// Tạo Supply khi pivot high + giá đã chạy xuống đủ xa
+if not na(ph)
+    float zTop = high[pivotLen]
+    float zBot = math.min(open[pivotLen], close[pivotLen])
+    if zTop <= zBot
+        zBot := zTop - atr * 0.15
+    if close <= zBot - atr * depAtr
+        b = showZones ? box.new(bar_index - pivotLen, zTop, bar_index + 30, zBot, xloc=xloc.bar_index, border_color=color.new(#ff9800, 30), bgcolor=color.new(#ff9800, 82), extend=extend.right) : box.new(bar_index - pivotLen, zTop, bar_index - pivotLen, zBot, bgcolor=color.new(color.white, 100), border_color=color.new(color.white, 100))
+        lb = showZones ? label.new(bar_index + 2, zBot, "Supply", style=label.style_none, textcolor=color.new(#ff9800, 0), size=size.small) : label.new(bar_index, zBot, "", style=label.style_none, textcolor=color.new(color.white, 100))
+        array.push(sBox, b)
+        array.push(sLab, lb)
+        array.push(sTop, zTop)
+        array.push(sBot, zBot)
+        array.push(sTou, 0)
+        f_trim(sTop, sBot, sTou, sBox, sLab)
+
+// Chạm / thủng zone (chạm chỉ đánh dấu; hết hạn khi vào lệnh hoặc thủng)
+var float touchDemTop = na
+var float touchDemBot = na
+var float touchSupTop = na
+var float touchSupBot = na
+var int   touchDemIdx = na
+var int   touchSupIdx = na
+nearDemand = false
+nearSupply = false
+
+if array.size(dTop) > 0
+    for i = array.size(dTop) - 1 to 0
+        float zt = array.get(dTop, i)
+        float zb = array.get(dBot, i)
+        if close < zb
+            f_kill(i, dTop, dBot, dTou, dBox, dLab)
+        else if low <= zt and high >= zb
+            nearDemand := true
+            touchDemTop := zt
+            touchDemBot := zb
+            touchDemIdx := i
+
+if array.size(sTop) > 0
+    for i = array.size(sTop) - 1 to 0
+        float zt = array.get(sTop, i)
+        float zb = array.get(sBot, i)
+        if close > zt
+            f_kill(i, sTop, sBot, sTou, sBox, sLab)
+        else if low <= zt and high >= zb
+            nearSupply := true
+            touchSupTop := zt
+            touchSupBot := zb
+            touchSupIdx := i
+
+var int lastEntryBar = na
+coolOk = na(lastEntryBar) or (bar_index - lastEntryBar >= cooldownBars)
+
+//===== T3c: Chỉ Spring/UT + PA mạnh + HTF + chống dao rơi (WR-first) =====
+spring = nearDemand and not na(touchDemBot) and low < touchDemBot and close >= touchDemBot and close > open
+upthrust = nearSupply and not na(touchSupTop) and high > touchSupTop and close <= touchSupTop and close < open
+
+barRange = high - low
+bodyLen  = math.abs(close - open)
+lowerWick = math.min(open, close) - low
+upperWick = high - math.max(open, close)
+midBar = (high + low) / 2.0
+
+rejectLong  = barRange > 0 and lowerWick >= math.max(bodyLen, atr * 0.15) * wickMult and close >= midBar and close > open
+rejectShort = barRange > 0 and upperWick >= math.max(bodyLen, atr * 0.15) * wickMult and close <= midBar and close < open
+bullEng = close > open and close[1] < open[1] and close >= open[1] and open <= close[1]
+bearEng = close < open and close[1] > open[1] and close <= open[1] and open >= close[1]
+paLong  = requireReject ? rejectLong : (rejectLong or bullEng)
+paShort = requireReject ? rejectShort : (rejectShort or bearEng)
+
+// HTF bias (15m mặc định): chỉ theo hướng khung lớn
+htfClose = request.security(syminfo.tickerid, htfTf, close, barmerge.gaps_off, barmerge.lookahead_off)
+htfEma   = request.security(syminfo.tickerid, htfTf, ta.ema(close, 20), barmerge.gaps_off, barmerge.lookahead_off)
+htfBull  = htfClose > htfEma
+htfBear  = htfClose < htfEma
+htfLongOk  = not useHtf or htfBull
+htfShortOk = not useHtf or htfBear
+
+// Chống dao rơi: không LONG nếu 3 nến trước toàn đỏ mạnh; không SHORT nếu 3 nến trước toàn xanh mạnh
+knifeDown = close[1] < open[1] and close[2] < open[2] and close[3] < open[3] and (open[1] - close[1]) > atr * 0.4
+knifeUp   = close[1] > open[1] and close[2] > open[2] and close[3] > open[3] and (close[1] - open[1]) > atr * 0.4
+longKnifeOk  = not blockKnife or not knifeDown
+shortKnifeOk = not blockKnife or not knifeUp
+
+// Balanced: Spring/UT + PA (reject hoặc engulf) + volume; HTF/knife mặc định TẮT
+longSetup  = spring and paLong
+shortSetup = upthrust and paShort
+stLongOk   = not needStAlign or stDir == 1
+stShortOk  = not needStAlign or stDir == -1
+
+longSig  = volOk and coolOk and longSetup and stLongOk and htfLongOk and longKnifeOk and tlLongOk
+shortSig = volOk and coolOk and shortSetup and stShortOk and htfShortOk and shortKnifeOk and tlShortOk
+
+plotshape(showSpringMk and spring, title="Spring", style=shape.diamond, location=location.belowbar, color=color.new(#00e5ff, 0), size=size.tiny, text="Sp")
+plotshape(showSpringMk and upthrust, title="Upthrust", style=shape.diamond, location=location.abovebar, color=color.new(#ffab40, 0), size=size.tiny, text="UT")
+
+// Gợi ý vì sao Sp/UT chưa thành lệnh (ô nhỏ dưới bảng)
+var table dbg = table.new(position.bottom_right, 1, 1, bgcolor=color.new(#12081f, 20), border_width=1, border_color=#ab47bc)
+if barstate.islast
+    string why = "OK có thể vào lệnh"
+    if spring and not longSig
+        why := not volOk ? "Sp có nhưng Volume yếu" : not paLong ? "Sp có nhưng thiếu PA" : not stLongOk ? "Sp có nhưng SuperTrend chưa up" : not htfLongOk ? "Sp có nhưng HTF chưa đồng thuận" : not longKnifeOk ? "Sp có nhưng bị lọc dao rơi" : not tlLongOk ? "Sp có nhưng chưa gần trendline hỗ trợ" : not coolOk ? "Sp có nhưng đang cooldown" : "Sp có nhưng bị fee/SL cap"
+    else if upthrust and not shortSig
+        why := not volOk ? "UT có nhưng Volume yếu" : not paShort ? "UT có nhưng thiếu PA" : not stShortOk ? "UT có nhưng SuperTrend chưa down" : not htfShortOk ? "UT có nhưng HTF chưa đồng thuận" : not shortKnifeOk ? "UT có nhưng bị lọc đuổi giá" : not tlShortOk ? "UT có nhưng chưa gần trendline kháng cự" : not coolOk ? "UT có nhưng đang cooldown" : "UT có nhưng bị fee/SL cap"
+    else if not spring and not upthrust
+        why := "Chưa có Spring/UT hợp lệ gần đây"
+    string tlInfo = " | TL đáy:" + str.tostring(array.size(plTlPrices)) + " đỉnh:" + str.tostring(array.size(phTlPrices)) + (array.size(supTL) > 0 ? " có TL↑" : " chưa TL↑") + (array.size(resTL) > 0 ? " có TL↓" : " chưa TL↓")
+    table.cell(dbg, 0, 0, "Debug: " + why + tlInfo, text_color=#ffe082, text_size=size.small, bgcolor=#12081f)
+
+//===== Mô phỏng lệnh + THỐNG KÊ =====
+var float equity   = na
+var float peakEq   = na
+var float maxDDpct = 0.0
+var int   posDir   = 0
+var float entryPx  = na
+var float slPx     = na
+var float tpPx     = na
+var float qty      = na
+var int   entryT   = na
+var int   nTrades  = 0
+var int   nWin     = 0
+var int   nLoss    = 0
+var float winSum   = 0.0
+var float lossSum  = 0.0
+var float feeSum   = 0.0
+var float grossSum = 0.0
+var float netSum   = 0.0
+var int   tFirst   = na
+var int   tLast    = na
+
+if barstate.isfirst
+    equity := initCapIn
+    peakEq := initCapIn
+
+feeOf(float px, float q) =>
+    px * q * feePctSide / 100.0 * 2.0
+
+if posDir != 0
+    bool hitSl = posDir == 1 ? low <= slPx : high >= slPx
+    bool hitTp = posDir == 1 ? high >= tpPx : low <= tpPx
+    if hitSl or hitTp
+        float exitPx = hitSl ? slPx : tpPx
+        string why = hitSl ? "SL" : "TP " + str.tostring(tpR) + "R"
+        float g = posDir == 1 ? (exitPx - entryPx) * qty : (entryPx - exitPx) * qty
+        float f = feeOf(entryPx, qty)
+        float n = g - f
+        grossSum += g
+        feeSum += f
+        netSum += n
+        equity += n
+        peakEq := math.max(peakEq, equity)
+        maxDDpct := math.max(maxDDpct, peakEq > 0 ? (peakEq - equity) / peakEq * 100.0 : 0.0)
+        nTrades += 1
+        if n > 0
+            nWin += 1
+            winSum += n
+        else
+            nLoss += 1
+            lossSum += math.abs(n)
+        if na(tFirst)
+            tFirst := entryT
+        tLast := time
+        if showExitLab
+            label.new(bar_index, posDir == 1 ? high : low,
+                 (posDir == 1 ? "LONG" : "SHORT") +
+                 "\nEntry: " + str.tostring(entryPx, format.mintick) +
+                 "\nSL: " + str.tostring(slPx, format.mintick) +
+                 "\nTP: " + str.tostring(tpPx, format.mintick) +
+                 "\nQty: " + str.tostring(qty, "#.###") +
+                 "\nGross: " + str.tostring(g, "#.##") +
+                 "\nNet P/L: " + str.tostring(n, "#.####") +
+                 "\nKết quả: " + (n > 0 ? "WIN" : "LOSS") + " (" + why + ")",
+                 style=posDir == 1 ? label.style_label_down : label.style_label_up,
+                 color=n > 0 ? color.new(#2e7d32, 5) : color.new(#c62828, 5),
+                 textcolor=color.white, size=size.normal)
+        posDir := 0
+
+atrPad = atr * slAtrMult
+
+// Đảo chiều
+if longSig and posDir == -1
+    float g = (entryPx - close) * qty
+    float f = feeOf(entryPx, qty)
+    float n = g - f
+    grossSum += g
+    feeSum += f
+    netSum += n
+    equity += n
+    peakEq := math.max(peakEq, equity)
+    maxDDpct := math.max(maxDDpct, peakEq > 0 ? (peakEq - equity) / peakEq * 100.0 : 0.0)
+    nTrades += 1
+    if n > 0
+        nWin += 1
+        winSum += n
+    else
+        nLoss += 1
+        lossSum += math.abs(n)
+    if na(tFirst)
+        tFirst := entryT
+    tLast := time
+    if showExitLab
+        label.new(bar_index, high, "Close Short before Long\nNet: " + str.tostring(n, "#.##") + "\n" + (n > 0 ? "WIN" : "LOSS"), style=label.style_label_up, color=n > 0 ? color.new(#2e7d32, 5) : color.new(#c62828, 5), textcolor=color.white, size=size.small)
+    posDir := 0
+
+if shortSig and posDir == 1
+    float g = (close - entryPx) * qty
+    float f = feeOf(entryPx, qty)
+    float n = g - f
+    grossSum += g
+    feeSum += f
+    netSum += n
+    equity += n
+    peakEq := math.max(peakEq, equity)
+    maxDDpct := math.max(maxDDpct, peakEq > 0 ? (peakEq - equity) / peakEq * 100.0 : 0.0)
+    nTrades += 1
+    if n > 0
+        nWin += 1
+        winSum += n
+    else
+        nLoss += 1
+        lossSum += math.abs(n)
+    if na(tFirst)
+        tFirst := entryT
+    tLast := time
+    if showExitLab
+        label.new(bar_index, low, "Close Long before Short\nNet: " + str.tostring(n, "#.##") + "\n" + (n > 0 ? "WIN" : "LOSS"), style=label.style_label_down, color=n > 0 ? color.new(#2e7d32, 5) : color.new(#c62828, 5), textcolor=color.white, size=size.small)
+    posDir := 0
+
+// Vào lệnh — SL ưu tiên ngoài zone
+enteredLong = false
+enteredShort = false
+
+minSlDist = math.max(atr * minSlAtr, close * minSlPct / 100.0)
+
+if longSig and posDir == 0
+    float slCand = spring ? low - atrPad * 0.1 : not na(touchDemBot) ? touchDemBot - atrPad * 0.25 : close - atrPad
+    // Đẩy SL đủ xa để Qty không nổ → phí không ăn mất risk
+    if close - slCand < minSlDist
+        slCand := close - minSlDist
+    float risk = close - slCand
+    float riskCash = equity * riskPct / 100.0
+    float q = risk > 0 ? riskCash / risk : 0.0
+    float feeEst = feeOf(close, q)
+    bool feeOk = riskCash > 0 and feeEst <= riskCash * maxFeeRisk / 100.0
+    if q > 0 and feeOk
+        posDir := 1
+        entryPx := close
+        slPx := slCand
+        tpPx := close + risk * tpR
+        qty := q
+        entryT := time
+        lastEntryBar := bar_index
+        enteredLong := true
+        if not na(touchDemIdx) and array.size(dTop) > touchDemIdx
+            array.set(dTou, touchDemIdx, array.get(dTou, touchDemIdx) + 1)
+            if array.get(dTou, touchDemIdx) >= maxTouches
+                f_kill(touchDemIdx, dTop, dBot, dTou, dBox, dLab)
+        if showEntryLab
+            string tagL = spring ? "LONG @ Spring" : "LONG @ Demand+PA"
+            label.new(bar_index, low, tagL + "\nEntry: " + str.tostring(entryPx, format.mintick) + "\nSL: " + str.tostring(slPx, format.mintick) + "\nTP: " + str.tostring(tpPx, format.mintick) + " (" + str.tostring(tpR) + "R)\nQty: " + str.tostring(qty, "#.###") + "\nPhi/risk: " + str.tostring(feeEst / riskCash * 100.0, "#.#") + "%", style=label.style_label_up, color=color.new(#1565c0, 10), textcolor=color.white, size=size.normal)
+
+if shortSig and posDir == 0
+    float slCand = upthrust ? high + atrPad * 0.1 : not na(touchSupTop) ? touchSupTop + atrPad * 0.25 : close + atrPad
+    if slCand - close < minSlDist
+        slCand := close + minSlDist
+    float risk = slCand - close
+    float riskCash = equity * riskPct / 100.0
+    float q = risk > 0 ? riskCash / risk : 0.0
+    float feeEst = feeOf(close, q)
+    bool feeOk = riskCash > 0 and feeEst <= riskCash * maxFeeRisk / 100.0
+    if q > 0 and feeOk
+        posDir := -1
+        entryPx := close
+        slPx := slCand
+        tpPx := close - risk * tpR
+        qty := q
+        entryT := time
+        lastEntryBar := bar_index
+        enteredShort := true
+        if not na(touchSupIdx) and array.size(sTop) > touchSupIdx
+            array.set(sTou, touchSupIdx, array.get(sTou, touchSupIdx) + 1)
+            if array.get(sTou, touchSupIdx) >= maxTouches
+                f_kill(touchSupIdx, sTop, sBot, sTou, sBox, sLab)
+        if showEntryLab
+            string tagS = upthrust ? "SHORT @ Upthrust" : "SHORT @ Supply+PA"
+            label.new(bar_index, high, tagS + "\nEntry: " + str.tostring(entryPx, format.mintick) + "\nSL: " + str.tostring(slPx, format.mintick) + "\nTP: " + str.tostring(tpPx, format.mintick) + " (" + str.tostring(tpR) + "R)\nQty: " + str.tostring(qty, "#.###") + "\nPhi/risk: " + str.tostring(feeEst / riskCash * 100.0, "#.#") + "%", style=label.style_label_down, color=color.new(#c62828, 10), textcolor=color.white, size=size.normal)
+
+plotshape(showArrows and enteredLong, "L", shape.triangleup, location.belowbar, color.aqua, size=size.tiny, text="L")
+plotshape(showArrows and enteredShort, "S", shape.triangledown, location.abovebar, color.fuchsia, size=size.tiny, text="S")
+
+//===== THỐNG KÊ =====
+var table tb = table.new(position.top_right, 2, 17, bgcolor=#12081f, border_width=2, border_color=#ab47bc, frame_width=2, frame_color=#ab47bc)
+
+f_d(int t) =>
+    na(t) ? "—" : str.tostring(dayofmonth(t), "00") + "/" + str.tostring(month(t), "00") + "/" + str.tostring(year(t))
+
+if showTable and barstate.islast
+    float wr = nTrades > 0 ? nWin * 100.0 / nTrades : 0.0
+    float pf = lossSum > 0 ? winSum / lossSum : (winSum > 0 ? 999.0 : 0.0)
+    float avgNet = nTrades > 0 ? netSum / nTrades : 0.0
+    float avgFee = nTrades > 0 ? feeSum / nTrades : 0.0
+    color ok = #69f0ae
+    color bad = #ff5252
+
+    table.cell(tb, 0, 0, "THỐNG KÊ", text_color=color.white, text_size=size.large, bgcolor=#6a1b9a)
+    table.cell(tb, 1, 0, "T3e +Trendline", text_color=wr >= 55 ? ok : #e1bee7, text_size=size.small, bgcolor=#6a1b9a)
+    table.cell(tb, 0, 1, "Từ ngày", text_color=#bdbdbd, text_size=size.normal, bgcolor=#12081f)
+    table.cell(tb, 1, 1, f_d(tFirst), text_color=color.white, text_size=size.normal, bgcolor=#12081f)
+    table.cell(tb, 0, 2, "Đến ngày", text_color=#bdbdbd, text_size=size.normal, bgcolor=#12081f)
+    table.cell(tb, 1, 2, f_d(tLast), text_color=color.white, text_size=size.normal, bgcolor=#12081f)
+    table.cell(tb, 0, 3, "Vốn ban đầu", text_color=#bdbdbd, text_size=size.normal, bgcolor=#12081f)
+    table.cell(tb, 1, 3, str.tostring(initCapIn, "#.##") + " $", text_color=color.white, text_size=size.normal, bgcolor=#12081f)
+    table.cell(tb, 0, 4, "Vốn hiện tại", text_color=#bdbdbd, text_size=size.normal, bgcolor=#6d4c00)
+    table.cell(tb, 1, 4, str.tostring(equity, "#.##") + " $", text_color=#ffee58, text_size=size.normal, bgcolor=#6d4c00)
+    table.cell(tb, 0, 5, "Tổng lệnh", text_color=#bdbdbd, text_size=size.normal, bgcolor=#12081f)
+    table.cell(tb, 1, 5, str.tostring(nTrades), text_color=color.white, text_size=size.normal, bgcolor=#12081f)
+    table.cell(tb, 0, 6, "Thắng / Thua", text_color=#bdbdbd, text_size=size.normal, bgcolor=#12081f)
+    table.cell(tb, 1, 6, str.tostring(nWin) + " / " + str.tostring(nLoss), text_color=color.white, text_size=size.normal, bgcolor=#12081f)
+    table.cell(tb, 0, 7, "Win Rate", text_color=#bdbdbd, text_size=size.normal, bgcolor=#12081f)
+    table.cell(tb, 1, 7, str.tostring(wr, "#.##") + "%", text_color=wr >= 60 ? ok : wr >= 50 ? color.yellow : bad, text_size=size.normal, bgcolor=#12081f)
+    table.cell(tb, 0, 8, "Gross LN", text_color=#bdbdbd, text_size=size.normal, bgcolor=#12081f)
+    table.cell(tb, 1, 8, (grossSum >= 0 ? "+" : "") + str.tostring(grossSum, "#.##") + " $", text_color=grossSum >= 0 ? ok : bad, text_size=size.normal, bgcolor=#12081f)
+    table.cell(tb, 0, 9, "Net LN", text_color=#bdbdbd, text_size=size.normal, bgcolor=#12081f)
+    table.cell(tb, 1, 9, (netSum >= 0 ? "+" : "") + str.tostring(netSum, "#.##") + " $", text_color=netSum >= 0 ? ok : bad, text_size=size.normal, bgcolor=#12081f)
+    table.cell(tb, 0, 10, "Profit Factor", text_color=#bdbdbd, text_size=size.normal, bgcolor=#12081f)
+    table.cell(tb, 1, 10, str.tostring(pf, "#.##"), text_color=pf >= 1 ? ok : bad, text_size=size.normal, bgcolor=#12081f)
+    table.cell(tb, 0, 11, "Tổng phí", text_color=#bdbdbd, text_size=size.normal, bgcolor=#12081f)
+    table.cell(tb, 1, 11, "-" + str.tostring(feeSum, "#.##") + " $", text_color=color.white, text_size=size.normal, bgcolor=#12081f)
+    table.cell(tb, 0, 12, "LN TB/lệnh", text_color=#bdbdbd, text_size=size.normal, bgcolor=#12081f)
+    table.cell(tb, 1, 12, (avgNet >= 0 ? "+" : "") + str.tostring(avgNet, "#.####") + " $", text_color=avgNet >= 0 ? ok : bad, text_size=size.normal, bgcolor=#12081f)
+    table.cell(tb, 0, 13, "Max DD %", text_color=#bdbdbd, text_size=size.normal, bgcolor=#4a0000)
+    table.cell(tb, 1, 13, str.tostring(maxDDpct, "#.##") + "%", text_color=bad, text_size=size.normal, bgcolor=#4a0000)
+    table.cell(tb, 0, 14, "Phí TB/lệnh", text_color=#bdbdbd, text_size=size.normal, bgcolor=#12081f)
+    table.cell(tb, 1, 14, str.tostring(avgFee, "#.####") + " $", text_color=color.white, text_size=size.normal, bgcolor=#12081f)
+    float feeVsGross = math.abs(grossSum) > 0 ? feeSum / math.abs(grossSum) : na
+    table.cell(tb, 0, 15, "Phí / |Gross|", text_color=#bdbdbd, text_size=size.normal, bgcolor=#12081f)
+    table.cell(tb, 1, 15, na(feeVsGross) ? "—" : str.tostring(feeVsGross * 100.0, "#.#") + "%", text_color=not na(feeVsGross) and feeVsGross < 1 ? ok : bad, text_size=size.normal, bgcolor=#12081f)
+    table.cell(tb, 0, 16, "Lọc T3c", text_color=#bdbdbd, text_size=size.normal, bgcolor=#12081f)
+    table.cell(tb, 1, 16, "Sp/UT + TL + TP1.5R", text_color=#80deea, text_size=size.small, bgcolor=#12081f)
