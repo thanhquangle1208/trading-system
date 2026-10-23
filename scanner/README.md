@@ -37,7 +37,16 @@ python -m sd_scanner scan    # scan 1 lần → tự theo dõi đến khi tắt
 
 Giữ cửa sổ terminal **mở**. Tắt máy / Ctrl+C = hết noti.
 
-Trên Telegram khi đang chạy: `/status` · `/stop` · `/scan` (rebuild vùng).
+Trên Telegram khi đang chạy:
+
+| Lệnh | Việc |
+|------|------|
+| `/add LIT` | Tìm ticker Binance→Bybit, hiện 1 2 3… → gõ số để thêm |
+| `/list` | Xem danh sách cặp |
+| `/scan` | Rebuild vùng |
+| `/status` | Trạng thái |
+| `/stop` | Dừng |
+| `/cancel` | Hủy bước chọn số sau `/add` |
 
 ## Chống spam (đã siết)
 

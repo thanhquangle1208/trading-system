@@ -22,15 +22,26 @@ class MarketData:
         self.bybit = ccxt.bybit({"enableRateLimit": True, "options": {"defaultType": "linear"}})
         self._symbol_venue: dict[str, str] = {}  # BTCUSDT → binance|bybit
         self._markets_loaded = False
+        self.binance_ok = False
+        self.bybit_ok = False
 
     def _load_markets(self) -> None:
         if self._markets_loaded:
             return
-        self.binance.load_markets()
+        try:
+            self.binance.load_markets()
+            self.binance_ok = True
+        except Exception as e:
+            print(f"  ! Binance markets: {e}")
+            self.binance_ok = False
         try:
             self.bybit.load_markets()
-        except Exception:
-            pass
+            self.bybit_ok = True
+        except Exception as e:
+            print(f"  ! Bybit markets: {e}")
+            self.bybit_ok = False
+        if not self.binance_ok and not self.bybit_ok:
+            raise RuntimeError("Không tải được markets Binance lẫn Bybit.")
         self._markets_loaded = True
 
     def resolve(self, symbol: str) -> tuple[Any, str, str]:
@@ -42,26 +53,23 @@ class MarketData:
             ex = self.binance if venue == "binance" else self.bybit
             return ex, self._ccxt_symbol(ex, sym), venue
 
-        # Binance USDM: BTC/USDT:USDT
-        b_sym = f"{sym[:-4]}/USDT:USDT" if sym.endswith("USDT") else sym
-        if b_sym in self.binance.markets or sym in getattr(self.binance, "markets_by_id", {}):
+        if self.binance_ok:
+            b_sym = f"{sym[:-4]}/USDT:USDT" if sym.endswith("USDT") else sym
             if b_sym in self.binance.markets:
                 self._symbol_venue[sym] = "binance"
                 return self.binance, b_sym, "binance"
+            for m, meta in self.binance.markets.items():
+                if meta.get("swap") and meta.get("base") and (meta.get("base") + "USDT") == sym:
+                    self._symbol_venue[sym] = "binance"
+                    return self.binance, m, "binance"
 
-        # thử id kiểu BTCUSDT
-        for m, meta in self.binance.markets.items():
-            if meta.get("swap") and meta.get("linear") and meta.get("base") and (meta.get("base") + "USDT") == sym:
-                self._symbol_venue[sym] = "binance"
-                return self.binance, m, "binance"
-
-        # Bybit linear
-        for m, meta in self.bybit.markets.items():
-            if not meta.get("swap"):
-                continue
-            if (meta.get("base") or "") + "USDT" == sym or m.startswith(sym.replace("USDT", "") + "/USDT"):
-                self._symbol_venue[sym] = "bybit"
-                return self.bybit, m, "bybit"
+        if self.bybit_ok:
+            for m, meta in self.bybit.markets.items():
+                if not meta.get("swap"):
+                    continue
+                if (meta.get("base") or "") + "USDT" == sym or m.startswith(sym.replace("USDT", "") + "/USDT"):
+                    self._symbol_venue[sym] = "bybit"
+                    return self.bybit, m, "bybit"
 
         raise ValueError(f"Không tìm thấy perp {sym} trên Binance/Bybit.")
 
@@ -105,3 +113,82 @@ class MarketData:
                 time.sleep(0.05)
             except Exception as e:
                 print(f"  ! Bỏ qua {s}: {e}")
+
+    def search_perp_tickers(self, query: str, limit: int = 10) -> list[dict[str, str]]:
+        """
+        Tìm perp USDT. Ưu tiên Binance; không có kết quả mới sang Bybit.
+        Trả list dict: symbol (BTCUSDT), venue, label (hiển thị).
+        """
+        self._load_markets()
+        q = query.strip().upper().replace(".P", "").replace("/", "").replace("-", "").replace(" ", "")
+        if not q:
+            return []
+        if q.endswith("USDT"):
+            base_q = q[:-4]
+            full_q = q
+        else:
+            base_q = q
+            full_q = q + "USDT"
+
+        def collect(ex: Any, venue: str) -> list[dict[str, str]]:
+            exact: list[dict[str, str]] = []
+            prefix: list[dict[str, str]] = []
+            fuzzy: list[dict[str, str]] = []
+            for _m, meta in ex.markets.items():
+                if meta.get("active") is False:
+                    continue
+                if meta.get("option"):
+                    continue
+                if not meta.get("swap", False) and meta.get("type") not in ("swap", "future"):
+                    continue
+                quote = (meta.get("quote") or "").upper()
+                settle = (meta.get("settle") or "").upper()
+                base = (meta.get("base") or "").upper()
+                market_id = (meta.get("id") or "").upper().replace("_", "").replace("-", "")
+                if quote != "USDT" and settle != "USDT" and not market_id.endswith("USDT"):
+                    continue
+                if not base:
+                    continue
+                store = base + "USDT"
+                # 1000PEPE… giữ base gốc
+                if market_id.endswith("USDT") and len(market_id) > 4:
+                    store = market_id
+
+                b = base
+                mid = market_id
+                hit_exact = b == base_q or store == full_q or mid == full_q
+                hit_prefix = b.startswith(base_q) or mid.startswith(base_q)
+                hit_fuzzy = base_q in b or base_q in mid
+                if not (hit_exact or hit_prefix or hit_fuzzy):
+                    continue
+
+                row = {
+                    "symbol": store,
+                    "venue": venue,
+                    "label": f"{store} · {venue}",
+                }
+                if hit_exact:
+                    exact.append(row)
+                elif hit_prefix:
+                    prefix.append(row)
+                else:
+                    fuzzy.append(row)
+
+            seen: set[str] = set()
+            out: list[dict[str, str]] = []
+            for row in exact + prefix + fuzzy:
+                if row["symbol"] in seen:
+                    continue
+                seen.add(row["symbol"])
+                out.append(row)
+                if len(out) >= limit:
+                    break
+            return out
+
+        if self.binance_ok:
+            found = collect(self.binance, "Binance Perp")
+            if found:
+                return found
+        if self.bybit_ok:
+            return collect(self.bybit, "Bybit Perp")
+        return []

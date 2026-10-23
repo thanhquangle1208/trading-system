@@ -93,8 +93,8 @@ class Telegram:
             return f"{x:.4g}"
         return f"{x:.6g}"
 
-    def poll_commands(self, timeout_sec: int = 0) -> list[str]:
-        """Trả list lệnh text từ đúng chat_id (lowercase): /scan /stop /status /help."""
+    def poll_messages(self, timeout_sec: int = 0) -> list[str]:
+        """Mọi tin nhắn text từ đúng chat_id (không chỉ lệnh /)."""
         params: dict[str, Any] = {"timeout": timeout_sec}
         if self._offset is not None:
             params["offset"] = self._offset
@@ -106,7 +106,7 @@ class Telegram:
             return []
         if not data.get("ok"):
             return []
-        cmds: list[str] = []
+        texts: list[str] = []
         for upd in data.get("result") or []:
             self._offset = int(upd["update_id"]) + 1
             msg = upd.get("message") or upd.get("edited_message") or {}
@@ -114,8 +114,6 @@ class Telegram:
             if str(chat.get("id")) != self.chat_id:
                 continue
             text = (msg.get("text") or "").strip()
-            if not text.startswith("/"):
-                continue
-            cmd = text.split()[0].split("@")[0].lower()
-            cmds.append(cmd)
-        return cmds
+            if text:
+                texts.append(text)
+        return texts
