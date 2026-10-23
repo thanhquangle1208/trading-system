@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import html
 from typing import Any
 
 import requests
@@ -16,16 +17,15 @@ class Telegram:
         self.base = f"https://api.telegram.org/bot{token}"
         self._offset: int | None = None
 
-    def send(self, text: str) -> None:
-        r = requests.post(
-            f"{self.base}/sendMessage",
-            json={
-                "chat_id": self.chat_id,
-                "text": text,
-                "disable_web_page_preview": True,
-            },
-            timeout=30,
-        )
+    def send(self, text: str, *, use_html: bool = False) -> None:
+        payload: dict[str, Any] = {
+            "chat_id": self.chat_id,
+            "text": text,
+            "disable_web_page_preview": True,
+        }
+        if use_html:
+            payload["parse_mode"] = "HTML"
+        r = requests.post(f"{self.base}/sendMessage", json=payload, timeout=30)
         r.raise_for_status()
         data = r.json()
         if not data.get("ok"):
@@ -43,24 +43,46 @@ class Telegram:
         zone_top: float,
         depth: float,
         confidence: float,
-        note: str = "",
     ) -> None:
         display = symbol if symbol.endswith("USDT") else symbol
-        lines = [
-            "🔔 Cảnh báo vùng giá",
-            "",
-            f"Cặp: {display}.P ({venue})",
-            f"Khung: {timeframe}",
-            f"Loại: {side_label(side)}",
-            f"Giá hiện tại: {self._fmt(price)}",
-            f"Vùng giá: {self._fmt(zone_bot)} – {self._fmt(zone_top)}",
-            "",
-            f"Độ hấp dẫn (độ sâu): {depth:.1f}/10",
-            f"Độ tin cậy: {confidence:.1f}/10",
-        ]
-        if note:
-            lines += ["", f"Ghi chú: {note}"]
-        self.send("\n".join(lines))
+        loai = side_label(side)
+        # Mua = xanh, Bán = đỏ (giống kiểu signal mẫu)
+        if side == "buy":
+            action_emoji = "🟢"
+            action_word = "MUA"
+        else:
+            action_emoji = "🔴"
+            action_word = "BÁN"
+
+        def e(s: str) -> str:
+            return html.escape(s, quote=False)
+
+        pair = e(f"{display}.P")
+        venue_e = e(venue)
+        tf_e = e(timeframe)
+        price_s = e(self._fmt(price))
+        zone_s = e(f"{self._fmt(zone_bot)} – {self._fmt(zone_top)}")
+        depth_s = e(f"{depth:.1f}/10")
+        conf_s = e(f"{confidence:.1f}/10")
+
+        text = "\n".join(
+            [
+                f"🏷️ <b>Thesis T3E · Cảnh báo vùng giá</b>",
+                "",
+                f"📊 <b>PHÂN TÍCH TÍN HIỆU</b>",
+                "━━━━━━━━━━━━━━━━",
+                f"{action_emoji} <b>{action_word} {pair}</b>",
+                f"⏱ <b>Khung:</b> {tf_e}",
+                f"🏷 <b>Loại:</b> {e(loai)}",
+                f"📍 <b>Giá hiện tại:</b> {price_s}",
+                f"📦 <b>Vùng giá:</b> {zone_s}",
+                f"🏦 <b>Sàn:</b> {venue_e}",
+                "",
+                f"⭐ <b>Độ hấp dẫn (độ sâu):</b> {depth_s}",
+                f"📈 <b>Độ tin cậy:</b> {conf_s}",
+            ]
+        )
+        self.send(text, use_html=True)
 
     @staticmethod
     def _fmt(x: float) -> str:

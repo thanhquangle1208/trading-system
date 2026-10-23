@@ -78,7 +78,6 @@ class Watcher:
                     conf_n = self._aligned_count(sym, z.side, price)
                     depth = depth_score(price, z)
                     conf = confidence_score(conf_n)
-                    note = self._note(conf_n)
                     try:
                         self.tg.send_alert(
                             symbol=sym,
@@ -90,7 +89,6 @@ class Watcher:
                             zone_top=z.top,
                             depth=depth,
                             confidence=conf,
-                            note=note,
                         )
                         sent += 1
                         print(f"  → Noti {sym} {tf} {z.side} depth={depth} conf={conf}")
@@ -98,14 +96,6 @@ class Watcher:
                         print(f"  ! Telegram: {e}")
             time.sleep(0.05)
         return sent
-
-    @staticmethod
-    def _note(n_tf: int) -> str:
-        if n_tf <= 1:
-            return "Chỉ 1 khung có vùng tại giá → độ tin cậy trung bình; mở chart tự kiểm tra."
-        if n_tf == 2:
-            return "2 khung đồng thuận vùng tại giá."
-        return f"{n_tf} khung đồng thuận vùng tại giá."
 
     def start_watching(self) -> None:
         self.running = True

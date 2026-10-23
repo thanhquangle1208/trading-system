@@ -24,22 +24,25 @@ Chi tiết thesis Pine vẫn: [`../thesis/decisions-locked.md`](../thesis/decisi
 
 ---
 
-## Tin mẫu (tiếng Việt)
+## Tin mẫu (tiếng Việt, HTML đậm trên Telegram)
 
 ```
-🔔 Cảnh báo vùng giá
+🏷️ Thesis T3E · Cảnh báo vùng giá
 
-Cặp: ETHUSDT.P (Binance Perp)
-Khung: H4
-Loại: Vùng Mua
-Giá hiện tại: 2382.5
-Vùng giá: 2320 – 2390
+📊 PHÂN TÍCH TÍN HIỆU
+━━━━━━━━━━━━━━━━
+🟢 MUA ETHUSDT.P
+⏱ Khung: H4
+🏷 Loại: Vùng Mua
+📍 Giá hiện tại: 2382.5
+📦 Vùng giá: 2320 – 2390
+🏦 Sàn: Binance Perp
 
-Độ hấp dẫn (độ sâu): 7.8/10
-Độ tin cậy: 6.5/10
-
-Ghi chú: Giá vừa cắt vào vùng giá (H1 có vùng, H4 chưa đồng thuận → tin cậy trung bình).
+⭐ Độ hấp dẫn (độ sâu): 7.8/10
+📈 Độ tin cậy: 6.5/10
 ```
+
+(Không còn dòng Ghi chú.)
 
 Công thức sơ bộ (chỉnh khi code):
 
