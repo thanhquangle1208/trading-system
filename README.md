@@ -2,7 +2,7 @@
 
 Repo tài liệu + (sau này) mã nguồn cho Tomas: **chốt trading thesis trên TradingView trước**, rồi mới bot Python / Telegram / dashboard.
 
-> **Hiện tại:** đang làm **Trading Thesis (Pine)** — bot Phase 1 **hoãn**. Đọc **HANDOFF** rồi **T0** trước khi code.
+> **Hiện tại:** Pine **Thesis T3E** (`pine/T3e.pine`) + MVP **scanner Telegram** (`scanner/`). Bot Phase 1 đầy đủ vẫn hoãn. Đọc **HANDOFF** trước.
 
 ---
 

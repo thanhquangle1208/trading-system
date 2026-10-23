@@ -1,0 +1,24 @@
+# Danh sách cặp Perp theo dõi (Binance USDT-M trước; thiếu thì Bybit)
+# Thêm/bớt dòng symbol — không cần .P; code tự hiểu là perp.
+
+symbols:
+  - BTCUSDT
+  - ETHUSDT
+  - SOLUSDT
+  - BNBUSDT
+
+# Khung thời gian
+timeframes:
+  - H1
+  - H4
+  - D1
+  - W1
+
+# Tham số vùng giá (gần với Thesis T3E)
+zone:
+  pivot_len: 5
+  dep_atr: 1.0
+  atr_len: 10
+  max_zones: 8
+  # Số nến lịch sử tải mỗi TF khi rebuild vùng
+  lookback_bars: 300

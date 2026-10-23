@@ -89,7 +89,7 @@ Trả lời khi quay lại bot; agent cập nhật `project-context.md`.
 | **T0** + method | **OK** (Tomas duyệt) |
 | **T3d** | Balanced (không TL) |
 | **T3e** | **`pine/T3e.pine`** ← chart (**không** Trendline) |
-| **Scanner TG** | Docs khóa — [`scanner/telegram-sd-alerts.md`](./scanner/telegram-sd-alerts.md); chờ token + “OK code scanner” |
+| **Scanner TG** | MVP code [`../scanner/`](../scanner/) — `python -m sd_scanner scan`; docs [`scanner/telegram-sd-alerts.md`](./scanner/telegram-sd-alerts.md) |
 | **Phase 1–6** bot đủ | **HOÃN** (scanner chỉ là cảnh báo, chưa execution) |
 
 **Quy tắc agent:** Phương pháp đã OK → được viết T1. T2+ cần Tomas OK từng bước (hoặc bảo “tiếp T2”). Không scaffold Phase 1 bot cho đến “OK Phase 1”.

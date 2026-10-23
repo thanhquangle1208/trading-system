@@ -1,6 +1,6 @@
 # Scanner Telegram — Vùng Mua / Vùng Bán (HTF)
 
-**Trạng thái (2026-10-23):** Quyết định đã chốt với Tomas. **Code scanner chưa viết** — đang chờ token Telegram + “OK code scanner”.
+**Trạng thái (2026-10-23):** Tomas **OK code scanner** (cách A). Code MVP: thư mục [`scanner/`](../../scanner/). Chạy trên máy: `python -m sd_scanner test|scan` (xem `scanner/README.md`).
 
 Mục tiêu: khi giá **cắt ngưỡng** Vùng Mua (Demand) / Vùng Bán (Supply) trên **H1, H4, D1, W1**, báo Telegram. Tomas mở chart → tự quyết định. **Không** tự vào lệnh.
 
