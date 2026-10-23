@@ -27,6 +27,7 @@ class Settings:
     telegram_token: str
     telegram_chat_id: str
     watch_interval_sec: int
+    alert_cooldown_sec: int
     symbols: list[str]
     timeframes: list[str]
     zone: ZoneParams
@@ -59,6 +60,11 @@ def load_settings() -> Settings:
         max_zones=int(z.get("max_zones", 8)),
         lookback_bars=int(z.get("lookback_bars", 300)),
     )
+    # cooldown phút (watchlist) hoặc giây (.env)
+    cooldown_min = float((raw.get("alert") or {}).get("cooldown_minutes", 5))
+    cooldown_env = os.getenv("ALERT_COOLDOWN_SEC")
+    cooldown_sec = int(cooldown_env) if cooldown_env else int(cooldown_min * 60)
+
     symbols = [str(s).upper().replace(".P", "").replace("/", "") for s in (raw.get("symbols") or [])]
     timeframes = [str(t).upper() for t in (raw.get("timeframes") or ["H1", "H4", "D1", "W1"])]
     if not symbols:
@@ -68,6 +74,7 @@ def load_settings() -> Settings:
         telegram_token=token,
         telegram_chat_id=chat_id,
         watch_interval_sec=max(15, interval),
+        alert_cooldown_sec=max(60, cooldown_sec),
         symbols=symbols,
         timeframes=timeframes,
         zone=zone,

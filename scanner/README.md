@@ -39,6 +39,12 @@ Giữ cửa sổ terminal **mở**. Tắt máy / Ctrl+C = hết noti.
 
 Trên Telegram khi đang chạy: `/status` · `/stop` · `/scan` (rebuild vùng).
 
+## Chống spam (đã siết)
+
+- Chỉ báo khi giá **thật sự trong** vùng giá (không đệm mép).
+- Lắc nhẹ quanh mép **không** reset nhịp ngay.
+- Cùng cặp+khung+vùng: cooldown mặc định **5 phút** (`watchlist.yaml` → `alert.cooldown_minutes`).
+
 ## Chi phí
 
 - Telegram + Binance/Bybit public API: **$0**

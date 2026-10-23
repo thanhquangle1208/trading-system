@@ -26,7 +26,7 @@ class Watcher:
         self.market = MarketData()
         self.tg = Telegram(settings.telegram_token, settings.telegram_chat_id)
         self.cache = ZoneCache()
-        self.episodes = EpisodeState()
+        self.episodes = EpisodeState(cooldown_sec=settings.alert_cooldown_sec)
         self.running = False
 
     def rebuild_zones(self) -> int:
@@ -55,7 +55,7 @@ class Watcher:
         n = 0
         for tf, zs in (self.cache.zones.get(symbol) or {}).items():
             for z in zs:
-                if z.side == side and price_in_zone(price, z, pad_frac=0.02):
+                if z.side == side and price_in_zone(price, z, pad_frac=0.0):
                     n += 1
                     break
         return n

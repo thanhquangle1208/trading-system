@@ -14,6 +14,11 @@ timeframes:
   - D1
   - W1
 
+# Chống spam Telegram
+alert:
+  # Cùng cặp + khung + vùng: sau mỗi tin, im ít nhất N phút
+  cooldown_minutes: 5
+
 # Tham số vùng giá (gần với Thesis T3E)
 zone:
   pivot_len: 5
