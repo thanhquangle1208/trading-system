@@ -37,7 +37,8 @@ Chart thesis: **BINANCE:BTCUSDT.P**, vốn paper **$10.000**.
 | Bước | Nội dung | Trạng thái |
 |------|----------|------------|
 | **T0** | Method S/D–Wyckoff–PA | **OK** (TP 2R, TF 5m, volume bắt buộc) |
-| **T3e** | T3d + Trendline | **Dùng** [`pine/T3e_trendline.pine`](pine/T3e_trendline.pine) |
+| **T3e** | Chart S/D + Sp/UT (không TL) | **Dùng** [`pine/T3e.pine`](pine/T3e.pine) |
+| **Scanner TG** | Vùng Mua/Bán H1–W1 → Telegram | MVP [`scanner/README.md`](scanner/README.md) |
 | **T3d** | Balanced WR | [`pine/T3d_balanced_wr.pine`](pine/T3d_balanced_wr.pine) |
 | **Tiếp** | Đo T3e; bật lọc gần TL nếu muốn | Đang |
 | Phase 1–6 bot | Bybit/ccxt, paper, Telegram, dashboard… | **Hoãn** |
