@@ -7,8 +7,6 @@ from typing import Any
 
 import requests
 
-from .scoring import side_label
-
 
 class Telegram:
     def __init__(self, token: str, chat_id: str) -> None:
@@ -35,18 +33,18 @@ class Telegram:
         self,
         *,
         symbol: str,
-        venue: str,
         timeframe: str,
         side: str,
         price: float,
         zone_bot: float,
         zone_top: float,
+        stl: float,
+        tp: float | None,
+        rr: float | None,
         depth: float,
         confidence: float,
     ) -> None:
         display = symbol if symbol.endswith("USDT") else symbol
-        loai = side_label(side)
-        # Mua = xanh, Bán = đỏ (giống kiểu signal mẫu)
         if side == "buy":
             action_emoji = "🟢"
             action_word = "MUA"
@@ -58,25 +56,28 @@ class Telegram:
             return html.escape(s, quote=False)
 
         pair = e(f"{display}.P")
-        venue_e = e(venue)
         tf_e = e(timeframe)
         price_s = e(self._fmt(price))
         zone_s = e(f"{self._fmt(zone_bot)} – {self._fmt(zone_top)}")
+        stl_s = e(self._fmt(stl))
+        tp_s = e(self._fmt(tp)) if tp is not None else "—"
+        rr_s = e(f"1 : {rr:g}") if rr is not None else "—"
         depth_s = e(f"{depth:.1f}/10")
         conf_s = e(f"{confidence:.1f}/10")
 
         text = "\n".join(
             [
-                f"🏷️ <b>Thesis T3E · Cảnh báo vùng giá</b>",
+                "🏷️ <b>Phương Pháp Supply &amp; Demand · Cảnh báo vùng giá</b>",
                 "",
-                f"📊 <b>PHÂN TÍCH TÍN HIỆU</b>",
+                "📊 <b>PHÂN TÍCH TÍN HIỆU</b>",
                 "━━━━━━━━━━━━━━━━",
                 f"{action_emoji} <b>{action_word} {pair}</b>",
                 f"⏱ <b>Khung:</b> {tf_e}",
-                f"🏷 <b>Loại:</b> {e(loai)}",
-                f"📍 <b>Giá hiện tại:</b> {price_s}",
+                f"📍 <b>Giá / Entry gợi ý:</b> {price_s}",
                 f"📦 <b>Vùng giá:</b> {zone_s}",
-                f"🏦 <b>Sàn:</b> {venue_e}",
+                f"🛑 <b>STL:</b> {stl_s}",
+                f"✅ <b>TP:</b> {tp_s}",
+                f"📐 <b>R:R:</b> {rr_s}",
                 "",
                 f"⭐ <b>Độ hấp dẫn (độ sâu):</b> {depth_s}",
                 f"📈 <b>Độ tin cậy:</b> {conf_s}",

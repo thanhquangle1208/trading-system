@@ -8,6 +8,7 @@ from dataclasses import dataclass, field
 from .config import Settings
 from .episode import EpisodeState
 from .exchange import MarketData
+from .levels import next_target, risk_reward, stop_level, take_profit_price
 from .scoring import confidence_score, depth_score
 from .telegram_notify import Telegram
 from .zones import Zone, build_zones, price_in_zone
@@ -69,7 +70,6 @@ class Watcher:
             except Exception as e:
                 print(f"  ! giá {sym}: {e}")
                 continue
-            venue = self.market.venue_label(sym)
             for tf, zs in (self.cache.zones.get(sym) or {}).items():
                 for z in zs:
                     band = self.episodes.on_price(sym, tf, z, price)
@@ -78,20 +78,29 @@ class Watcher:
                     conf_n = self._aligned_count(sym, z.side, price)
                     depth = depth_score(price, z)
                     conf = confidence_score(conf_n)
+                    stl = stop_level(z.side, z)
+                    tgt = next_target(z.side, price, zs)
+                    tp = take_profit_price(z.side, tgt) if tgt is not None else None
+                    rr = risk_reward(price, stl, tp)
                     try:
                         self.tg.send_alert(
                             symbol=sym,
-                            venue=venue,
                             timeframe=tf,
                             side=z.side,
                             price=price,
                             zone_bot=z.bot,
                             zone_top=z.top,
+                            stl=stl,
+                            tp=tp,
+                            rr=rr,
                             depth=depth,
                             confidence=conf,
                         )
                         sent += 1
-                        print(f"  → Noti {sym} {tf} {z.side} depth={depth} conf={conf}")
+                        print(
+                            f"  → Noti {sym} {tf} {z.side} "
+                            f"stl={stl} tp={tp} rr={rr} depth={depth} conf={conf}"
+                        )
                     except Exception as e:
                         print(f"  ! Telegram: {e}")
             time.sleep(0.05)

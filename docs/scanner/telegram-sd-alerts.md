@@ -27,22 +27,26 @@ Chi tiết thesis Pine vẫn: [`../thesis/decisions-locked.md`](../thesis/decisi
 ## Tin mẫu (tiếng Việt, HTML đậm trên Telegram)
 
 ```
-🏷️ Thesis T3E · Cảnh báo vùng giá
+🏷️ Phương Pháp Supply & Demand · Cảnh báo vùng giá
 
 📊 PHÂN TÍCH TÍN HIỆU
 ━━━━━━━━━━━━━━━━
 🟢 MUA ETHUSDT.P
 ⏱ Khung: H4
-🏷 Loại: Vùng Mua
-📍 Giá hiện tại: 2382.5
+📍 Giá / Entry gợi ý: 2382.5
 📦 Vùng giá: 2320 – 2390
-🏦 Sàn: Binance Perp
+🛑 STL: 2320
+✅ TP: 2510   (mép Vùng Bán gần nhất cùng TF; — nếu chưa có)
+📐 R:R: 1 : 2.1
 
 ⭐ Độ hấp dẫn (độ sâu): 7.8/10
 📈 Độ tin cậy: 6.5/10
 ```
 
-(Không còn dòng Ghi chú.)
+**STL / TP (gợi ý, không tự lệnh):**
+- STL = mép hết vùng (Mua → đáy vùng; Bán → đỉnh vùng).
+- TP = mép vào vùng đối ứng gần nhất cùng khung (Mua → Vùng Bán phía trên; Bán → Vùng Mua phía dưới).
+- R:R = |TP − giá| / |giá − STL|.
 
 Công thức sơ bộ (chỉnh khi code):
 
