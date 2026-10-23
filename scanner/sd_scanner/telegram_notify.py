@@ -67,13 +67,13 @@ class Telegram:
 
         text = "\n".join(
             [
-                "🏷️ <b>Phương Pháp Supply &amp; Demand · Cảnh báo vùng giá</b>",
+                "🏷️ <b>Phương Pháp Supply &amp; Demand</b>",
                 "",
                 "📊 <b>PHÂN TÍCH TÍN HIỆU</b>",
                 "━━━━━━━━━━━━━━━━",
                 f"{action_emoji} <b>{action_word} {pair}</b>",
                 f"⏱ <b>Khung:</b> {tf_e}",
-                f"📍 <b>Giá / Entry gợi ý:</b> {price_s}",
+                f"📍 <b>Giá / Entry:</b> {price_s}",
                 f"📦 <b>Vùng giá:</b> {zone_s}",
                 f"🛑 <b>STL:</b> {stl_s}",
                 f"✅ <b>TP:</b> {tp_s}",
