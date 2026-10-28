@@ -165,14 +165,9 @@ class Watcher:
             self.settings.symbols.remove(sym)
             return
 
-        self.tg.send(f"✅ Đã thêm {sym} ({chosen['venue']}).\nĐang tải vùng giá cặp này…")
+        self.tg.send(f"✅ Đã thêm {sym} ({chosen['venue']}).")
         try:
-            n = self.rebuild_one(sym)
-            self.tg.send(
-                f"Xong. {sym}: {n} vùng.\n"
-                f"Danh sách hiện tại ({len(self.settings.symbols)}): "
-                + ", ".join(self.settings.symbols)
-            )
+            self.rebuild_one(sym)
         except Exception as e:
             self.tg.send(f"Đã lưu {sym} nhưng tải vùng lỗi: {e}. Thử /scan.")
 
