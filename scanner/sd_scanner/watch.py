@@ -172,7 +172,7 @@ class Watcher:
             self.tg.send(f"Đã lưu {sym} nhưng tải vùng lỗi: {e}. Thử /scan.")
 
     def _handle_add_query(self, query: str) -> None:
-        self.tg.send(f"🔎 Đang tìm «{query}» trên Binance Perp (không có thì Bybit)…")
+        # Không gửi tin “Đang tìm…” — chỉ báo kết quả (✅ / không thấy / chọn số).
         try:
             opts = self.market.search_perp_tickers(query, limit=10)
         except Exception as e:

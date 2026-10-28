@@ -40,7 +40,7 @@ Code: `scanner/` · Docs: `docs/scanner/telegram-sd-alerts.md` · Mac: `scanner/
 | TP | Mép vùng đối ứng gần nhất **cùng TF** |
 | Chất lượng (ít nhiễu) | Chỉ báo **H4/D1/W1**; độ sâu **≥7**; **≥2 TF** đồng thuận; cooldown vùng 30′ + cặp/chiều 60′; H1 chỉ confluence |
 | `/add TÊN` | Tìm Binance→Bybit; **1 kết quả → thêm luôn**; nhiều → chọn 1,2,3… |
-| Spam trạng thái | **Không** gửi: bắt đầu/xong scan, “Đã bật…”, “Chỉ thấy 1 ticker…”, “Xong N vùng + list”. Giữ `✅ Đã thêm…` và **cảnh báo vùng** |
+| Spam trạng thái | **Không** gửi: bắt đầu/xong scan, “Đã bật…”, “Đang tìm…”, “Chỉ thấy 1 ticker…”, “Xong N vùng + list”. Giữ `✅ Đã thêm…` và **cảnh báo vùng** |
 | Secrets | `.env` ở root (`TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`) — **gitignored** |
 | Mac auto-update | `scanner/mac/start_with_autoupdate.sh`: mỗi N phút `fetch`; **chỉ pull+restart khi có commit mới** |
 

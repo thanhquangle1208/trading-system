@@ -16,4 +16,5 @@
 - Giải thích cho Tomas kiểu newbie: từng bước, chậm, không giả định biết BotFather/API. (2026-10-23)
 - Ưu tiên hiện tại (2026-10-28): **scanner Telegram ít nhiễu** + Mac auto `git pull`; Pine T3E giữ ổn định. Bot Phase 1 đầy đủ vẫn hoãn.
 - Scanner quality: báo H4/D1/W1; depth≥7; ≥2 TF; ít tin trạng thái (scan/add). (2026-10-28)
+- `/add`: không gửi “Đang tìm…”; chỉ tin kết quả (`✅ Đã thêm…` / không thấy / chọn số). (2026-10-28)
 - Agent cloud **không** điều khiển Mac; chỉ push GitHub. (2026-10-28)
