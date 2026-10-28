@@ -185,10 +185,9 @@ class Watcher:
             )
             self.pending_add = None
             return
-        # Chỉ 1 kết quả → thêm luôn, không hỏi chọn số
+        # Chỉ 1 kết quả → thêm luôn (không thông báo bước chọn)
         if len(opts) == 1:
             self.pending_add = None
-            self.tg.send(f"Chỉ thấy 1 ticker: {opts[0]['label']} → thêm luôn.")
             self._commit_add(opts[0])
             return
         self.pending_add = PendingAdd(options=opts, created_at=time.time())
@@ -267,9 +266,11 @@ class Watcher:
             return
 
         if cmd == "/scan":
-            self.tg.send("🔄 Đang rebuild vùng giá…")
-            n = self.rebuild_zones()
-            self.tg.send(f"Xong rebuild: {n} vùng. Tiếp tục theo dõi.")
+            # Im lặng — không spam trạng thái; lỗi mới báo
+            try:
+                self.rebuild_zones()
+            except Exception as e:
+                self.tg.send(f"❌ /scan lỗi: {e}")
             return
 
         if cmd == "/help":
@@ -286,16 +287,7 @@ class Watcher:
     def start_watching(self) -> None:
         self.running = True
         print("Đang theo dõi… (Ctrl+C hoặc /stop trên Telegram để dừng)")
-        q = self.settings.quality
-        self.tg.send(
-            "✅ Đã bật theo dõi (chế độ ít nhiễu).\n"
-            f"Cặp: {', '.join(self.settings.symbols)}\n"
-            f"Khung báo tin: {', '.join(q.alert_timeframes)} "
-            f"(cần ≥{q.min_aligned_tfs} TF + độ sâu ≥{q.min_depth_score})\n"
-            f"Mỗi {self.settings.watch_interval_sec}s lấy giá; "
-            "chỉ khi đủ chất lượng mới báo.\n"
-            "Lệnh: /add /list /status /scan /stop /help"
-        )
+        # Không gửi tin “Đã bật theo dõi…” — tránh spam khi auto restart
         last_rebuild = time.time()
         rebuild_every = 60 * 60
         while self.running:
@@ -336,10 +328,9 @@ class Watcher:
                 time.sleep(1)
 
     def run_scan_session(self) -> None:
-        """Scan một lần (nạp vùng) rồi bật theo dõi đến khi dừng."""
-        self.tg.send("🔎 Bắt đầu scan — đang tải vùng giá (Binance/Bybit)…")
+        """Scan một lần (nạp vùng) rồi bật theo dõi đến khi dừng — không spam Telegram trạng thái."""
         print("Rebuild zones…")
         n = self.rebuild_zones()
-        self.tg.send(f"Scan xong: {n} vùng trên {len(self.settings.symbols)} cặp. Bật theo dõi.")
+        print(f"Scan xong: {n} vùng trên {len(self.settings.symbols)} cặp.")
         self.check_once()
         self.start_watching()
