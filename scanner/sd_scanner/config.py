@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 import yaml
@@ -23,6 +23,16 @@ class ZoneParams:
 
 
 @dataclass
+class AlertQuality:
+    cooldown_sec: int = 1800
+    side_cooldown_sec: int = 3600
+    alert_timeframes: list[str] = field(default_factory=lambda: ["H4", "D1", "W1"])
+    min_depth_score: float = 7.0
+    min_aligned_tfs: int = 2
+    min_depth_band: int = 2
+
+
+@dataclass
 class Settings:
     telegram_token: str
     telegram_chat_id: str
@@ -32,10 +42,10 @@ class Settings:
     timeframes: list[str]
     zone: ZoneParams
     watchlist_path: Path
+    quality: AlertQuality
 
 
 def load_settings() -> Settings:
-    # Ưu tiên .env ở root repo, rồi scanner/
     load_dotenv(ROOT / ".env")
     load_dotenv(SCANNER_DIR / ".env")
 
@@ -60,10 +70,22 @@ def load_settings() -> Settings:
         max_zones=int(z.get("max_zones", 8)),
         lookback_bars=int(z.get("lookback_bars", 300)),
     )
-    # cooldown phút (watchlist) hoặc giây (.env)
-    cooldown_min = float((raw.get("alert") or {}).get("cooldown_minutes", 5))
+
+    a = raw.get("alert") or {}
+    cooldown_min = float(a.get("cooldown_minutes", 30))
+    side_cd_min = float(a.get("side_cooldown_minutes", 60))
     cooldown_env = os.getenv("ALERT_COOLDOWN_SEC")
     cooldown_sec = int(cooldown_env) if cooldown_env else int(cooldown_min * 60)
+
+    alert_tfs = [str(t).upper() for t in (a.get("alert_timeframes") or ["H4", "D1", "W1"])]
+    quality = AlertQuality(
+        cooldown_sec=max(60, cooldown_sec),
+        side_cooldown_sec=max(60, int(side_cd_min * 60)),
+        alert_timeframes=alert_tfs,
+        min_depth_score=float(a.get("min_depth_score", 7.0)),
+        min_aligned_tfs=int(a.get("min_aligned_tfs", 2)),
+        min_depth_band=int(a.get("min_depth_band", 2)),
+    )
 
     symbols = [str(s).upper().replace(".P", "").replace("/", "") for s in (raw.get("symbols") or [])]
     timeframes = [str(t).upper() for t in (raw.get("timeframes") or ["H1", "H4", "D1", "W1"])]
@@ -74,9 +96,10 @@ def load_settings() -> Settings:
         telegram_token=token,
         telegram_chat_id=chat_id,
         watch_interval_sec=max(15, interval),
-        alert_cooldown_sec=max(60, cooldown_sec),
+        alert_cooldown_sec=quality.cooldown_sec,
         symbols=symbols,
         timeframes=timeframes,
         zone=zone,
         watchlist_path=wl_path,
+        quality=quality,
     )

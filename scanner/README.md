@@ -54,11 +54,17 @@ Trên Telegram khi đang chạy:
 | `/stop` | Dừng |
 | `/cancel` | Hủy bước chọn số sau `/add` |
 
-## Chống spam (đã siết)
+## Chất lượng > số lượng (đã siết nhiễu)
 
-- Chỉ báo khi giá **thật sự trong** vùng giá (không đệm mép).
-- Lắc nhẹ quanh mép **không** reset nhịp ngay.
-- Cùng cặp+khung+vùng: cooldown mặc định **5 phút** (`watchlist.yaml` → `alert.cooldown_minutes`).
+Cấu hình trong `watchlist.yaml` → `alert:`:
+
+| Luật | Mặc định |
+|------|----------|
+| Khung **được phép báo tin** | **H4, D1, W1** (H1 chỉ tính confluence, không tự bắn) |
+| Độ sâu tối thiểu | **≥ 7.0/10** (bỏ báo mới chạm mép ~6) |
+| Số khung đồng thuận | **≥ 2** (độ tin cậy ≥ 7.0) |
+| Cooldown cùng vùng | **30 phút** |
+| Cooldown cùng cặp+chiều | **60 phút** |
 
 ## Chi phí
 

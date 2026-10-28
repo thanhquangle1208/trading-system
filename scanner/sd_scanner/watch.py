@@ -34,7 +34,12 @@ class Watcher:
         self.market = MarketData()
         self.tg = Telegram(settings.telegram_token, settings.telegram_chat_id)
         self.cache = ZoneCache()
-        self.episodes = EpisodeState(cooldown_sec=settings.alert_cooldown_sec)
+        q = settings.quality
+        self.episodes = EpisodeState(
+            cooldown_sec=q.cooldown_sec,
+            side_cooldown_sec=q.side_cooldown_sec,
+            min_band=q.min_depth_band,
+        )
         self.running = False
         self.pending_add: PendingAdd | None = None
 
@@ -87,8 +92,10 @@ class Watcher:
         return n
 
     def check_once(self) -> int:
-        """Một vòng ticker. Trả số tin đã gửi."""
+        """Một vòng ticker. Trả số tin đã gửi (đã lọc chất lượng)."""
         sent = 0
+        q = self.settings.quality
+        alert_tfs = set(q.alert_timeframes)
         for sym in self.settings.symbols:
             try:
                 price = self.market.fetch_last(sym)
@@ -97,11 +104,18 @@ class Watcher:
                 continue
             for tf, zs in (self.cache.zones.get(sym) or {}).items():
                 for z in zs:
-                    band = self.episodes.on_price(sym, tf, z, price)
-                    if band is None:
+                    # H1 (và TF khác ngoài list): chỉ cập nhật trạng thái, không bắn tin
+                    if tf not in alert_tfs:
+                        self.episodes.on_price(sym, tf, z, price, emit=False)
                         continue
+
                     conf_n = self._aligned_count(sym, z.side, price)
                     depth = depth_score(price, z)
+                    quality_ok = depth >= q.min_depth_score and conf_n >= q.min_aligned_tfs
+                    band = self.episodes.on_price(sym, tf, z, price, emit=quality_ok)
+                    if band is None:
+                        continue
+
                     conf = confidence_score(conf_n)
                     stl = stop_level(z.side, z)
                     tgt = next_target(z.side, price, zs)
@@ -271,12 +285,14 @@ class Watcher:
     def start_watching(self) -> None:
         self.running = True
         print("Đang theo dõi… (Ctrl+C hoặc /stop trên Telegram để dừng)")
+        q = self.settings.quality
         self.tg.send(
-            "✅ Đã bật theo dõi vùng giá.\n"
+            "✅ Đã bật theo dõi (chế độ ít nhiễu).\n"
             f"Cặp: {', '.join(self.settings.symbols)}\n"
-            f"Khung: {', '.join(self.settings.timeframes)}\n"
-            f"Mỗi {self.settings.watch_interval_sec}s chỉ lấy giá; "
-            "chỉ khi cắt ngưỡng mới báo.\n"
+            f"Khung báo tin: {', '.join(q.alert_timeframes)} "
+            f"(cần ≥{q.min_aligned_tfs} TF + độ sâu ≥{q.min_depth_score})\n"
+            f"Mỗi {self.settings.watch_interval_sec}s lấy giá; "
+            "chỉ khi đủ chất lượng mới báo.\n"
             "Lệnh: /add /list /status /scan /stop /help"
         )
         last_rebuild = time.time()
