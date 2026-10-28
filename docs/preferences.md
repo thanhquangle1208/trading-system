@@ -14,3 +14,6 @@
 - Khi Tomas cần script Pine: **chỉ gửi link GitHub** (raw +/hoặc blob trên nhánh đang làm). **Không** dán toàn bộ source từng dòng vào chat. (2026-10-23)
 - Scanner cảnh báo: Perp; tin Telegram **tiếng Việt** (Vùng Mua/Bán/Vùng giá); thang **điểm /10** (không ABC); `/scan` một lần rồi tự theo dõi đến khi tắt máy; không dùng LLM để quét giá. (2026-10-23)
 - Giải thích cho Tomas kiểu newbie: từng bước, chậm, không giả định biết BotFather/API. (2026-10-23)
+- Ưu tiên hiện tại (2026-10-28): **scanner Telegram ít nhiễu** + Mac auto `git pull`; Pine T3E giữ ổn định. Bot Phase 1 đầy đủ vẫn hoãn.
+- Scanner quality: báo H4/D1/W1; depth≥7; ≥2 TF; ít tin trạng thái (scan/add). (2026-10-28)
+- Agent cloud **không** điều khiển Mac; chỉ push GitHub. (2026-10-28)
