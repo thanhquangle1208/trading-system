@@ -145,6 +145,37 @@ class Watcher:
             time.sleep(0.05)
         return sent
 
+    def _commit_add(self, chosen: dict[str, str]) -> None:
+        """Lưu ticker đã chọn vào watchlist + tải vùng."""
+        sym = chosen["symbol"]
+        if sym in self.settings.symbols:
+            self.tg.send(f"{sym} đã có trong danh sách rồi.")
+            return
+        try:
+            self.market.resolve(sym)
+        except Exception as e:
+            self.tg.send(f"❌ Không dùng được {sym}: {e}")
+            return
+
+        self.settings.symbols.append(sym)
+        try:
+            save_symbols(self.settings.watchlist_path, self.settings.symbols)
+        except Exception as e:
+            self.tg.send(f"❌ Lưu watchlist lỗi: {e}")
+            self.settings.symbols.remove(sym)
+            return
+
+        self.tg.send(f"✅ Đã thêm {sym} ({chosen['venue']}).\nĐang tải vùng giá cặp này…")
+        try:
+            n = self.rebuild_one(sym)
+            self.tg.send(
+                f"Xong. {sym}: {n} vùng.\n"
+                f"Danh sách hiện tại ({len(self.settings.symbols)}): "
+                + ", ".join(self.settings.symbols)
+            )
+        except Exception as e:
+            self.tg.send(f"Đã lưu {sym} nhưng tải vùng lỗi: {e}. Thử /scan.")
+
     def _handle_add_query(self, query: str) -> None:
         self.tg.send(f"🔎 Đang tìm «{query}» trên Binance Perp (không có thì Bybit)…")
         try:
@@ -159,6 +190,12 @@ class Watcher:
             )
             self.pending_add = None
             return
+        # Chỉ 1 kết quả → thêm luôn, không hỏi chọn số
+        if len(opts) == 1:
+            self.pending_add = None
+            self.tg.send(f"Chỉ thấy 1 ticker: {opts[0]['label']} → thêm luôn.")
+            self._commit_add(opts[0])
+            return
         self.pending_add = PendingAdd(options=opts, created_at=time.time())
         lines = ["Chọn số ticker cần thêm:", ""]
         for i, o in enumerate(opts, start=1):
@@ -170,7 +207,6 @@ class Watcher:
         """True nếu đã xử lý (kể cả lỗi chọn)."""
         if self.pending_add is None:
             return False
-        # hết hạn 5 phút
         if time.time() - self.pending_add.created_at > 300:
             self.pending_add = None
             self.tg.send("Hết thời gian chọn ticker. Gõ /add … lại.")
@@ -184,38 +220,8 @@ class Watcher:
             self.tg.send(f"Chỉ chọn từ 1 đến {len(opts)}.")
             return True
         chosen = opts[idx - 1]
-        sym = chosen["symbol"]
         self.pending_add = None
-
-        if sym in self.settings.symbols:
-            self.tg.send(f"{sym} đã có trong danh sách rồi.")
-            return True
-
-        # xác nhận resolve được
-        try:
-            self.market.resolve(sym)
-        except Exception as e:
-            self.tg.send(f"❌ Không dùng được {sym}: {e}")
-            return True
-
-        self.settings.symbols.append(sym)
-        try:
-            save_symbols(self.settings.watchlist_path, self.settings.symbols)
-        except Exception as e:
-            self.tg.send(f"❌ Lưu watchlist lỗi: {e}")
-            self.settings.symbols.remove(sym)
-            return True
-
-        self.tg.send(f"✅ Đã thêm {sym} ({chosen['venue']}).\nĐang tải vùng giá cặp này…")
-        try:
-            n = self.rebuild_one(sym)
-            self.tg.send(
-                f"Xong. {sym}: {n} vùng.\n"
-                f"Danh sách hiện tại ({len(self.settings.symbols)}): "
-                + ", ".join(self.settings.symbols)
-            )
-        except Exception as e:
-            self.tg.send(f"Đã lưu {sym} nhưng tải vùng lỗi: {e}. Thử /scan.")
+        self._commit_add(chosen)
         return True
 
     def _dispatch_message(self, text: str) -> None:
