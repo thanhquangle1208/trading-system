@@ -16,7 +16,7 @@ Mục tiêu: khi giá **cắt ngưỡng** Vùng Mua (Demand) / Vùng Bán (Suppl
 | `depth_score` | Độ **hấp dẫn** theo độ sâu trong vùng giá (1–10) |
 | `độ_tin_cậy` | Thang **x/10** (confluence TF + ngữ cảnh); ví dụ 6 / 8 / 9.5 |
 | Nhãn tin | **Vùng Mua** / **Vùng Bán** / **Vùng giá** (không ghi L1/L2/L3) |
-| Chống spam / chất lượng | Báo **H4/D1/W1** only; sâu ≥7; ≥2 TF; cooldown 30–60 phút; H1 chỉ confluence; `/add` không tin “Đang tìm…” |
+| Chống spam / chất lượng | Báo **H4/D1/W1** only; sâu ≥7; ≥2 TF; cooldown 30–60 phút; H1 chỉ confluence; `/add` không tin “Đang tìm…”; **Bias W1 EMA34** (MUA nếu giá > EMA; BÁN nếu giá < EMA) |
 | Chạy | Lệnh **scan một lần** → **bật theo dõi** đến khi tắt process / tắt máy |
 | Chi phí | **0$** API công khai + Telegram Bot miễn phí; **không** dùng LLM để quét giá |
 

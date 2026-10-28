@@ -5,6 +5,7 @@ from __future__ import annotations
 import time
 from dataclasses import dataclass, field
 
+from .bias import bias_allows, bias_label, ema_last
 from .config import Settings
 from .episode import EpisodeState
 from .exchange import MarketData
@@ -19,6 +20,8 @@ from .zones import Zone, build_zones, price_in_zone
 class ZoneCache:
     # symbol → tf → list[Zone]
     zones: dict[str, dict[str, list[Zone]]] = field(default_factory=dict)
+    # symbol → EMA W1 (Nấc 1 bias)
+    w1_ema: dict[str, float] = field(default_factory=dict)
     built_at: float = 0.0
 
 
@@ -43,16 +46,39 @@ class Watcher:
         self.running = False
         self.pending_add: PendingAdd | None = None
 
+    def _update_w1_ema(self, symbol: str, df_w1=None) -> None:
+        """Tính / cache EMA W1 cho bias. df_w1 = nến tuần nếu đã có sẵn."""
+        length = self.settings.quality.w1_ema_length
+        try:
+            df = df_w1
+            if df is None:
+                df = self.market.fetch_ohlcv(symbol, "W1", max(self.settings.zone.lookback_bars, length + 5))
+            val = ema_last(df["close"], length)
+            if val is not None:
+                self.cache.w1_ema[symbol] = val
+                print(f"  {symbol} W1 EMA{length}: {val:g}")
+            else:
+                self.cache.w1_ema.pop(symbol, None)
+                print(f"  ! {symbol}: chưa đủ nến W1 cho EMA{length}")
+        except Exception as e:
+            self.cache.w1_ema.pop(symbol, None)
+            print(f"  ! {symbol} W1 EMA: {e}")
+
     def rebuild_zones(self) -> int:
         """Tải nến + dựng vùng. Trả tổng số vùng."""
         self.market.warmup(self.settings.symbols)
         total = 0
         new_map: dict[str, dict[str, list[Zone]]] = {}
+        new_ema: dict[str, float] = {}
+        length = self.settings.quality.w1_ema_length
         for sym in self.settings.symbols:
             new_map[sym] = {}
+            df_w1 = None
             for tf in self.settings.timeframes:
                 try:
                     df = self.market.fetch_ohlcv(sym, tf, self.settings.zone.lookback_bars)
+                    if tf == "W1":
+                        df_w1 = df
                     zs = build_zones(df, self.settings.zone)
                     new_map[sym][tf] = zs
                     total += len(zs)
@@ -61,16 +87,32 @@ class Watcher:
                     print(f"  ! {sym} {tf}: {e}")
                     new_map[sym][tf] = []
                 time.sleep(0.15)
+            # Bias W1 EMA (dùng lại nến W1 nếu vừa tải)
+            try:
+                if df_w1 is None and self.settings.quality.require_w1_ema_bias:
+                    df_w1 = self.market.fetch_ohlcv(sym, "W1", max(self.settings.zone.lookback_bars, length + 5))
+                    time.sleep(0.15)
+                if df_w1 is not None:
+                    val = ema_last(df_w1["close"], length)
+                    if val is not None:
+                        new_ema[sym] = val
+                        print(f"  {sym} W1 EMA{length}: {val:g}")
+            except Exception as e:
+                print(f"  ! {sym} W1 EMA: {e}")
         self.cache.zones = new_map
+        self.cache.w1_ema = new_ema
         self.cache.built_at = time.time()
         return total
 
     def rebuild_one(self, symbol: str) -> int:
         total = 0
         self.cache.zones.setdefault(symbol, {})
+        df_w1 = None
         for tf in self.settings.timeframes:
             try:
                 df = self.market.fetch_ohlcv(symbol, tf, self.settings.zone.lookback_bars)
+                if tf == "W1":
+                    df_w1 = df
                 zs = build_zones(df, self.settings.zone)
                 self.cache.zones[symbol][tf] = zs
                 total += len(zs)
@@ -79,6 +121,7 @@ class Watcher:
                 print(f"  ! {symbol} {tf}: {e}")
                 self.cache.zones[symbol][tf] = []
             time.sleep(0.15)
+        self._update_w1_ema(symbol, df_w1)
         self.cache.built_at = time.time()
         return total
 
@@ -111,7 +154,24 @@ class Watcher:
 
                     conf_n = self._aligned_count(sym, z.side, price)
                     depth = depth_score(price, z)
-                    quality_ok = depth >= q.min_depth_score and conf_n >= q.min_aligned_tfs
+
+                    # Nấc 1: bias W1 EMA — chặn tin ngược xu hướng tuần
+                    bias_ok = True
+                    w1_bias_txt: str | None = None
+                    if q.require_w1_ema_bias:
+                        ema = self.cache.w1_ema.get(sym)
+                        if ema is None:
+                            bias_ok = False
+                        else:
+                            bias_ok = bias_allows(z.side, price, ema)
+                            if bias_ok:
+                                w1_bias_txt = bias_label(price, ema, q.w1_ema_length)
+
+                    quality_ok = (
+                        depth >= q.min_depth_score
+                        and conf_n >= q.min_aligned_tfs
+                        and bias_ok
+                    )
                     band = self.episodes.on_price(sym, tf, z, price, emit=quality_ok)
                     if band is None:
                         continue
@@ -134,11 +194,13 @@ class Watcher:
                             rr=rr,
                             depth=depth,
                             confidence=conf,
+                            w1_bias=w1_bias_txt,
                         )
                         sent += 1
                         print(
                             f"  → Noti {sym} {tf} {z.side} "
                             f"stl={stl} tp={tp} rr={rr} depth={depth} conf={conf}"
+                            f" bias={w1_bias_txt or '-'}"
                         )
                     except Exception as e:
                         print(f"  ! Telegram: {e}")

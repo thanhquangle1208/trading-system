@@ -30,6 +30,9 @@ class AlertQuality:
     min_depth_score: float = 7.0
     min_aligned_tfs: int = 2
     min_depth_band: int = 2
+    # Nấc 1: bias khung tuần — MUA chỉ khi giá > EMA W1; BÁN khi giá < EMA W1
+    require_w1_ema_bias: bool = True
+    w1_ema_length: int = 34
 
 
 @dataclass
@@ -85,6 +88,8 @@ def load_settings() -> Settings:
         min_depth_score=float(a.get("min_depth_score", 7.0)),
         min_aligned_tfs=int(a.get("min_aligned_tfs", 2)),
         min_depth_band=int(a.get("min_depth_band", 2)),
+        require_w1_ema_bias=bool(a.get("require_w1_ema_bias", True)),
+        w1_ema_length=max(2, int(a.get("w1_ema_length", 34))),
     )
 
     symbols = [str(s).upper().replace(".P", "").replace("/", "") for s in (raw.get("symbols") or [])]

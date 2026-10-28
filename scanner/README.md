@@ -65,6 +65,7 @@ Cấu hình trong `watchlist.yaml` → `alert:`:
 | Số khung đồng thuận | **≥ 2** (độ tin cậy ≥ 7.0) |
 | Cooldown cùng vùng | **30 phút** |
 | Cooldown cùng cặp+chiều | **60 phút** |
+| **Nấc 1 — Bias W1** | **EMA 34 tuần**: MUA chỉ khi giá > EMA; BÁN chỉ khi giá < EMA (tin có dòng `🧭 Bias W1`) |
 
 ## Chi phí
 

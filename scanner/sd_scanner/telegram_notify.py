@@ -43,6 +43,7 @@ class Telegram:
         rr: float | None,
         depth: float,
         confidence: float,
+        w1_bias: str | None = None,
     ) -> None:
         display = symbol if symbol.endswith("USDT") else symbol
         if side == "buy":
@@ -65,25 +66,25 @@ class Telegram:
         depth_s = e(f"{depth:.1f}/10")
         conf_s = e(f"{confidence:.1f}/10")
 
-        text = "\n".join(
-            [
-                "🏷️ <b>Phương Pháp Supply &amp; Demand</b>",
-                "",
-                "📊 <b>PHÂN TÍCH TÍN HIỆU</b>",
-                "━━━━━━━━━━━━━━━━",
-                f"{action_emoji} <b>{action_word} {pair}</b>",
-                f"⏱ <b>Khung:</b> {tf_e}",
-                f"📍 <b>Giá / Entry:</b> {price_s}",
-                f"📦 <b>Vùng giá:</b> {zone_s}",
-                f"🛑 <b>STL:</b> {stl_s}",
-                f"✅ <b>TP:</b> {tp_s}",
-                f"📐 <b>R:R:</b> {rr_s}",
-                "",
-                f"⭐ <b>Độ hấp dẫn (độ sâu):</b> {depth_s}",
-                f"📈 <b>Độ tin cậy:</b> {conf_s}",
-            ]
-        )
-        self.send(text, use_html=True)
+        lines = [
+            "🏷️ <b>Phương Pháp Supply &amp; Demand</b>",
+            "",
+            "📊 <b>PHÂN TÍCH TÍN HIỆU</b>",
+            "━━━━━━━━━━━━━━━━",
+            f"{action_emoji} <b>{action_word} {pair}</b>",
+            f"⏱ <b>Khung:</b> {tf_e}",
+            f"📍 <b>Giá / Entry:</b> {price_s}",
+            f"📦 <b>Vùng giá:</b> {zone_s}",
+            f"🛑 <b>STL:</b> {stl_s}",
+            f"✅ <b>TP:</b> {tp_s}",
+            f"📐 <b>R:R:</b> {rr_s}",
+            "",
+            f"⭐ <b>Độ hấp dẫn (độ sâu):</b> {depth_s}",
+            f"📈 <b>Độ tin cậy:</b> {conf_s}",
+        ]
+        if w1_bias:
+            lines.append(f"🧭 <b>Bias W1:</b> {e(w1_bias)}")
+        self.send("\n".join(lines), use_html=True)
 
     @staticmethod
     def _fmt(x: float) -> str:

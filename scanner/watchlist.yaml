@@ -31,6 +31,9 @@ alert:
   min_aligned_tfs: 2
   # Band độ sâu tối thiểu: 2 = bỏ báo “mới chạm mép” (band 1)
   min_depth_band: 2
+  # Nấc 1 (Swing): hướng khung tuần — MUA chỉ khi giá > EMA W1; BÁN khi giá < EMA W1
+  require_w1_ema_bias: true
+  w1_ema_length: 34
 
 # Tham số vùng giá (gần với Thesis T3E)
 zone:
