@@ -1,125 +1,84 @@
 # HANDOFF — Trading System
 
-**Đọc file này trước** khi làm bất kỳ việc gì trong repo. Sau đó đọc: `architecture-roadmap.md` → `project-context.md` → `cost-estimate.md` → `preferences.md` → **`thesis/T0-trading-thesis.md`** (nếu làm thesis).
+**Đọc file này trước.** Sau đó: `preferences.md` → `scanner/telegram-sd-alerts.md` → `thesis/decisions-locked.md` (nếu đụng thesis/Pine).
 
-> **Trạng thái hiện tại (2026-10-23):** Script chart: **`pine/T3e.pine`** (Thesis T3E, không TL). **Scanner Telegram** (Vùng Mua/Bán H1–W1): quyết định đã khóa, **chưa code** — xem [`scanner/telegram-sd-alerts.md`](./scanner/telegram-sd-alerts.md). Bot Phase 1 đầy đủ vẫn **hoãn**.
-
----
-
-## Dự án này là gì?
-
-Hệ thống giao dịch cá nhân của **Tomas Le** (người mới bắt đầu, chưa có nền tảng code):
-
-- **Ngắn hạn (đang làm):** chốt **thesis** trên TV — chart **BINANCE:BTCUSDT.P**, vốn paper **$10k**, logic vừa làm vừa research.
-- **Dài hạn (hoãn):** bot Python (ccxt, Bybit…), paper/live, Telegram, dashboard localhost — xem roadmap Phase 1–6.
-
-Giải thích và tài liệu bằng **tiếng Việt**, chậm rãi, dễ hiểu. Mỗi bước: đề xuất → Tomas duyệt → mới code.
+> **Cập nhật 2026-10-28:** Ưu tiên hiện tại = **Scanner Telegram S/D trên Mac** (cảnh báo vùng giá, không tự trade). Chart Pine **`pine/T3e.pine`**. Bot Phase 1–6 đầy đủ vẫn **hoãn**.
 
 ---
 
-## Hiểu đúng: “tích hợp vào chart TV”
+## Dự án là gì?
 
-| Công cụ | Vai trò |
-|---------|---------|
-| **Pine Script** | Code **chạy bên trong TradingView** → vẽ mũi tên, hộp LONG/SHORT, bảng THỐNG KÊ **trên chart** như ảnh |
-| **Python bot** | Chạy **ngoài** TV (máy bạn) → lấy giá API, đặt lệnh, Telegram — **không** vẽ được vào chart TV |
+Hệ thống giao dịch cá nhân của **Tomas Le** (newbie — giải thích tiếng Việt, chậm, rõ).
 
-Muốn UI như ảnh → làm **Pine**. Bot là bước sau khi thesis đã rõ.
-
-Chi tiết: [`thesis/T0-trading-thesis.md`](./thesis/T0-trading-thesis.md).
-
----
-
-## Quyết định đã chốt (locked)
-
-### Thesis / Pine (ưu tiên hiện tại)
-
-| Mục | Quyết định |
-|-----|------------|
-| Ưu tiên | **Pine thesis trước**; **bot Phase 1 hoãn** |
-| Script | **Viết lại từ đầu** |
-| Logic | Vừa làm vừa research (bắt đầu đơn giản) |
-| Vốn paper thesis | **$10.000** |
-| Chart | **BINANCE:BTCUSDT.P** (perp) |
-| TF học | **5m** (đã chốt) |
-| TP | **2R** (đã chốt) |
-| Volume | **Bắt buộc** (đã chốt) |
-| Phương pháp | **S/D + Wyckoff + PA + Trend line** — **OK** — [`thesis/method-sd-wyckoff-pa.md`](./thesis/method-sd-wyckoff-pa.md) |
-| Quyết định khóa | [`thesis/decisions-locked.md`](./thesis/decisions-locked.md) |
-
-### Kiến trúc bot dài hạn (vẫn giữ, chưa code)
-
-| Mục | Quyết định |
-|-----|------------|
-| TradingView dài hạn | **A (Pine)** đang làm trước để chốt thesis; **B (Python dashboard)** khi làm bot |
-| Ngôn ngữ bot | **Python** (ccxt, backtest, Optuna) |
-| Sàn bot đầu | **Bybit** qua **ccxt** (sau thesis) |
-| DEX | Adapter riêng, **sau** |
-| DB đầu | **SQLite** → Postgres sau |
-| Chế độ | Paper + backtest trước live |
-| Chi phí | Ít opex; máy nhà; không tự thuê VPS/TV Pro trừ khi Tomas yêu cầu |
-| Rating / Notifier | Thiết kế giữ nguyên — triển khai khi làm bot |
-| Code Phase 1–6 | **Chưa** — chờ “OK Phase 1” sau khi thesis ổn |
-
-Chi tiết bot: [`architecture-roadmap.md`](./architecture-roadmap.md). Chi phí: [`cost-estimate.md`](./cost-estimate.md).
+| Lớp | Vai trò |
+|-----|---------|
+| **Pine `T3e.pine`** | Vẽ S/D + Sp/UT + THỐNG KÊ trên TradingView (đã **bỏ Trendline**) |
+| **Scanner Python** | Máy Mac: theo dõi Perp → Telegram khi giá vào vùng đủ chất lượng |
+| **Bot live / Phase 1–6** | **Hoãn** — chưa đặt lệnh thật |
 
 ---
 
-## Câu hỏi vẫn mở (bot — không chặn thesis)
+## Nhánh Git (bắt buộc)
 
-Trả lời khi quay lại bot; agent cập nhật `project-context.md`.
-
-1. Spot hay Perp primary cho **bot** (thesis đang dùng perp chart Binance)
-2. Timezone: `Asia/Ho_Chi_Minh` hay UTC?
-3. Bybit API / testnet sẵn chưa?
-4. Telegram bot + chat ID; một hay nhiều kênh?
-5. `rating`: “Rủi ro” hay “Độ tin cậy”?
-6. Ngưỡng confluence mặc định?
-7. Leverage tối đa (perp bot)?
-
-**Thesis — còn research dần:** công thức trend/entry/TP R / phí % / zone Supply-Demand sớm hay để T4 — xem T0 §6.
+- **Nhánh làm việc:** `cursor/trading-thesis-pine-de71`
+- Base PR thường: `main`
+- Sau mỗi lần sửa: `commit` + `push` nhánh này
+- **Không** force-merge `main` trừ khi Tomas yêu cầu
 
 ---
 
-## Trạng thái phase / bước
+## Scanner — trạng thái & luật (đã code)
 
-| Bước | Trạng thái |
-|------|------------|
-| Kiến trúc bot / roadmap | Đã có trong docs; **bot chưa code** |
-| **T0** + method | **OK** (Tomas duyệt) |
-| **T3d** | Balanced (không TL) |
-| **T3e** | **`pine/T3e.pine`** ← chart (**không** Trendline) |
-| **Scanner TG** | MVP [`../scanner/`](../scanner/) — trên Mac dùng [`../scanner/mac/`](../scanner/mac/) auto `git pull` khi có commit mới; docs [`scanner/telegram-sd-alerts.md`](./scanner/telegram-sd-alerts.md) |
-| **Phase 1–6** bot đủ | **HOÃN** (scanner chỉ là cảnh báo, chưa execution) |
+Code: `scanner/` · Docs: `docs/scanner/telegram-sd-alerts.md` · Mac: `scanner/mac/README.md`
 
-**Quy tắc agent:** Phương pháp đã OK → được viết T1. T2+ cần Tomas OK từng bước (hoặc bảo “tiếp T2”). Không scaffold Phase 1 bot cho đến “OK Phase 1”.
+| Mục | Đã chốt |
+|-----|---------|
+| Thị trường | **Perp** — Binance trước, thiếu thì Bybit |
+| Watchlist | `scanner/watchlist.yaml` (+ Telegram `/add`) |
+| Tin Telegram | Tiếng Việt; tiêu đề **Phương Pháp Supply & Demand**; có Entry, Vùng giá, **STL**, **TP**, **R:R**, độ hấp dẫn, độ tin cậy |
+| STL | Mép hết vùng (Mua=bot, Bán=top) |
+| TP | Mép vùng đối ứng gần nhất **cùng TF** |
+| Chất lượng (ít nhiễu) | Chỉ báo **H4/D1/W1**; độ sâu **≥7**; **≥2 TF** đồng thuận; cooldown vùng 30′ + cặp/chiều 60′; H1 chỉ confluence |
+| `/add TÊN` | Tìm Binance→Bybit; **1 kết quả → thêm luôn**; nhiều → chọn 1,2,3… |
+| Spam trạng thái | **Không** gửi: bắt đầu/xong scan, “Đã bật…”, “Chỉ thấy 1 ticker…”, “Xong N vùng + list”. Giữ `✅ Đã thêm…` và **cảnh báo vùng** |
+| Secrets | `.env` ở root (`TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`) — **gitignored** |
+| Mac auto-update | `scanner/mac/start_with_autoupdate.sh`: mỗi N phút `fetch`; **chỉ pull+restart khi có commit mới** |
+
+**Lưu ý agent cloud:** Sửa code trên VM → push GitHub. **Không** SSH vào Mac. Tomas Mac tự pull (script) hoặc `git pull` tay rồi restart scanner.
+
+**Pine:** Khi gửi script cho Tomas → **chỉ link GitHub** (raw/blob), không dán full source vào chat.
 
 ---
 
-## Nhánh Git & commit gần đây
+## Pine / thesis
 
-- **Nhánh thesis:** `cursor/trading-thesis-pine-43e3`
-- **Nhánh kiến trúc cũ:** `cursor/architecture-roadmap-abd1`
-- **`main`:** có thể đứng sau các nhánh feature — không force-merge trừ khi Tomas yêu cầu.
+- Script hiện tại: **`pine/T3e.pine`** (không Trendline — Tomas: TL không hiệu quả)
+- Chart học: BTCUSDT.P · method S/D + Wyckoff + PA (TL đã bỏ khỏi script)
+- Chi tiết: `docs/thesis/*`
 
 ---
 
-## Instruction cho agent (bắt buộc)
+## Preferences nhanh
 
-**Before coding, read HANDOFF + architecture-roadmap + project-context + cost-estimate + preferences + thesis/T0.**
+- Tiếng Việt, newbie, đề xuất → OK → mới code lớn
+- Ít opex; không tự thuê VPS
+- Không dùng LLM để quét giá (scanner = code + API sàn)
+- Sau mỗi session: commit + push + cập nhật HANDOFF nếu đổi hướng
 
-1. Giải thích tiếng Việt, rõ ràng, giả định người mới.
-2. Ưu tiên hiện tại = **thesis Pine**; bot chỉ khi Tomas mở lại.
-3. Mỗi bước T0→T5: đề xuất → duyệt → code.
-4. Sau mỗi lần làm: commit + push nhánh.
-5. Ưu tiên làm việc qua **Git repository**.
+---
+
+## Việc agent mới nên làm khi vào
+
+1. `git fetch` + checkout **`cursor/trading-thesis-pine-de71`**
+2. Đọc HANDOFF + `preferences.md` + `docs/scanner/telegram-sd-alerts.md`
+3. Hỏi Tomas task tiếp theo (đừng đoán Phase 1 bot)
+4. Nếu sửa scanner: push nhánh; nhắc Tomas Mac auto-update hoặc pull tay
 
 ---
 
 ## English summary (for other AIs)
 
-**Now:** Current script `pine/T3e.pine` (Thesis T3E). Trendline **removed** (Tomas: not effective). S/D + Spring/UT + PA + TP 1.5R. Bot still paused.
-
-**Next:** Paste T3e on TV; measure WR/Net. “OK Phase 1” later for bot.
-
-**Branch:** `cursor/trading-thesis-pine-43e3`.
+**Branch:** `cursor/trading-thesis-pine-de71`  
+**Focus:** Mac Telegram SD zone scanner (alerts only, no execution). Quality filters: alert TF H4/D1/W1, depth≥7, ≥2 TF confluence, long cooldowns. `/add` auto-picks single match; silence operational spam. Pine chart: `pine/T3e.pine` (no trendlines). Phase 1–6 trading bot still paused.  
+**Mac:** `scanner/mac/start_with_autoupdate.sh` pulls only when remote has new commits. Cloud agent cannot run commands on Tomas’s Mac.  
+**Must-read:** this file, `docs/preferences.md`, `docs/scanner/telegram-sd-alerts.md`.
