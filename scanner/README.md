@@ -47,7 +47,7 @@ Trên Telegram khi đang chạy:
 
 | Lệnh | Việc |
 |------|------|
-| `/add LIT` | Tìm ticker; **1 kết quả → thêm luôn**; nhiều kết quả → chọn 1 2 3… |
+| `/add LIT` | Tìm ticker (im lặng); **1 kết quả → thêm luôn** (`✅`); nhiều → chọn 1 2 3… |
 | `/list` | Xem danh sách cặp |
 | `/scan` | Rebuild vùng |
 | `/status` | Trạng thái |
