@@ -28,6 +28,12 @@ pip install -r requirements.txt
 
 ## Mỗi lần bật máy muốn nhận noti
 
+**Cách mới (khuyên dùng — làm việc trên điện thoại):** tự pull khi GitHub có commit mới:
+
+Xem hướng dẫn: [`mac/README.md`](mac/README.md) → chạy `scanner/mac/start_with_autoupdate.sh`
+
+**Cách cũ (thủ công):**
+
 ```bash
 cd scanner
 source .venv/bin/activate
