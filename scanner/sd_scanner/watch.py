@@ -4,9 +4,10 @@ from __future__ import annotations
 
 import time
 from dataclasses import dataclass, field
+from pathlib import Path
 
 from .bias import bias_allows, bias_label, ema_last
-from .config import Settings
+from .config import SCANNER_DIR, Settings
 from .episode import EpisodeState
 from .exchange import MarketData
 from .levels import next_target, risk_reward, stop_level, take_profit_price
@@ -14,6 +15,9 @@ from .scoring import confidence_score, depth_score
 from .telegram_notify import Telegram
 from .watchlist_store import save_symbols
 from .zones import Zone, build_zones, price_in_zone
+
+# Cooldown sống qua restart (Mac auto-pull). Không commit file này.
+EPISODE_STATE_PATH = Path(SCANNER_DIR) / ".runtime" / "episode_state.json"
 
 
 @dataclass
@@ -42,7 +46,9 @@ class Watcher:
             cooldown_sec=q.cooldown_sec,
             side_cooldown_sec=q.side_cooldown_sec,
             min_band=q.min_depth_band,
+            state_path=EPISODE_STATE_PATH,
         )
+        self.episodes.load()
         self.running = False
         self.pending_add: PendingAdd | None = None
 

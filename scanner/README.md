@@ -64,7 +64,8 @@ Cấu hình trong `watchlist.yaml` → `alert:`:
 | Độ sâu tối thiểu | **≥ 7.0/10** (bỏ báo mới chạm mép ~6) |
 | Số khung đồng thuận | **≥ 2** (độ tin cậy ≥ 7.0) |
 | Cooldown cùng vùng | **30 phút** |
-| Cooldown cùng cặp+chiều | **60 phút** |
+| Cooldown cùng cặp+chiều | **60 phút** (lưu file `scanner/.runtime/` — **không mất khi restart**) |
+| Một vùng / một nhịp | **Chỉ 1 tin** (không báo lại khi giá sâu thêm trong cùng vùng) |
 | **Nấc 1 — Bias W1** | **EMA 34 tuần**: MUA chỉ khi giá > EMA; BÁN chỉ khi giá < EMA (tin có dòng `🧭 Bias W1`) |
 
 ## Chi phí

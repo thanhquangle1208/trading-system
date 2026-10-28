@@ -18,4 +18,5 @@
 - Scanner quality: báo H4/D1/W1; depth≥7; ≥2 TF; ít tin trạng thái (scan/add). (2026-10-28)
 - `/add`: không gửi “Đang tìm…”; chỉ tin kết quả (`✅ Đã thêm…` / không thấy / chọn số). (2026-10-28)
 - Scanner siết từng nấc nhẹ (chờ Tomas confirm). **Nấc 1:** Bias W1 EMA34. Chưa: Fib/RSI/bỏ H4/R:R≥2. (2026-10-28)
+- Cooldown episode **persist đĩa** — tránh spam khi Mac auto-pull restart (bug MON 4 tin). (2026-10-28)
 - Agent cloud **không** điều khiển Mac; chỉ push GitHub. (2026-10-28)

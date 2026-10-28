@@ -8,6 +8,7 @@ __pycache__/
 .mypy_cache/
 .DS_Store
 scanner/data/
+scanner/.runtime/
 scanner/mac/config.env
 scanner/mac/scanner.pid
 scanner/mac/logs/
