@@ -34,6 +34,8 @@ alert:
   # Nấc 1 (Swing): hướng khung tuần — MUA chỉ khi giá > EMA W1; BÁN khi giá < EMA W1
   require_w1_ema_bias: true
   w1_ema_length: 34
+  # Entry sát / trùng mép vùng → nới STL tối thiểu % này (0.025 = 2.5%)
+  min_stl_pct: 0.025
 
 # Tham số vùng giá (gần với Thesis T3E)
 zone:

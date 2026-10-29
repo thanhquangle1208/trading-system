@@ -36,7 +36,7 @@ Code: `scanner/` · Docs: `docs/scanner/telegram-sd-alerts.md` · Mac: `scanner/
 | Thị trường | **Perp** — Binance trước, thiếu thì Bybit |
 | Watchlist | `scanner/watchlist.yaml` (+ Telegram `/add`) |
 | Tin Telegram | Tiếng Việt; tiêu đề **Phương Pháp Supply & Demand**; có Entry, Vùng giá, **STL**, **TP**, **R:R**, độ hấp dẫn, độ tin cậy |
-| STL | Mép hết vùng (Mua=bot, Bán=top) |
+| STL | Mép hết vùng (Mua=bot, Bán=top); nếu Entry sát mép (&lt; **2.5%**) → nới STL đủ 2.5% (không bao giờ Entry = STL) |
 | TP | Mép vùng đối ứng gần nhất **cùng TF** |
 | Chất lượng (ít nhiễu) | Chỉ báo **H4/D1/W1**; độ sâu **≥7**; **≥2 TF**; cooldown vùng 30′ + cặp/chiều 60′ (**lưu đĩa** — sống qua restart/auto-pull); mỗi vùng **1 tin/nhịp**; H1 chỉ confluence; **Nấc 1:** Bias **W1 EMA34** |
 | `/add TÊN` | Tìm Binance→Bybit; **1 kết quả → thêm luôn**; nhiều → chọn 1,2,3… |

@@ -67,6 +67,7 @@ Cấu hình trong `watchlist.yaml` → `alert:`:
 | Cooldown cùng cặp+chiều | **60 phút** (lưu file `scanner/.runtime/` — **không mất khi restart**) |
 | Một vùng / một nhịp | **Chỉ 1 tin** (không báo lại khi giá sâu thêm trong cùng vùng) |
 | **Nấc 1 — Bias W1** | **EMA 34 tuần**: MUA chỉ khi giá > EMA; BÁN chỉ khi giá < EMA (tin có dòng `🧭 Bias W1`) |
+| STL tối thiểu | Entry→STL ≥ **2.5%**; sát mép vùng thì nới STL (không Entry = STL) |
 
 ## Chi phí
 

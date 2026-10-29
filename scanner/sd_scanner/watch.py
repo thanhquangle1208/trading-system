@@ -183,7 +183,7 @@ class Watcher:
                         continue
 
                     conf = confidence_score(conf_n)
-                    stl = stop_level(z.side, z)
+                    stl = stop_level(z.side, z, price, min_stl_pct=q.min_stl_pct)
                     tgt = next_target(z.side, price, zs)
                     tp = take_profit_price(z.side, tgt) if tgt is not None else None
                     rr = risk_reward(price, stl, tp)

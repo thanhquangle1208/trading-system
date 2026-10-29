@@ -33,6 +33,8 @@ class AlertQuality:
     # Nấc 1: bias khung tuần — MUA chỉ khi giá > EMA W1; BÁN khi giá < EMA W1
     require_w1_ema_bias: bool = True
     w1_ema_length: int = 34
+    # Khoảng cách tối thiểu Entry→STL (0.025 = 2.5%). Sát mép vùng thì nới STL.
+    min_stl_pct: float = 0.025
 
 
 @dataclass
@@ -90,6 +92,7 @@ def load_settings() -> Settings:
         min_depth_band=int(a.get("min_depth_band", 2)),
         require_w1_ema_bias=bool(a.get("require_w1_ema_bias", True)),
         w1_ema_length=max(2, int(a.get("w1_ema_length", 34))),
+        min_stl_pct=max(0.0, float(a.get("min_stl_pct", 0.025))),
     )
 
     symbols = [str(s).upper().replace(".P", "").replace("/", "") for s in (raw.get("symbols") or [])]
