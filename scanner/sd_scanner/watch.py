@@ -394,15 +394,21 @@ class Watcher:
                 "/stop — dừng\n"
                 "/cancel — hủy bước chọn ticker"
             )
+            return
+
+        # Lệnh lạ — trả lời để biết bot còn sống / đã cập nhật chưa
+        self.tg.send(f"Không hiểu «{cmd}». Gõ /help để xem lệnh (có /top).")
 
     def _handle_top(self) -> None:
         """3 lệnh đáng bet nhất trong 24h — từ tin đã noti; 1 lần / cặp."""
+        print("  /top được gọi")
         since = time.time() - 24 * 3600
         records = self.history.load_since(since)
         if not records:
             self.tg.send(
-                "Chưa có tin cảnh báo nào trong 24 giờ qua.\n"
-                "Đợi bot noti vùng giá, rồi gõ /top lại."
+                "📭 /top: chưa có tin nào trong lịch sử 24 giờ.\n"
+                "Chỉ tính tin cảnh báo gửi **sau khi** Mac đã cập nhật bản có /top.\n"
+                "Đợi bot noti vùng mới, rồi gõ /top lại."
             )
             return
         top = pick_top(records, limit=3)
