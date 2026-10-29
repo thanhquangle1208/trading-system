@@ -30,7 +30,7 @@ EPISODE_STATE_PATH = Path(SCANNER_DIR) / ".runtime" / "episode_state.json"
 ALERT_HISTORY_PATH = Path(SCANNER_DIR) / ".runtime" / "alert_history.jsonl"
 
 # Hiện trên /status — Tomas kiểm tra Mac đã chạy đúng bản chưa.
-SCANNER_FEATURES = "/top · bias-W1 · STL≥2.5% · cooldown-disk"
+SCANNER_FEATURES = "/top · bias-W1 · STL≥2.5% · cooldown-disk · watchlist.local"
 
 
 @dataclass

@@ -21,5 +21,6 @@
 - Cooldown episode **persist đĩa** — tránh spam khi restart (bug MON 4 tin). (2026-10-28)
 - STL: **mọi lệnh** Entry→STL ≥ **2.5%**; mép S/R chỉ dùng khi đã ≥ 2.5%. (2026-10-29)
 - `/top`: 3 lệnh 24h, 1 lần/cặp; pair chỉ soft bonus, không cố định BTC>ETH>…. (2026-10-29)
-- Mac: **bỏ auto-update** — `git pull` tay + `stop_scanner`/`start_scanner` (stop giết orphan). (2026-10-29)
+- Mac auto-update **an toàn**: giữ watchlist.local + .runtime cooldown; giết orphan; không stash -u. (2026-10-29)
+- Restart bot **không** được spam lại noti trong cửa sổ cooldown 30–60′. (2026-10-29)
 - Agent cloud **không** điều khiển Mac; chỉ push GitHub. (2026-10-28)

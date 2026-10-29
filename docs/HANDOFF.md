@@ -43,9 +43,10 @@ Code: `scanner/` · Docs: `docs/scanner/telegram-sd-alerts.md` · Mac: `scanner/
 | `/top` | 3 lệnh đáng xem nhất **24h** (đã noti); **1 lần/cặp**; xếp tin cậy + độ sâu + R:R + TF + bias + soft pair (pair không cố định thứ tự) |
 | Spam trạng thái | **Không** gửi: bắt đầu/xong scan, “Đã bật…”, “Đang tìm…”, “Xong N vùng…”. Giữ `✅ Đã thêm…` và **cảnh báo vùng** |
 | Secrets | `.env` ở root (`TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`) — **gitignored** |
-| Mac chạy bot | **`git pull` tay** + `scanner/mac/stop_scanner.sh` rồi `start_scanner.sh`. **Đã bỏ** auto-update (dễ sót process cũ) |
+| Mac chạy bot | **`start_with_autoupdate.sh`** (24/7): pull an toàn khi GitHub có commit; giữ `watchlist.local.yaml` + `.runtime/` (cooldown); giết orphan. Hoặc `start_scanner.sh` một lần |
+| Restart & spam | Cooldown **lưu đĩa** → restart/auto-update **không** được phép spam lại trong 30–60′ |
 
-**Lưu ý agent cloud:** Sửa code trên VM → push GitHub. **Không** SSH vào Mac. Tomas: `git pull` + stop/start scanner trên Mac.
+**Lưu ý agent cloud:** Sửa code → push GitHub. **Không** SSH Mac. Tomas Mac chạy auto-update hoặc pull tay.
 
 **Pine:** Khi gửi script cho Tomas → **chỉ link GitHub** (raw/blob), không dán full source vào chat.
 
@@ -81,5 +82,5 @@ Code: `scanner/` · Docs: `docs/scanner/telegram-sd-alerts.md` · Mac: `scanner/
 
 **Branch:** `cursor/trading-thesis-pine-de71`  
 **Focus:** Mac Telegram SD zone scanner (alerts only, no execution). Quality filters: alert TF H4/D1/W1, depth≥7, ≥2 TF confluence, long cooldowns. `/add` auto-picks single match; `/top` ranks last-24h alerts. Pine: `pine/T3e.pine`. Phase 1–6 bot paused.  
-**Mac:** No autoupdate. Manual `git pull` + `scanner/mac/stop_scanner.sh` + `start_scanner.sh` (stop kills orphan processes).  
+**Mac:** `start_with_autoupdate.sh` — safe pull (preserve watchlist.local + .runtime cooldown), kill orphans, ff/hard sync to origin. Restart must not re-spam within cooldown.  
 **Must-read:** this file, `docs/preferences.md`, `docs/scanner/telegram-sd-alerts.md`.

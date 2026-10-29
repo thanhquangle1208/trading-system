@@ -63,8 +63,8 @@ def load_settings() -> Settings:
         )
 
     interval = int(os.getenv("WATCH_INTERVAL_SEC") or "45")
-    wl_path = SCANNER_DIR / "watchlist.yaml"
-    with wl_path.open(encoding="utf-8") as f:
+    base_path = SCANNER_DIR / "watchlist.yaml"
+    with base_path.open(encoding="utf-8") as f:
         raw = yaml.safe_load(f) or {}
 
     z = raw.get("zone") or {}
@@ -95,10 +95,15 @@ def load_settings() -> Settings:
         min_stl_pct=max(0.0, float(a.get("min_stl_pct", 0.025))),
     )
 
-    symbols = [str(s).upper().replace(".P", "").replace("/", "") for s in (raw.get("symbols") or [])]
+    from .watchlist_store import ensure_local_symbols, normalize_symbols
+
+    seed = normalize_symbols(raw.get("symbols"))
+    wl_path, symbols = ensure_local_symbols(SCANNER_DIR, seed)
     timeframes = [str(t).upper() for t in (raw.get("timeframes") or ["H1", "H4", "D1", "W1"])]
     if not symbols:
-        raise SystemExit("watchlist.yaml: danh sách symbols trống.")
+        raise SystemExit(
+            "Danh sách cặp trống. Thêm vào scanner/watchlist.local.yaml hoặc /add trên Telegram."
+        )
 
     return Settings(
         telegram_token=token,

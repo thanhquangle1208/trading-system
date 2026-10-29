@@ -28,16 +28,15 @@ pip install -r requirements.txt
 
 ## Mỗi lần bật máy muốn nhận noti
 
-**Khuyên dùng trên Mac** (đã **bỏ** auto-update):
+**Khuyên dùng trên Mac 24/7** (auto-update an toàn — prompt từ iPhone):
 
 ```bash
-cd ~/trading-system
-git pull origin cursor/trading-thesis-pine-de71
-cd scanner/mac
+cd ~/trading-system/scanner/mac
 ./stop_scanner.sh
-./start_scanner.sh
+./start_with_autoupdate.sh
 ```
 
+Cặp theo dõi: `watchlist.local.yaml` (không commit). Cooldown: `scanner/.runtime/` (sống qua restart).  
 Chi tiết: [`mac/README.md`](mac/README.md).
 
 **Hoặc thủ công trong terminal:**

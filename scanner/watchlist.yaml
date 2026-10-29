@@ -1,5 +1,6 @@
-# Danh sách cặp Perp theo dõi (Binance USDT-M trước; thiếu thì Bybit)
-# Thêm/bớt dòng symbol — không cần .P; code tự hiểu là perp.
+# Cấu hình scanner (commit được).
+# Danh sách cặp THẬT trên Mac: watchlist.local.yaml (gitignore).
+# symbols dưới đây chỉ là seed lần đầu nếu chưa có file local.
 
 symbols:
   - BTCUSDT

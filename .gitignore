@@ -9,9 +9,11 @@ __pycache__/
 .DS_Store
 scanner/data/
 scanner/.runtime/
+scanner/watchlist.local.yaml
 scanner/mac/config.env
 scanner/mac/scanner.pid
 scanner/mac/logs/
+scanner/mac/.pull-backup/
 *.sqlite
 *.db
 .python-version

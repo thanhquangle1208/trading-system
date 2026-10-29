@@ -1,9 +1,17 @@
-# Mac — chạy Scanner (không auto-update)
+# Mac — Scanner + auto-update an toàn
 
-Agent cloud sửa code → **push GitHub**.  
-Trên Mac bạn **`git pull` tay** rồi bật lại scanner.
+Prompt trên **iPhone** → agent **push GitHub** → Mac (bật 24/7) tự `pull` + restart.
 
-> **Đã gỡ** `start_with_autoupdate.sh` (hay để sót process cũ → Telegram vẫn trả `/help` bản cũ, không có `/top`).
+## Bug cũ đã vá
+
+| Bug cũ | Cách mới |
+|--------|----------|
+| Reset → quên cooldown → spam tin ~10′ | Cooldown lưu `scanner/.runtime/` — **sống qua restart** |
+| `/add` sửa `watchlist.yaml` → `git pull` bị chặn | Cặp nằm ở `watchlist.local.yaml` (**gitignore**) |
+| Process cũ sót → `/help` không có `/top` | `stop` **giết hết** orphan `sd_scanner` |
+| Pull lệch nhánh | Chỉ `git pull --ff-only`; diverged → **không** tự pull |
+
+**Restart ≠ báo lại toàn bộ.** Luật 30′/60′ vẫn giữ nhờ file cooldown trên đĩa.
 
 ## Cài một lần
 
@@ -20,37 +28,38 @@ pip install -r requirements.txt
 
 cd mac
 cp config.env.example config.env
-# Sửa REPO_DIR nếu repo không nằm ở ~/trading-system
+# Sửa REPO_DIR nếu cần
 chmod +x *.sh
 ```
 
-Có file `.env` ở **gốc repo** (token Telegram).
+`.env` ở **gốc repo** (token Telegram).
 
-## Mỗi lần cập nhật code (làm đúng thứ tự)
+Nếu bạn đang có nhiều cặp trong `watchlist.yaml`: lần chạy đầu bot (hoặc auto-update) sẽ **migrate** sang `watchlist.local.yaml`.
+
+## Chạy 24/7 (khuyên dùng)
 
 ```bash
-cd ~/trading-system
-git pull origin cursor/trading-thesis-pine-de71
-
-cd scanner/mac
+cd ~/trading-system/scanner/mac
 ./stop_scanner.sh
-./start_scanner.sh
+./start_with_autoupdate.sh
 ```
 
-`stop` sẽ **giết cả process orphan** (scanner cũ còn sống ngoài pid file).  
-`start` kiểm tra `watch.py` **phải có `/top`** — sai repo/path thì báo lỗi, không chạy nhầm.
+Giữ Terminal mở (hoặc chạy nền). Mac **không sleep** sâu.
 
-## Kiểm tra trên Telegram
+Dừng bot:
 
-1. `/help` → **phải có dòng `/top`**  
-2. `/status` → có dòng `Bản code: … /top …`  
-3. Nếu `/help` không có `/top` → đang chạy nhầm thư mục hoặc chưa pull: xem `config.env` → `REPO_DIR`
+```bash
+./stop_scanner.sh
+```
 
-## Log
+## Kiểm tra sau cập nhật
 
-- `scanner/mac/logs/scanner.log` — output bot  
-- `scanner/mac/logs/scanner_run.log` — start/stop  
+1. `/help` có **`/top`**  
+2. `/status` có `Bản code: /top · …`  
+3. Log: `scanner/mac/logs/auto_update.log` — dòng “Có commit mới…” khi agent vừa push  
 
-## Chi phí
+## Chỉ start tay (không vòng pull)
 
-$0 — không VPS, không auto-pull.
+```bash
+./start_scanner.sh
+```
