@@ -20,4 +20,5 @@
 - Scanner siết từng nấc nhẹ (chờ Tomas confirm). **Nấc 1:** Bias W1 EMA34. Chưa: Fib/RSI/bỏ H4/R:R≥2. (2026-10-28)
 - Cooldown episode **persist đĩa** — tránh spam khi Mac auto-pull restart (bug MON 4 tin). (2026-10-28)
 - STL: **mọi lệnh** Entry→STL ≥ **2.5%**; mép S/R chỉ dùng khi đã ≥ 2.5%. (2026-10-29)
+- `/top`: 3 lệnh 24h, 1 lần/cặp; pair chỉ soft bonus, không cố định BTC>ETH>…. (2026-10-29)
 - Agent cloud **không** điều khiển Mac; chỉ push GitHub. (2026-10-28)

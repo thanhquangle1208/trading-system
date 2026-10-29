@@ -49,6 +49,7 @@ Trên Telegram khi đang chạy:
 |------|------|
 | `/add LIT` | Tìm ticker (im lặng); **1 kết quả → thêm luôn** (`✅`); nhiều → chọn 1 2 3… |
 | `/list` | Xem danh sách cặp |
+| `/top` | **3 lệnh đáng xem nhất** trong 24h (tin đã noti; 1 lần/cặp; xếp đa tiêu chí) |
 | `/scan` | Rebuild vùng |
 | `/status` | Trạng thái |
 | `/stop` | Dừng |

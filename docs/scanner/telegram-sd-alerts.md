@@ -18,6 +18,7 @@ Mục tiêu: khi giá **cắt ngưỡng** Vùng Mua (Demand) / Vùng Bán (Suppl
 | Nhãn tin | **Vùng Mua** / **Vùng Bán** / **Vùng giá** (không ghi L1/L2/L3) |
 | Chống spam / chất lượng | Báo **H4/D1/W1** only; sâu ≥7; ≥2 TF; cooldown 30–60′ **persist đĩa** (không mất khi Mac auto-pull restart); **1 tin / vùng / nhịp**; `/add` không “Đang tìm…”; **Bias W1 EMA34** |
 | Chạy | Lệnh **scan một lần** → **bật theo dõi** đến khi tắt process / tắt máy |
+| `/top` | Top 3 tin đã noti trong **24h**; dedupe 1/cặp; điểm = tin cậy + độ sâu + R:R + TF + bias + soft pair |
 | Chi phí | **0$** API công khai + Telegram Bot miễn phí; **không** dùng LLM để quét giá |
 
 Chi tiết thesis Pine vẫn: [`../thesis/decisions-locked.md`](../thesis/decisions-locked.md). Script chart: `pine/T3e.pine`.

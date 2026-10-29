@@ -6,6 +6,7 @@ import time
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from .alert_history import AlertHistory, AlertRecord, telegram_message_link
 from .bias import bias_allows, bias_label, ema_last
 from .config import SCANNER_DIR, Settings
 from .episode import EpisodeState
@@ -20,11 +21,13 @@ from .levels import (
 )
 from .scoring import confidence_score, depth_score
 from .telegram_notify import Telegram
+from .top_rank import pick_top, score_breakdown
 from .watchlist_store import save_symbols
 from .zones import Zone, build_zones, price_in_zone
 
-# Cooldown sống qua restart (Mac auto-pull). Không commit file này.
+# Cooldown + lịch sử noti — sống qua restart. Không commit.
 EPISODE_STATE_PATH = Path(SCANNER_DIR) / ".runtime" / "episode_state.json"
+ALERT_HISTORY_PATH = Path(SCANNER_DIR) / ".runtime" / "alert_history.jsonl"
 
 
 @dataclass
@@ -56,6 +59,7 @@ class Watcher:
             state_path=EPISODE_STATE_PATH,
         )
         self.episodes.load()
+        self.history = AlertHistory(ALERT_HISTORY_PATH)
         self.running = False
         self.pending_add: PendingAdd | None = None
 
@@ -200,7 +204,7 @@ class Watcher:
                     tp = take_profit_price(z.side, tgt) if tgt is not None else None
                     rr = risk_reward(price, stl, tp)
                     try:
-                        self.tg.send_alert(
+                        msg_id = self.tg.send_alert(
                             symbol=sym,
                             timeframe=tf,
                             side=z.side,
@@ -214,6 +218,28 @@ class Watcher:
                             confidence=conf,
                             w1_bias=w1_bias_txt,
                         )
+                        try:
+                            self.history.append(
+                                AlertRecord(
+                                    ts=time.time(),
+                                    symbol=sym,
+                                    timeframe=tf,
+                                    side=z.side,
+                                    price=price,
+                                    zone_bot=z.bot,
+                                    zone_top=z.top,
+                                    stl=stl,
+                                    tp=tp,
+                                    rr=rr,
+                                    depth=depth,
+                                    confidence=conf,
+                                    w1_bias=w1_bias_txt,
+                                    message_id=msg_id,
+                                    chat_id=self.tg.chat_id,
+                                )
+                            )
+                        except Exception as he:
+                            print(f"  ! lưu history: {he}")
                         sent += 1
                         print(
                             f"  → Noti {sym} {tf} {z.side} "
@@ -353,16 +379,63 @@ class Watcher:
                 self.tg.send(f"❌ /scan lỗi: {e}")
             return
 
+        if cmd == "/top":
+            self._handle_top()
+            return
+
         if cmd == "/help":
             self.tg.send(
                 "Lệnh:\n"
                 "/add TÊN — tìm & thêm cặp (vd. /add LIT)\n"
                 "/list — xem danh sách\n"
+                "/top — 3 lệnh đáng xem nhất (24 giờ qua)\n"
                 "/scan — tải lại vùng\n"
                 "/status — trạng thái\n"
                 "/stop — dừng\n"
                 "/cancel — hủy bước chọn ticker"
             )
+
+    def _handle_top(self) -> None:
+        """3 lệnh đáng bet nhất trong 24h — từ tin đã noti; 1 lần / cặp."""
+        since = time.time() - 24 * 3600
+        records = self.history.load_since(since)
+        if not records:
+            self.tg.send(
+                "Chưa có tin cảnh báo nào trong 24 giờ qua.\n"
+                "Đợi bot noti vùng giá, rồi gõ /top lại."
+            )
+            return
+        top = pick_top(records, limit=3)
+        if not top:
+            self.tg.send("Không xếp được top từ lịch sử 24h.")
+            return
+
+        fmt = Telegram._fmt
+        lines = [
+            "🏆 TOP 3 lệnh đáng xem (24 giờ qua)",
+            "Chỉ lấy tin đã noti · mỗi cặp 1 lần · xếp đa tiêu chí",
+            "",
+        ]
+        medals = ("1️⃣", "2️⃣", "3️⃣")
+        for i, (rec, sc) in enumerate(top):
+            action = "🟢 MUA" if rec.side == "buy" else "🔴 BÁN"
+            sym = rec.symbol if rec.symbol.endswith("USDT") else rec.symbol
+            rr_s = f"1 : {rec.rr:g}" if rec.rr is not None else "—"
+            tp_s = fmt(rec.tp) if rec.tp is not None else "—"
+            link = telegram_message_link(rec.chat_id, rec.message_id)
+            lines += [
+                f"{medals[i]} {action} {sym}.P · {rec.timeframe}",
+                f"   Entry {fmt(rec.price)} · Vùng {fmt(rec.zone_bot)}–{fmt(rec.zone_top)}",
+                f"   STL {fmt(rec.stl)} · TP {tp_s} · R:R {rr_s}",
+                f"   Tin cậy {rec.confidence:.1f}/10 · Độ sâu {rec.depth:.1f}/10 · điểm {sc:.1f}",
+                f"   Vì sao: {score_breakdown(rec)}",
+            ]
+            if link:
+                lines.append(f"   🔗 Tin gốc: {link}")
+            else:
+                lines.append("   (Không có link tin gốc — chat riêng với bot)")
+            lines.append("")
+        self.tg.send("\n".join(lines).rstrip())
 
     def start_watching(self) -> None:
         self.running = True

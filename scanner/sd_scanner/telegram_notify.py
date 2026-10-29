@@ -15,7 +15,8 @@ class Telegram:
         self.base = f"https://api.telegram.org/bot{token}"
         self._offset: int | None = None
 
-    def send(self, text: str, *, use_html: bool = False) -> None:
+    def send(self, text: str, *, use_html: bool = False) -> int | None:
+        """Gửi tin. Trả message_id nếu API trả về."""
         payload: dict[str, Any] = {
             "chat_id": self.chat_id,
             "text": text,
@@ -28,6 +29,9 @@ class Telegram:
         data = r.json()
         if not data.get("ok"):
             raise RuntimeError(f"Telegram lỗi: {data}")
+        result = data.get("result") or {}
+        mid = result.get("message_id")
+        return int(mid) if mid is not None else None
 
     def send_alert(
         self,
@@ -44,7 +48,7 @@ class Telegram:
         depth: float,
         confidence: float,
         w1_bias: str | None = None,
-    ) -> None:
+    ) -> int | None:
         display = symbol if symbol.endswith("USDT") else symbol
         if side == "buy":
             action_emoji = "🟢"
@@ -84,7 +88,7 @@ class Telegram:
         ]
         if w1_bias:
             lines.append(f"🧭 <b>Bias W1:</b> {e(w1_bias)}")
-        self.send("\n".join(lines), use_html=True)
+        return self.send("\n".join(lines), use_html=True)
 
     @staticmethod
     def _fmt(x: float) -> str:
