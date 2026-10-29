@@ -28,11 +28,19 @@ pip install -r requirements.txt
 
 ## Mỗi lần bật máy muốn nhận noti
 
-**Cách mới (khuyên dùng — làm việc trên điện thoại):** tự pull khi GitHub có commit mới:
+**Khuyên dùng trên Mac** (đã **bỏ** auto-update):
 
-Xem hướng dẫn: [`mac/README.md`](mac/README.md) → chạy `scanner/mac/start_with_autoupdate.sh`
+```bash
+cd ~/trading-system
+git pull origin cursor/trading-thesis-pine-de71
+cd scanner/mac
+./stop_scanner.sh
+./start_scanner.sh
+```
 
-**Cách cũ (thủ công):**
+Chi tiết: [`mac/README.md`](mac/README.md).
+
+**Hoặc thủ công trong terminal:**
 
 ```bash
 cd scanner
@@ -41,7 +49,7 @@ python -m sd_scanner test    # lần đầu: kiểm tra Telegram
 python -m sd_scanner scan    # scan 1 lần → tự theo dõi đến khi tắt
 ```
 
-Giữ cửa sổ terminal **mở**. Tắt máy / Ctrl+C = hết noti.
+Giữ process chạy. Tắt máy / Ctrl+C = hết noti.
 
 Trên Telegram khi đang chạy:
 

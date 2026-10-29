@@ -38,14 +38,14 @@ Code: `scanner/` · Docs: `docs/scanner/telegram-sd-alerts.md` · Mac: `scanner/
 | Tin Telegram | Tiếng Việt; tiêu đề **Phương Pháp Supply & Demand**; có Entry, Vùng giá, **STL**, **TP**, **R:R**, độ hấp dẫn, độ tin cậy |
 | STL | **Mọi tin** Entry→STL ≥ **2.5%**. Mép vùng chỉ dùng khi đã ≥ 2.5%; sát hơn → nới STL. Không gửi STL &lt; 2.5% |
 | TP | Mép vùng đối ứng gần nhất **cùng TF** |
-| Chất lượng (ít nhiễu) | Chỉ báo **H4/D1/W1**; độ sâu **≥7**; **≥2 TF**; cooldown vùng 30′ + cặp/chiều 60′ (**lưu đĩa** — sống qua restart/auto-pull); mỗi vùng **1 tin/nhịp**; H1 chỉ confluence; **Nấc 1:** Bias **W1 EMA34** |
+| Chất lượng (ít nhiễu) | Chỉ báo **H4/D1/W1**; độ sâu **≥7**; **≥2 TF**; cooldown vùng 30′ + cặp/chiều 60′ (**lưu đĩa**); mỗi vùng **1 tin/nhịp**; H1 chỉ confluence; **Nấc 1:** Bias **W1 EMA34** |
 | `/add TÊN` | Tìm Binance→Bybit; **1 kết quả → thêm luôn**; nhiều → chọn 1,2,3… |
 | `/top` | 3 lệnh đáng xem nhất **24h** (đã noti); **1 lần/cặp**; xếp tin cậy + độ sâu + R:R + TF + bias + soft pair (pair không cố định thứ tự) |
-| Spam trạng thái | **Không** gửi: bắt đầu/xong scan, “Đã bật…”, “Đang tìm…”, “Chỉ thấy 1 ticker…”, “Xong N vùng + list”. Giữ `✅ Đã thêm…` và **cảnh báo vùng** |
+| Spam trạng thái | **Không** gửi: bắt đầu/xong scan, “Đã bật…”, “Đang tìm…”, “Xong N vùng…”. Giữ `✅ Đã thêm…` và **cảnh báo vùng** |
 | Secrets | `.env` ở root (`TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`) — **gitignored** |
-| Mac auto-update | `scanner/mac/start_with_autoupdate.sh`: mỗi N phút `fetch`; **chỉ pull+restart khi có commit mới** |
+| Mac chạy bot | **`git pull` tay** + `scanner/mac/stop_scanner.sh` rồi `start_scanner.sh`. **Đã bỏ** auto-update (dễ sót process cũ) |
 
-**Lưu ý agent cloud:** Sửa code trên VM → push GitHub. **Không** SSH vào Mac. Tomas Mac tự pull (script) hoặc `git pull` tay rồi restart scanner.
+**Lưu ý agent cloud:** Sửa code trên VM → push GitHub. **Không** SSH vào Mac. Tomas: `git pull` + stop/start scanner trên Mac.
 
 **Pine:** Khi gửi script cho Tomas → **chỉ link GitHub** (raw/blob), không dán full source vào chat.
 
@@ -73,13 +73,13 @@ Code: `scanner/` · Docs: `docs/scanner/telegram-sd-alerts.md` · Mac: `scanner/
 1. `git fetch` + checkout **`cursor/trading-thesis-pine-de71`**
 2. Đọc HANDOFF + `preferences.md` + `docs/scanner/telegram-sd-alerts.md`
 3. Hỏi Tomas task tiếp theo (đừng đoán Phase 1 bot)
-4. Nếu sửa scanner: push nhánh; nhắc Tomas Mac auto-update hoặc pull tay
+4. Nếu sửa scanner: push nhánh; nhắc Tomas `git pull` + `./stop_scanner.sh` + `./start_scanner.sh`
 
 ---
 
 ## English summary (for other AIs)
 
 **Branch:** `cursor/trading-thesis-pine-de71`  
-**Focus:** Mac Telegram SD zone scanner (alerts only, no execution). Quality filters: alert TF H4/D1/W1, depth≥7, ≥2 TF confluence, long cooldowns. `/add` auto-picks single match; silence operational spam. Pine chart: `pine/T3e.pine` (no trendlines). Phase 1–6 trading bot still paused.  
-**Mac:** `scanner/mac/start_with_autoupdate.sh` pulls only when remote has new commits. Cloud agent cannot run commands on Tomas’s Mac.  
+**Focus:** Mac Telegram SD zone scanner (alerts only, no execution). Quality filters: alert TF H4/D1/W1, depth≥7, ≥2 TF confluence, long cooldowns. `/add` auto-picks single match; `/top` ranks last-24h alerts. Pine: `pine/T3e.pine`. Phase 1–6 bot paused.  
+**Mac:** No autoupdate. Manual `git pull` + `scanner/mac/stop_scanner.sh` + `start_scanner.sh` (stop kills orphan processes).  
 **Must-read:** this file, `docs/preferences.md`, `docs/scanner/telegram-sd-alerts.md`.

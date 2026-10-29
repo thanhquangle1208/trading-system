@@ -14,11 +14,12 @@
 - Khi Tomas cần script Pine: **chỉ gửi link GitHub** (raw +/hoặc blob trên nhánh đang làm). **Không** dán toàn bộ source từng dòng vào chat. (2026-10-23)
 - Scanner cảnh báo: Perp; tin Telegram **tiếng Việt** (Vùng Mua/Bán/Vùng giá); thang **điểm /10** (không ABC); `/scan` một lần rồi tự theo dõi đến khi tắt máy; không dùng LLM để quét giá. (2026-10-23)
 - Giải thích cho Tomas kiểu newbie: từng bước, chậm, không giả định biết BotFather/API. (2026-10-23)
-- Ưu tiên hiện tại (2026-10-28): **scanner Telegram ít nhiễu** + Mac auto `git pull`; Pine T3E giữ ổn định. Bot Phase 1 đầy đủ vẫn hoãn.
+- Ưu tiên hiện tại: **scanner Telegram ít nhiễu**; Pine T3E ổn định. Bot Phase 1 đầy đủ vẫn hoãn.
 - Scanner quality: báo H4/D1/W1; depth≥7; ≥2 TF; ít tin trạng thái (scan/add). (2026-10-28)
 - `/add`: không gửi “Đang tìm…”; chỉ tin kết quả (`✅ Đã thêm…` / không thấy / chọn số). (2026-10-28)
 - Scanner siết từng nấc nhẹ (chờ Tomas confirm). **Nấc 1:** Bias W1 EMA34. Chưa: Fib/RSI/bỏ H4/R:R≥2. (2026-10-28)
-- Cooldown episode **persist đĩa** — tránh spam khi Mac auto-pull restart (bug MON 4 tin). (2026-10-28)
+- Cooldown episode **persist đĩa** — tránh spam khi restart (bug MON 4 tin). (2026-10-28)
 - STL: **mọi lệnh** Entry→STL ≥ **2.5%**; mép S/R chỉ dùng khi đã ≥ 2.5%. (2026-10-29)
 - `/top`: 3 lệnh 24h, 1 lần/cặp; pair chỉ soft bonus, không cố định BTC>ETH>…. (2026-10-29)
+- Mac: **bỏ auto-update** — `git pull` tay + `stop_scanner`/`start_scanner` (stop giết orphan). (2026-10-29)
 - Agent cloud **không** điều khiển Mac; chỉ push GitHub. (2026-10-28)

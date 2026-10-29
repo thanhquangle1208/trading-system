@@ -29,6 +29,9 @@ from .zones import Zone, build_zones, price_in_zone
 EPISODE_STATE_PATH = Path(SCANNER_DIR) / ".runtime" / "episode_state.json"
 ALERT_HISTORY_PATH = Path(SCANNER_DIR) / ".runtime" / "alert_history.jsonl"
 
+# Hiện trên /status — Tomas kiểm tra Mac đã chạy đúng bản chưa.
+SCANNER_FEATURES = "/top · bias-W1 · STL≥2.5% · cooldown-disk"
+
 
 @dataclass
 class ZoneCache:
@@ -365,6 +368,7 @@ class Watcher:
             pend = " (đang chờ chọn ticker /add)" if self.pending_add else ""
             self.tg.send(
                 f"📡 Đang chạy{pend}.\n"
+                f"Bản code: {SCANNER_FEATURES}\n"
                 f"Vùng cache tuổi: {age}s\n"
                 f"Cặp ({len(self.settings.symbols)}): "
                 + ", ".join(self.settings.symbols)

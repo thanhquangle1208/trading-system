@@ -1,74 +1,56 @@
-# Mac — tự `git pull` khi có code mới (cho làm việc trên điện thoại)
+# Mac — chạy Scanner (không auto-update)
 
-Bạn prompt trên **điện thoại** → agent cloud sửa code → **push GitHub**.  
-Script này trên **Mac** (máy bật): mỗi vài phút kiểm tra; **chỉ khi có commit mới** mới `pull` + restart scanner.
+Agent cloud sửa code → **push GitHub**.  
+Trên Mac bạn **`git pull` tay** rồi bật lại scanner.
 
-## Chi phí
+> **Đã gỡ** `start_with_autoupdate.sh` (hay để sót process cũ → Telegram vẫn trả `/help` bản cũ, không có `/top`).
 
-- **$0** thêm  
-- Không gọi Binance chỉ vì check git  
-- Không restart nếu không có update → pin/CPU gần như chỉ bằng lúc bot đang chạy
-
-## Cài một lần (newbie)
-
-### 1. Vào đúng repo
+## Cài một lần
 
 ```bash
 cd ~/trading-system
 git fetch origin cursor/trading-thesis-pine-de71
 git checkout cursor/trading-thesis-pine-de71
 git pull origin cursor/trading-thesis-pine-de71
-```
 
-### 2. Config
+cd scanner
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
 
-```bash
-cd ~/trading-system/scanner/mac
+cd mac
 cp config.env.example config.env
-nano config.env
-```
-
-Sửa nếu cần:
-
-- `REPO_DIR` — mặc định `$HOME/trading-system`  
-- `GIT_BRANCH` — `cursor/trading-thesis-pine-de71`  
-- `CHECK_EVERY_SEC` — `600` = 10 phút (đổi `300`=5 phút, `900`=15 phút)
-
-Có file `.env` ở gốc repo (token Telegram) như trước.
-
-### 3. Cho phép chạy script
-
-```bash
-cd ~/trading-system/scanner/mac
+# Sửa REPO_DIR nếu repo không nằm ở ~/trading-system
 chmod +x *.sh
 ```
 
-### 4. Bật (cách đơn giản — giữ Terminal mở)
+Có file `.env` ở **gốc repo** (token Telegram).
+
+## Mỗi lần cập nhật code (làm đúng thứ tự)
 
 ```bash
-cd ~/trading-system/scanner/mac
-./start_with_autoupdate.sh
-```
+cd ~/trading-system
+git pull origin cursor/trading-thesis-pine-de71
 
-Giữ cửa sổ Terminal này (hoặc để chạy nền). Mac **không sleep** nếu muốn nhận noti + auto-update liên tục.
-
-Dừng scanner:
-
-```bash
+cd scanner/mac
 ./stop_scanner.sh
+./start_scanner.sh
 ```
 
-Log xem tại: `scanner/mac/logs/`
+`stop` sẽ **giết cả process orphan** (scanner cũ còn sống ngoài pid file).  
+`start` kiểm tra `watch.py` **phải có `/top`** — sai repo/path thì báo lỗi, không chạy nhầm.
 
-## Quy trình hàng ngày (điện thoại + Mac)
+## Kiểm tra trên Telegram
 
-1. Mac bật → chạy `./start_with_autoupdate.sh`  
-2. Trên điện thoại: prompt agent sửa code (agent push GitHub)  
-3. Trong ≤ 5–15 phút Mac tự pull + restart  
-4. Telegram bot dùng bản mới — bạn không cần gõ `git pull` tay
+1. `/help` → **phải có dòng `/top`**  
+2. `/status` → có dòng `Bản code: … /top …`  
+3. Nếu `/help` không có `/top` → đang chạy nhầm thư mục hoặc chưa pull: xem `config.env` → `REPO_DIR`
 
-## Lưu ý
+## Log
 
-- Tắt Mac / sleep sâu → hết auto-update và hết noti  
-- Nếu `git pull` báo diverged: trên Mac mở Terminal báo mình (hoặc `git status`)  
-- `config.env`, `*.pid`, `logs/` không cần commit lên GitHub
+- `scanner/mac/logs/scanner.log` — output bot  
+- `scanner/mac/logs/scanner_run.log` — start/stop  
+
+## Chi phí
+
+$0 — không VPS, không auto-pull.
