@@ -1,0 +1,10 @@
+# Copy thành watchlist.local.yaml trên Mac (hoặc để bot tự tạo lần đầu).
+# File này KHÔNG commit — chứa cặp bạn /add, sống qua git pull.
+#
+#   cp watchlist.local.yaml.example watchlist.local.yaml
+
+symbols:
+  - BTCUSDT
+  - ETHUSDT
+  - SOLUSDT
+  - BNBUSDT

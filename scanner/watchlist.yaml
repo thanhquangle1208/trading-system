@@ -1,0 +1,47 @@
+# Cấu hình scanner (commit được).
+# Danh sách cặp THẬT trên Mac: watchlist.local.yaml (gitignore).
+# symbols dưới đây chỉ là seed lần đầu nếu chưa có file local.
+
+symbols:
+  - BTCUSDT
+  - ETHUSDT
+  - SOLUSDT
+  - BNBUSDT
+
+# Khung vẫn quét để tính confluence (H1 chỉ hỗ trợ độ tin cậy, không tự bắn tin)
+timeframes:
+  - H1
+  - H4
+  - D1
+  - W1
+
+# Chất lượng > số lượng (đã siết nhiễu)
+alert:
+  # Cùng cặp + khung + vùng: im sau mỗi tin
+  cooldown_minutes: 30
+  # Cùng cặp + phía (MUA/BÁN): im thêm (chống nhiều vùng H1/H4 liên tiếp)
+  side_cooldown_minutes: 60
+  # Chỉ Telegram khi khung báo thuộc list này (H1 bỏ khỏi trigger)
+  alert_timeframes:
+    - H4
+    - D1
+    - W1
+  # Độ hấp dẫn tối thiểu (~6 = mép; 7 = đã vào ~1/3 vùng)
+  min_depth_score: 7.0
+  # Số khung cùng phía có giá trong vùng (≥2 → độ tin cậy ≥ 7.0)
+  min_aligned_tfs: 2
+  # Band độ sâu tối thiểu: 2 = bỏ báo “mới chạm mép” (band 1)
+  min_depth_band: 2
+  # Nấc 1 (Swing): hướng khung tuần — MUA chỉ khi giá > EMA W1; BÁN khi giá < EMA W1
+  require_w1_ema_bias: true
+  w1_ema_length: 34
+  # Entry sát / trùng mép vùng → nới STL tối thiểu % này (0.025 = 2.5%)
+  min_stl_pct: 0.025
+
+# Tham số vùng giá (gần với Thesis T3E)
+zone:
+  pivot_len: 5
+  dep_atr: 1.0
+  atr_len: 10
+  max_zones: 8
+  lookback_bars: 300
