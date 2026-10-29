@@ -19,5 +19,5 @@
 - `/add`: không gửi “Đang tìm…”; chỉ tin kết quả (`✅ Đã thêm…` / không thấy / chọn số). (2026-10-28)
 - Scanner siết từng nấc nhẹ (chờ Tomas confirm). **Nấc 1:** Bias W1 EMA34. Chưa: Fib/RSI/bỏ H4/R:R≥2. (2026-10-28)
 - Cooldown episode **persist đĩa** — tránh spam khi Mac auto-pull restart (bug MON 4 tin). (2026-10-28)
-- STL: tối thiểu **2.5%** so với Entry khi sát mép vùng; xa mép thì giữ mép vùng. (2026-10-29)
+- STL: **mọi lệnh** Entry→STL ≥ **2.5%**; mép S/R chỉ dùng khi đã ≥ 2.5%. (2026-10-29)
 - Agent cloud **không** điều khiển Mac; chỉ push GitHub. (2026-10-28)

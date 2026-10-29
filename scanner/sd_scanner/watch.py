@@ -10,7 +10,14 @@ from .bias import bias_allows, bias_label, ema_last
 from .config import SCANNER_DIR, Settings
 from .episode import EpisodeState
 from .exchange import MarketData
-from .levels import next_target, risk_reward, stop_level, take_profit_price
+from .levels import (
+    enforce_min_stl,
+    next_target,
+    risk_reward,
+    stl_distance_pct,
+    stop_level,
+    take_profit_price,
+)
 from .scoring import confidence_score, depth_score
 from .telegram_notify import Telegram
 from .watchlist_store import save_symbols
@@ -183,7 +190,12 @@ class Watcher:
                         continue
 
                     conf = confidence_score(conf_n)
+                    # Mọi tin: Entry→STL ≥ min_stl_pct (2.5%). Mép vùng chỉ dùng khi đã đủ xa.
                     stl = stop_level(z.side, z, price, min_stl_pct=q.min_stl_pct)
+                    stl = enforce_min_stl(z.side, price, stl, min_stl_pct=q.min_stl_pct)
+                    if stl_distance_pct(price, stl) + 1e-12 < q.min_stl_pct:
+                        print(f"  ! bỏ tin {sym} {tf}: STL < {q.min_stl_pct:.1%} entry")
+                        continue
                     tgt = next_target(z.side, price, zs)
                     tp = take_profit_price(z.side, tgt) if tgt is not None else None
                     rr = risk_reward(price, stl, tp)

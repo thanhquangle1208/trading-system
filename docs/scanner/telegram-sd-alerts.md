@@ -44,11 +44,11 @@ Chi tiết thesis Pine vẫn: [`../thesis/decisions-locked.md`](../thesis/decisi
 ```
 
 **STL / TP (gợi ý, không tự lệnh):**
-- STL = mép hết vùng (Mua → đáy vùng; Bán → đỉnh vùng).
-- Nếu Entry sát / trùng mép đó (khoảng cách &lt; **2.5%** giá Entry) → **nới STL** ra ngoài đủ 2.5% — không gửi tin Entry = STL.
-- Nếu Entry còn xa mép vùng (≥ 2.5%) → giữ STL = mép vùng.
-- TP = mép vào vùng đối ứng gần nhất cùng khung (Mua → Vùng Bán phía trên; Bán → Vùng Mua phía dưới).
-- R:R = |TP − giá| / |giá − STL|.
+- **Luật cứng:** mọi tin Entry→STL ≥ **2.5%** giá Entry (không ngoại lệ).
+- Ứng viên STL = mép hết vùng (Mua → đáy; Bán → đỉnh).
+- Entry cách mép **≥ 2.5%** → dùng mép vùng.
+- Entry cách mép **&lt; 2.5%** (hoặc trùng) → nới STL đúng 2.5%.
+- TP = mép vào vùng đối ứng gần nhất cùng khung; R:R = |TP − giá| / |giá − STL|.
 
 Công thức sơ bộ (chỉnh khi code):
 
