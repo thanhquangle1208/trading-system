@@ -20,6 +20,7 @@ class BuyZoneConfig:
     digest_minute_vn: int = 5
     state_path: str = ".state/buy_zones.json"
     timezone: str = "Asia/Ho_Chi_Minh"
+    lease_max_age_sec: int = 20 * 60
 
     @property
     def hysteresis(self) -> float:
@@ -52,6 +53,7 @@ def load_buy_zone_config(
             raw = loaded
     digest = raw.get("digest") or {}
     state = raw.get("state") or {}
+    lease = raw.get("lease") or {}
 
     hysteresis = float(raw.get("hysteresis_pct", 2.0))
     approaching = _optional_float(raw.get("approaching_pct"))
@@ -67,6 +69,7 @@ def load_buy_zone_config(
             approaching = float(env_a)
 
     state_path = os.getenv("BUY_ZONE_STATE_PATH") or state.get("path") or ".state/buy_zones.json"
+    lease_minutes = int(lease.get("max_age_minutes", 20))
     return BuyZoneConfig(
         hysteresis_pct=hysteresis,
         approaching_pct=approaching,
@@ -75,4 +78,5 @@ def load_buy_zone_config(
         digest_minute_vn=int(digest.get("minute_vn", 5)),
         state_path=str(state_path),
         timezone=timezone,
+        lease_max_age_sec=max(60, lease_minutes * 60),
     )

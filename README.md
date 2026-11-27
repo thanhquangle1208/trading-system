@@ -21,7 +21,7 @@ Bot đọc database Notion **「Vùng giá gom token」** mỗi lần chạy. Ch
 Tin mẫu:
 
 ```text
-🟢 BTC vào Vùng 1 (55.000–61.000). Giá hiện tại: 60.850. Vô hiệu nếu nến ngày đóng dưới 53.000. Ghi chú: ...
+🟢 BTC vào Vùng 1 (55.000–61.000). Giá hiện tại: 60.850. Ghi chú: Z1 vesting … (chỉ tokenomics/vesting/Z1–Z3)
 🔴 BTC – Vùng 1 hết hiệu lực: nến ngày đóng 52.700 < 53.000. Dừng mua vùng này, đánh giá lại.
 ```
 
@@ -88,31 +88,41 @@ Không bắt buộc: `COINGECKO_API_KEY` (chỉ khi CoinGecko giới hạn giá 
 1. Merge pull request này vào nhánh **`main`**. Lịch của GitHub **chỉ chạy trên nhánh mặc định**.
 2. Tab **Actions** → **Cảnh báo vùng giá gom**. Nếu có nút **Enable workflow** thì bấm.
 3. Bấm **Run workflow** một lần để thử. Để ô dry-run **tắt** nếu muốn nhận tin thật; bật dry-run nếu chỉ muốn xem log, không gửi Telegram.
-4. Sau đó cứ khoảng **10 phút** bot tự chạy. Không cần mở laptop.
+4. Lịch GitHub vẫn bật. Đó là bản dự phòng khi Mac tắt. Khi Mac đang chạy, GitHub thấy nhịp và **không gửi thêm**.
 
-Xem log: Actions → lần chạy mới nhất. Dòng `Không lấy được giá SECZ` là bình thường.
+Xem log: Actions → lần chạy mới nhất. Dòng `Mac đang chạy` nghĩa là GitHub đang nhường. Dòng `Không lấy được giá SECZ` là bình thường.
 
-### Chạy thử trên máy (không gửi tin)
+### Chạy trên Mac (giá Bybit / Binance), GitHub dự phòng
 
-`.env` cần `NOTION_TOKEN`. Không cần token Telegram khi dry-run.
+Hướng dẫn ngắn, từng bước: **[docs/HUONG-DAN-MAC.md](docs/HUONG-DAN-MAC.md)**
 
-```bash
-PYTHONPATH=src python -m trading_system.zones --dry-run
-```
+Máy GitHub ở Mỹ bị Bybit/Binance chặn nên dùng OKX/CoinGecko. Mac ở Việt Nam dùng Bybit/Binance. Mac ghi nhịp lên nhánh `buy-zone-alert-state`; GitHub chỉ chạy khi nhịp Mac cũ hơn ~20 phút.
 
-Tin in ra terminal. Lệnh này **không** ghi nhớ “đã báo”, nên chạy lại vẫn in tiếp.  
-Muốn gửi thật từ máy (thường không cần, vì GitHub đã chạy):
+Cài một lần:
 
 ```bash
-PYTHONPATH=src python -m trading_system.zones
+cd ~/trading-system
+git checkout main
+git pull
+bash scripts/mac/setup_once.sh
 ```
+
+Bật / tắt:
+
+```bash
+bash scripts/mac/start_buy_zones.sh
+bash scripts/mac/stop_buy_zones.sh
+tail -n 40 .state/buy_zones.log
+```
+
+Script `start` tự báo nếu thiếu `.venv`, thư viện, hoặc token trong `.env`. Không tự viết vòng `while` ngoài `scripts/mac/`.
 
 ### Nhớ “đã báo chưa” — vì sao không dùng cache?
 
-File nhớ chỉ có cờ (id trang, đang ở trong vùng hay không, mức vô hiệu đã báo, ngày bản tin, id CoinGecko). **Không** có token, không có ghi chú phân tích.
+File nhớ chỉ có cờ (id trang, đang ở trong vùng hay không, mức vô hiệu đã báo, ngày bản tin, id CoinGecko, và nhịp Mac/GitHub). **Không** có token, không có ghi chú phân tích.
 
-- Trên máy: file `.state/buy_zones.json` (đã nằm trong `.gitignore`, không commit).
-- Trên GitHub: nhánh riêng `buy-zone-alert-state`, file `state/buy_zones.json`.
+- Trên máy: file `.state/buy_zones.json` (đã nằm trong `.gitignore`, không commit vào nhánh code).
+- Trên GitHub: nhánh riêng `buy-zone-alert-state`, file `state/buy_zones.json`. Mac và GitHub cùng sửa file này.
 
 Cache của GitHub Actions có thể bị **xóa** sau vài ngày không đụng tới, rồi bot báo lại từ đầu. Nhánh git không bị xóa như vậy, nên dùng nhánh. Workflow tự tạo và tự cập nhật nhánh đó. Bạn không cần tạo tay.
 

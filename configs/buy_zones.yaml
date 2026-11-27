@@ -14,7 +14,11 @@ digest:
   hour_vn: 7
   minute_vn: 5
 
-# File nhớ "đã báo chưa" trên máy chạy. GitHub Actions đẩy bản không bí mật
+# File nhớ "đã báo chưa" trên máy chạy. Mac và GitHub cùng đẩy bản không bí mật
 # lên nhánh buy-zone-alert-state (không commit vào nhánh code).
 state:
   path: .state/buy_zones.json
+
+# Mac ghi nhịp mỗi lần chạy. GitHub chỉ chạy khi nhịp Mac cũ hơn số phút này.
+lease:
+  max_age_minutes: 20

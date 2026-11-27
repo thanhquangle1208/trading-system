@@ -3,8 +3,29 @@
 from __future__ import annotations
 
 import math
+import re
 
 from trading_system.zones.models import BuyZone
+
+# Giữ đoạn ghi chú có các từ này (tokenomics / vesting / Z1–Z3).
+_KEEP_NOTE = re.compile(
+    r"(?i)\b("
+    r"tokenomics|tokenomic|vesting|vest|unlock|unl|cliff|tge|"
+    r"fdv|supply|emission|dilut|airdrop|allocation|alloc|"
+    r"z\s*[123]|v[uù]ng\s*[123]"
+    r")\b"
+)
+# Bỏ đoạn về mức vô hiệu / nhắc mua chung chung / chỉ lặp ticker.
+_DROP_NOTE = re.compile(
+    r"(?i)("
+    r"v[oô] ?hi[eệ]u|"
+    r"n[eế]n\s+ng[aà]y\s+đ[oó]ng|"
+    r"07:00\s*vn|"
+    r"gom\s+t[uừ]ng\s+ph[aầ]n|"
+    r"ch[oờ]\s+n[eế]n\s+x[aá]c\s+nh[aậ]n"
+    r")"
+)
+_SPLIT_NOTE = re.compile(r"(?<=[.!?…])\s+|\n+|;\s*")
 
 
 def format_price(value: float) -> str:
@@ -25,25 +46,44 @@ def format_price(value: float) -> str:
     return sign + text.replace(",", "X").replace(".", ",").replace("X", ".")
 
 
-def _short_note(note: str, limit: int = 300) -> str:
-    text = " ".join(note.split())
+def useful_note(note: str, ticker: str = "", *, limit: int = 300) -> str:
+    """Chỉ giữ đoạn liên quan tokenomics / vesting / Z1–Z3. Bỏ vô hiệu và câu thừa."""
+    raw = " ".join((note or "").split()).strip()
+    if not raw:
+        return ""
+    ticker_u = (ticker or "").strip().upper()
+    parts = [p.strip(" .") for p in _SPLIT_NOTE.split(raw) if p.strip(" .")]
+    kept: list[str] = []
+    for part in parts:
+        compact = part.strip()
+        if not compact:
+            continue
+        if ticker_u and compact.upper() == ticker_u:
+            continue
+        if _DROP_NOTE.search(compact):
+            continue
+        if _KEEP_NOTE.search(compact):
+            kept.append(compact)
+    if not kept:
+        return ""
+    text = ". ".join(kept)
+    if not text.endswith("."):
+        text += "."
     if len(text) <= limit:
         return text
     return text[: limit - 1] + "…"
 
 
 def format_entry(zone: BuyZone, price: float) -> str:
+    """Tin vào vùng: không nhắc mức vô hiệu; ghi chú chỉ tokenomics/vesting/Z."""
     lo, hi = zone.bounds()
     bits = [
         f"🟢 {zone.ticker} vào Vùng {zone.zone_no} ({format_price(lo)}–{format_price(hi)}).",
         f"Giá hiện tại: {format_price(price)}.",
     ]
-    if zone.invalidation is not None:
-        bits.append(
-            f"Vô hiệu nếu nến ngày đóng dưới {format_price(zone.invalidation)}."
-        )
-    if zone.note.strip():
-        bits.append(f"Ghi chú: {_short_note(zone.note)}")
+    note = useful_note(zone.note, zone.ticker)
+    if note:
+        bits.append(f"Ghi chú: {note}")
     if zone.link.strip():
         bits.append(zone.link.strip())
     return " ".join(bits)

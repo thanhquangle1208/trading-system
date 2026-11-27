@@ -42,7 +42,7 @@ def _btc(pid: str = "p1", **overrides) -> dict:
         "Vô hiệu nếu nến ngày đóng dưới": _number(53000),
         "Trạng thái": _select("Đang theo dõi"),
         "Chuỗi/sàn tham chiếu": _rich("Spot / Binance BTCUSDT"),
-        "Điều kiện/ghi chú": _rich("ghi chú"),
+        "Điều kiện/ghi chú": _rich("Vesting team 24 tháng. Tokenomics FDV cao."),
         "Link phân tích Notion": {"type": "url", "url": "https://www.notion.so/abc"},
         "Giá lúc phân tích": _number(60000),
         "Ngày phân tích": {"type": "date", "date": {"start": "2026-01-02"}},

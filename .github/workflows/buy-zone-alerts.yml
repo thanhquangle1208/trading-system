@@ -1,6 +1,7 @@
 # Chạy trên nhánh mặc định (main) sau khi merge.
 # GitHub cron có thể trễ vài phút đến vài chục phút — luật nến ngày nhìn nến đã đóng,
 # không phụ thuộc đúng giây 07:00.
+# Khi Mac còn nhịp trên nhánh buy-zone-alert-state, job này bỏ qua (không gửi trùng).
 name: Cảnh báo vùng giá gom
 
 on:
@@ -43,21 +44,7 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Lấy trạng thái đã lưu
-        run: |
-          mkdir -p .state
-          if git ls-remote --exit-code --heads origin buy-zone-alert-state >/dev/null 2>&1; then
-            git fetch --depth 1 origin buy-zone-alert-state
-            if git cat-file -e FETCH_HEAD:state/buy_zones.json 2>/dev/null; then
-              git show FETCH_HEAD:state/buy_zones.json > .state/buy_zones.json
-              echo "Đã nạp trạng thái từ nhánh buy-zone-alert-state."
-            else
-              printf '%s\n' '{"version":1,"zones":{},"last_digest_date":null,"coingecko_ids":{}}' > .state/buy_zones.json
-              echo "Nhánh trạng thái chưa có file — bắt đầu trống."
-            fi
-          else
-            printf '%s\n' '{"version":1,"zones":{},"last_digest_date":null,"coingecko_ids":{}}' > .state/buy_zones.json
-            echo "Chưa có nhánh trạng thái — lần này bắt đầu trống."
-          fi
+        run: bash scripts/sync_buy_zone_state.sh pull
 
       - name: Kiểm tra vùng giá
         id: run
@@ -69,12 +56,13 @@ jobs:
           NOTION_DATA_SOURCE_ID: ${{ secrets.NOTION_DATA_SOURCE_ID }}
           COINGECKO_API_KEY: ${{ secrets.COINGECKO_API_KEY }}
           BUY_ZONE_STATE_PATH: .state/buy_zones.json
+          BUY_ZONE_RUNNER: github
           DRY: ${{ inputs.dry_run }}
         run: |
           if [ "$DRY" = "true" ]; then
-            python -m trading_system.zones --dry-run
+            python -m trading_system.zones --dry-run --runner github
           else
-            python -m trading_system.zones
+            python -m trading_system.zones --runner github
           fi
 
       - name: Lưu trạng thái (không bí mật)

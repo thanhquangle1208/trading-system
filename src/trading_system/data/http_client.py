@@ -1,4 +1,4 @@
-"""HTTP JSON nhỏ, không phụ thuộc thư viện ngoài."""
+"""HTTP JSON nhỏ. SSL qua ssl_util (Keychain Mac / certifi)."""
 
 from __future__ import annotations
 
@@ -6,6 +6,8 @@ import json
 import urllib.error
 import urllib.request
 from typing import Any
+
+from trading_system.data.ssl_util import ssl_context
 
 DEFAULT_HEADERS = {
     "User-Agent": "trading-system-buy-zone/1.0",
@@ -22,6 +24,9 @@ class HttpStatusError(Exception):
 
 
 class UrllibClient:
+    def __init__(self) -> None:
+        self._ssl = ssl_context()
+
     def request_json(
         self,
         method: str,
@@ -40,7 +45,7 @@ class UrllibClient:
             merged.setdefault("Content-Type", "application/json")
         req = urllib.request.Request(url, data=data, headers=merged, method=method.upper())
         try:
-            with urllib.request.urlopen(req, timeout=timeout) as resp:
+            with urllib.request.urlopen(req, timeout=timeout, context=self._ssl) as resp:
                 raw = resp.read().decode("utf-8")
                 status = getattr(resp, "status", 200)
         except urllib.error.HTTPError as exc:
