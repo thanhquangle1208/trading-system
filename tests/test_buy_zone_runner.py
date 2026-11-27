@@ -100,7 +100,8 @@ def test_inactive_rows_skipped_and_entry_deduped_across_restart(tmp_path) -> Non
     assert len(box.messages) == 1
     assert box.messages[0].startswith("🟢 BTC vào Vùng 1")
     assert "ETH" not in box.messages[0]
-    assert "ghi chú" in box.messages[0]
+    assert "Vesting" in box.messages[0]
+    assert "Vô hiệu nếu nến ngày đóng dưới" not in box.messages[0]
 
     box2 = Box()
     second = _run(_http(pages, price="60000"), box2, path, now)

@@ -21,7 +21,7 @@ Bot đọc database Notion **「Vùng giá gom token」** mỗi lần chạy. Ch
 Tin mẫu:
 
 ```text
-🟢 BTC vào Vùng 1 (55.000–61.000). Giá hiện tại: 60.850. Vô hiệu nếu nến ngày đóng dưới 53.000. Ghi chú: ...
+🟢 BTC vào Vùng 1 (55.000–61.000). Giá hiện tại: 60.850. Ghi chú: Z1 vesting … (chỉ tokenomics/vesting/Z1–Z3)
 🔴 BTC – Vùng 1 hết hiệu lực: nến ngày đóng 52.700 < 53.000. Dừng mua vùng này, đánh giá lại.
 ```
 

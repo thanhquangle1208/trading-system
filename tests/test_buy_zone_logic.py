@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from datetime import datetime, timezone
 
 from trading_system.zones.logic import (
@@ -16,6 +17,7 @@ from trading_system.zones.messages import (
     format_entry,
     format_invalidation,
     format_price,
+    useful_note,
 )
 from trading_system.zones.models import STATUS_EXPIRED, STATUS_STALE, BuyZone
 
@@ -47,14 +49,14 @@ def test_format_price_vietnamese() -> None:
     assert format_price(0.00125) == "0,00125"
 
 
-def test_entry_message_matches_example() -> None:
+def test_entry_message_skips_invalidation_and_generic_note() -> None:
     text = format_entry(_zone(), 60_850)
     assert text == (
         "🟢 BTC vào Vùng 1 (55.000–61.000). Giá hiện tại: 60.850. "
-        "Vô hiệu nếu nến ngày đóng dưới 53.000. "
-        "Ghi chú: chờ nến xác nhận "
         "https://www.notion.so/btc-zone"
     )
+    assert "Vô hiệu" not in text
+    assert "Ghi chú" not in text
 
 
 def test_entry_message_omits_missing_invalidation_note_and_link() -> None:
@@ -63,6 +65,30 @@ def test_entry_message_omits_missing_invalidation_note_and_link() -> None:
     assert "Ghi chú" not in text
     assert "http" not in text
     assert "60.850" in text
+
+
+def test_useful_note_keeps_tokenomics_vesting_zones_drops_junk() -> None:
+    raw = (
+        "AERO. Z2: UNL 3/8/2026 0,389. "
+        "Vô hiệu nếu nến ngày đóng dưới 0,375 (07:00 VN). "
+        "Gom từng phần. Vesting team 24 tháng. Tokenomics: FDV 500M."
+    )
+    note = useful_note(raw, "AERO")
+    assert "Vô hiệu" not in note
+    assert "Gom từng phần" not in note
+    assert not re.match(r"(?i)^AERO\b", note)
+    assert "Z2: UNL 3/8/2026 0,389" in note
+    assert "Vesting team 24 tháng" in note
+    assert "Tokenomics: FDV 500M" in note
+
+    text = format_entry(
+        _zone(ticker="AERO", note=raw, invalidation=0.375, link=""),
+        0.40,
+    )
+    assert "Vô hiệu nếu nến ngày đóng dưới" not in text
+    assert "Gom từng phần" not in text
+    assert "Z2: UNL" in text
+    assert "Tokenomics" in text
 
 
 def test_invalidation_message_matches_example() -> None:
