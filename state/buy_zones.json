@@ -1,0 +1,482 @@
+{
+  "coingecko_ids": {
+    "EDEN": "openeden",
+    "PLUME": "plume",
+    "RED": "redstone-oracles",
+    "SECZ": "securitize-corp"
+  },
+  "last_digest_date": "2026-11-27",
+  "version": 1,
+  "zones": {
+    "41e85969-3b15-8107-a1dc-ed1aa4c37e02": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41e85969-3b15-810c-b2ec-e2a768b4004c": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41e85969-3b15-810e-a8c8-cf02d9424d12": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41e85969-3b15-8113-83c2-febdb208af57": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41e85969-3b15-8113-accb-ff8754c562ca": {
+      "approach_armed": true,
+      "inside": true,
+      "invalidation_level_key": null
+    },
+    "41e85969-3b15-8114-84bf-f4227fef0996": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41e85969-3b15-8114-96b8-edc26c81f530": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41e85969-3b15-8117-b0f2-fa69e9013eb5": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41e85969-3b15-811d-84e1-e8f55b0ba940": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41e85969-3b15-811e-b811-ed464701b8cc": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41e85969-3b15-8121-81ab-c6d46d98b7a9": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41e85969-3b15-8129-ab41-e773e317aa07": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41e85969-3b15-8138-a60c-d911986f328d": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41e85969-3b15-8144-8676-c81b491d0f93": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41e85969-3b15-8144-9e4c-cb911a3f0414": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41e85969-3b15-8144-a490-f8c6781ecc30": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41e85969-3b15-8146-b48f-dd8752135d4c": {
+      "approach_armed": true,
+      "inside": true,
+      "invalidation_level_key": null
+    },
+    "41e85969-3b15-814b-a48f-f99f92b25c09": {
+      "approach_armed": true,
+      "inside": true,
+      "invalidation_level_key": null
+    },
+    "41e85969-3b15-814c-bb0c-df2b22241fd4": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41e85969-3b15-814e-9e9b-eb7f09206278": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41e85969-3b15-8151-818b-e2424a181f0e": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41e85969-3b15-8151-85a5-df07b73cbe3a": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41e85969-3b15-8157-97be-f89bcac77783": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41e85969-3b15-815e-8de7-cb33e98b8fb0": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41e85969-3b15-816b-871a-cf25184ab952": {
+      "approach_armed": true,
+      "inside": true,
+      "invalidation_level_key": null
+    },
+    "41e85969-3b15-816d-ba68-ef0792f447ff": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41e85969-3b15-816f-b15a-fbf85bef17db": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41e85969-3b15-8176-a295-c4f354f87ea6": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41e85969-3b15-817b-af11-c46df892c8e1": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41e85969-3b15-8185-8033-d7081ce00775": {
+      "approach_armed": true,
+      "inside": true,
+      "invalidation_level_key": null
+    },
+    "41e85969-3b15-818a-90a5-cd17338da8fb": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41e85969-3b15-818a-b8c2-e89f7a8ff67f": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41e85969-3b15-8193-b5ae-ea0493e88568": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41e85969-3b15-8195-be5c-fc33a221bca4": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41e85969-3b15-819a-845e-c6c28ba9f215": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41e85969-3b15-819f-9218-c94663d87c58": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41e85969-3b15-81af-8c60-f9c4c571ada7": {
+      "approach_armed": true,
+      "inside": true,
+      "invalidation_level_key": null
+    },
+    "41e85969-3b15-81b0-bdaa-dfac247cf3c4": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41e85969-3b15-81b3-919e-dc8f531c0c6f": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41e85969-3b15-81b4-9b05-d89e6d346b58": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41e85969-3b15-81b5-b4e2-fa4e08c97b43": {
+      "approach_armed": true,
+      "inside": true,
+      "invalidation_level_key": null
+    },
+    "41e85969-3b15-81b7-ad81-f7b579e352a8": {
+      "approach_armed": true,
+      "inside": true,
+      "invalidation_level_key": null
+    },
+    "41e85969-3b15-81ba-a42f-f21885a3ea24": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41e85969-3b15-81bf-810b-cbc6b0d5445f": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41e85969-3b15-81c0-9985-e3796348200c": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41e85969-3b15-81c0-bb88-ce41dbee3186": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41e85969-3b15-81c2-9a7a-c97ae22888d2": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41e85969-3b15-81c2-a243-dae6ee9a8bc1": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41e85969-3b15-81c8-bbbf-ce6cf87fbc8d": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41e85969-3b15-81cc-8af8-e9a503262728": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41e85969-3b15-81cd-ba08-e9604417d349": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41e85969-3b15-81ce-a829-d5383c0427f4": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41e85969-3b15-81d1-8443-ec227e52cb7c": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41e85969-3b15-81d8-b699-f5425b8efb22": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41e85969-3b15-81da-b4de-d22294359927": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41e85969-3b15-81e2-a60f-c8d23b0d0d98": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41e85969-3b15-81e6-bad8-d13b89ab0bae": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41e85969-3b15-81eb-b2d4-cae8b78b91ed": {
+      "approach_armed": true,
+      "inside": true,
+      "invalidation_level_key": null
+    },
+    "41e85969-3b15-81f0-9db4-d7012c8b46d5": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41e85969-3b15-81f3-8a3a-dca39e1ca852": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41e85969-3b15-81fe-a300-f9f3d90c9dce": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41f85969-3b15-811e-a26e-ec5cbb7ec237": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41f85969-3b15-8129-b5d8-d3c542a441a1": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41f85969-3b15-8137-8021-fb6bdc919036": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41f85969-3b15-813c-bc5c-f1b18fada8eb": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41f85969-3b15-813f-bce7-cbec87a5f2b3": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41f85969-3b15-814d-ab6f-fe9a474d7225": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41f85969-3b15-815d-9e03-e3d8d91ff2ed": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41f85969-3b15-8162-b830-e7b0af209466": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41f85969-3b15-8165-a084-cdb79c072555": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41f85969-3b15-8178-b26b-df476e514526": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41f85969-3b15-817c-be58-da7d21db5b28": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": "0.97"
+    },
+    "41f85969-3b15-817f-97c2-e53f791cb5aa": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41f85969-3b15-8182-8275-c6fa273e9561": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41f85969-3b15-8184-915d-d6620ce7dfd6": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41f85969-3b15-8188-a9da-e1c4576261f7": {
+      "approach_armed": true,
+      "inside": true,
+      "invalidation_level_key": null
+    },
+    "41f85969-3b15-8199-9a6e-d9647b332ea8": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41f85969-3b15-81ac-a611-ddb5fca70e30": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41f85969-3b15-81ad-9fe4-dc0bed3071bb": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41f85969-3b15-81be-ac58-c055c02174dd": {
+      "approach_armed": true,
+      "inside": true,
+      "invalidation_level_key": null
+    },
+    "41f85969-3b15-81c2-bb32-c92c3ed51d79": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41f85969-3b15-81c3-99e8-de5d32ba00a1": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41f85969-3b15-81c4-98bb-fcc6f90122f2": {
+      "approach_armed": true,
+      "inside": true,
+      "invalidation_level_key": null
+    },
+    "41f85969-3b15-81c5-905c-de398ccfc5cb": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41f85969-3b15-81c5-aef6-f072e74595bd": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41f85969-3b15-81ca-a219-e721b8be9a73": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41f85969-3b15-81d5-b178-ecbf968bc3c9": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": "0.24"
+    },
+    "41f85969-3b15-81db-a796-dd30677f94ec": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": "0.012"
+    },
+    "41f85969-3b15-81e1-b9e8-e20f07b8c9c3": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41f85969-3b15-81e7-90be-efdd2dc90245": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41f85969-3b15-81e8-99b8-e4ac34a6d2f7": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41f85969-3b15-81f0-8522-eb236240a6b7": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41f85969-3b15-81f6-adb4-fae514525e06": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "41f85969-3b15-81f9-b647-cd2eac0ac224": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    }
+  }
+}
