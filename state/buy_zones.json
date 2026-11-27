@@ -7,7 +7,7 @@
   },
   "last_digest_date": "2026-11-27",
   "lease": {
-    "heartbeat_utc": "2026-11-27T15:05:50Z",
+    "heartbeat_utc": "2026-11-27T15:05:58Z",
     "holder": "local"
   },
   "version": 1,
@@ -64,7 +64,7 @@
     },
     "41e85969-3b15-8121-81ab-c6d46d98b7a9": {
       "approach_armed": true,
-      "inside": false,
+      "inside": true,
       "invalidation_level_key": null
     },
     "41e85969-3b15-8129-ab41-e773e317aa07": {
@@ -94,7 +94,7 @@
     },
     "41e85969-3b15-8146-b48f-dd8752135d4c": {
       "approach_armed": true,
-      "inside": true,
+      "inside": false,
       "invalidation_level_key": null
     },
     "41e85969-3b15-814b-a48f-f99f92b25c09": {
@@ -114,7 +114,7 @@
     },
     "41e85969-3b15-8151-818b-e2424a181f0e": {
       "approach_armed": true,
-      "inside": false,
+      "inside": true,
       "invalidation_level_key": null
     },
     "41e85969-3b15-8151-85a5-df07b73cbe3a": {
@@ -124,7 +124,7 @@
     },
     "41e85969-3b15-8157-97be-f89bcac77783": {
       "approach_armed": true,
-      "inside": false,
+      "inside": true,
       "invalidation_level_key": null
     },
     "41e85969-3b15-815e-8de7-cb33e98b8fb0": {
@@ -159,12 +159,12 @@
     },
     "41e85969-3b15-8185-8033-d7081ce00775": {
       "approach_armed": true,
-      "inside": true,
+      "inside": false,
       "invalidation_level_key": null
     },
     "41e85969-3b15-818a-90a5-cd17338da8fb": {
       "approach_armed": true,
-      "inside": false,
+      "inside": true,
       "invalidation_level_key": null
     },
     "41e85969-3b15-818a-b8c2-e89f7a8ff67f": {
@@ -269,7 +269,7 @@
     },
     "41e85969-3b15-81ce-a829-d5383c0427f4": {
       "approach_armed": true,
-      "inside": false,
+      "inside": true,
       "invalidation_level_key": null
     },
     "41e85969-3b15-81d1-8443-ec227e52cb7c": {
@@ -319,7 +319,7 @@
     },
     "41f85969-3b15-811e-a26e-ec5cbb7ec237": {
       "approach_armed": true,
-      "inside": false,
+      "inside": true,
       "invalidation_level_key": null
     },
     "41f85969-3b15-8129-b5d8-d3c542a441a1": {
@@ -334,7 +334,7 @@
     },
     "41f85969-3b15-813c-bc5c-f1b18fada8eb": {
       "approach_armed": true,
-      "inside": false,
+      "inside": true,
       "invalidation_level_key": null
     },
     "41f85969-3b15-813f-bce7-cbec87a5f2b3": {
@@ -394,7 +394,7 @@
     },
     "41f85969-3b15-8199-9a6e-d9647b332ea8": {
       "approach_armed": true,
-      "inside": false,
+      "inside": true,
       "invalidation_level_key": null
     },
     "41f85969-3b15-81ac-a611-ddb5fca70e30": {
@@ -469,7 +469,7 @@
     },
     "41f85969-3b15-81f0-8522-eb236240a6b7": {
       "approach_armed": true,
-      "inside": false,
+      "inside": true,
       "invalidation_level_key": null
     },
     "41f85969-3b15-81f6-adb4-fae514525e06": {
