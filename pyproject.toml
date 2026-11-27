@@ -23,6 +23,7 @@ dev = ["pytest>=8.0"]
 where = ["src"]
 
 [tool.pytest.ini_options]
-pythonpath = ["src"]
+# "." so `import tests...` works when CI runs the pytest script (not python -m).
+pythonpath = [".", "src"]
 testpaths = ["tests"]
 addopts = "-q"
