@@ -6,6 +6,10 @@
     "SECZ": "securitize-corp"
   },
   "last_digest_date": "2026-11-27",
+  "lease": {
+    "heartbeat_utc": "2026-11-27T15:02:27Z",
+    "holder": "local"
+  },
   "version": 1,
   "zones": {
     "41e85969-3b15-8107-a1dc-ed1aa4c37e02": {
