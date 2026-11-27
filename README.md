@@ -2,7 +2,128 @@
 
 Repo này là **bộ tài liệu + (sau này) mã nguồn** cho bot giao dịch cá nhân của Tomas: theo dõi **BTC** nhiều khung thời gian, tín hiệu khi chỉ báo **đồng thuận**, quản lý rủi ro, chạy **paper / backtest** trước rồi mới **live**, báo **Telegram** và xem trên **dashboard** máy nhà.
 
-> Hiện **chưa có code Phase 1**. Chỉ có đề xuất kiến trúc và hướng dẫn bàn giao. Đọc **HANDOFF** trước khi làm gì thêm.
+> **Đã chạy được:** cảnh báo **vùng giá gom** (Notion → Telegram), 24/7 trên GitHub Actions, không cần mở máy. Làm theo mục [Cảnh báo vùng giá gom](#cảnh-báo-vùng-giá-gom).
+>
+> **Phase 1–6** (chỉ báo, paper, dashboard) vẫn nằm ở các PR nháp, **chưa** có trên `main`. Đọc **HANDOFF** trước khi đụng phần đó.
+
+---
+
+## Cảnh báo vùng giá gom
+
+Bot đọc database Notion **「Vùng giá gom token」** mỗi lần chạy. Chỉ xét dòng **Trạng thái = Đang theo dõi**.
+
+- Giá đi vào khoảng **Giá dưới → Giá trên**: gửi **một** tin. Giá phải ra khỏi vùng **hơn 2%** thì mới “cài lại”; lần sau vào vùng sẽ báo tiếp (tránh báo liên tục khi giá đứng sát mép).
+- Sau **07:00 giờ Việt Nam** (nến ngày đóng lúc 00:00 UTC): nếu giá đóng **thấp hơn** mức **Vô hiệu nếu nến ngày đóng dưới**, gửi **một** tin. Đây là “vùng không còn đúng, dừng mua và đánh giá lại” — **không** phải cắt lỗ, và bot **không sửa** Notion.
+- **07:05** gửi bản tin sáng: những vùng mà giá **đang nằm trong**. GitHub có thể trễ vài phút; trong ngày chỉ gửi một lần.
+- Token không lấy được giá (SECZ là cổ phiếu, một số coin nhỏ không có trên sàn) bị **bỏ qua và ghi log**, bot không sập.
+- Cột **Chuỗi/sàn tham chiếu** (ví dụ `Spot / Binance BTCUSDT`) chọn sàn. Nếu sàn bị chặn, thử Bybit → Binance → OKX, rồi CoinGecko.
+
+Tin mẫu:
+
+```text
+🟢 BTC vào Vùng 1 (55.000–61.000). Giá hiện tại: 60.850. Vô hiệu nếu nến ngày đóng dưới 53.000. Ghi chú: ...
+🔴 BTC – Vùng 1 hết hiệu lực: nến ngày đóng 52.700 < 53.000. Dừng mua vùng này, đánh giá lại.
+```
+
+Bot này **không nghe lệnh** kiểu `/zones` (GitHub Actions không chạy liên tục để nhận tin nhắn). Thay vào đó là bản tin 07:05.
+
+### Việc Tomas phải làm một lần
+
+Repo công khai. **Không** dán token vào file rồi commit. Chỉ điền GitHub Secrets (và file `.env` trên máy nếu muốn chạy thử).
+
+#### 1. Notion — integration chỉ được đọc
+
+1. Mở [https://www.notion.so/my-integrations](https://www.notion.so/my-integrations) → **New integration**.
+2. Tên tùy ý, ví dụ `Vung gia gom`. Quyền: **Read content**. Không cần quyền sửa.
+3. Copy **Internal Integration Secret** — đây là `NOTION_TOKEN` (bắt đầu bằng `ntn_` hoặc `secret_`).
+4. Mở database **Vùng giá gom token** → menu `•••` góc trên → **Connections** / **Add connections** → chọn integration vừa tạo.  
+   Chưa share thì API trả 404, bot không đọc được dòng nào.
+5. Id đã gắn sẵn trong code, thường **không cần sửa**:
+   - Database: `41e859693b1581cc80bbfbcd6fe9e8c3`
+   - Data source: `41e85969-3b15-815a-9e5e-000b774bd208`
+
+Sửa vùng, giá, hoặc đổi Trạng thái trên Notion là đủ. Lần chạy sau (tối đa khoảng 10 phút, cộng độ trễ của GitHub) dùng số mới. Không cần sửa code.
+
+#### 2. Telegram — tạo bot
+
+1. Mở Telegram, nhắn [@BotFather](https://t.me/BotFather) → `/newbot` → đặt tên → copy **token**. Đó là `TELEGRAM_BOT_TOKEN`.
+2. Mở chat với bot đó, nhắn `/start` (một chữ cũng được).
+
+#### 3. Lấy chat id
+
+Trên máy bạn, trong thư mục repo:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+cp .env.example .env
+```
+
+Mở `.env`, dán `TELEGRAM_BOT_TOKEN=...`, lưu. Rồi:
+
+```bash
+PYTHONPATH=src python -m trading_system.notify.chat_id
+```
+
+In ra một số, ví dụ `123456789`. Đó là `TELEGRAM_CHAT_ID`.  
+Chat riêng: số dương. Nhóm: thêm bot vào nhóm, nhắn một tin trong nhóm, chạy lại — id nhóm thường có dấu trừ, copy cả dấu trừ.
+
+Nếu lệnh bảo chưa thấy tin: nhắn lại cho bot rồi chạy lại.
+
+#### 4. Thêm 3 secret trên GitHub
+
+Repo → **Settings** → **Secrets and variables** → **Actions** → **New repository secret**:
+
+| Tên secret | Giá trị |
+|------------|---------|
+| `NOTION_TOKEN` | secret integration ở bước 1 |
+| `TELEGRAM_BOT_TOKEN` | token BotFather |
+| `TELEGRAM_CHAT_ID` | số ở bước 3 |
+
+Không bắt buộc: `COINGECKO_API_KEY` (chỉ khi CoinGecko giới hạn giá coin nhỏ).
+
+#### 5. Bật lịch chạy
+
+1. Merge pull request này vào nhánh **`main`**. Lịch của GitHub **chỉ chạy trên nhánh mặc định**.
+2. Tab **Actions** → **Cảnh báo vùng giá gom**. Nếu có nút **Enable workflow** thì bấm.
+3. Bấm **Run workflow** một lần để thử. Để ô dry-run **tắt** nếu muốn nhận tin thật; bật dry-run nếu chỉ muốn xem log, không gửi Telegram.
+4. Sau đó cứ khoảng **10 phút** bot tự chạy. Không cần mở laptop.
+
+Xem log: Actions → lần chạy mới nhất. Dòng `Không lấy được giá SECZ` là bình thường.
+
+### Chạy thử trên máy (không gửi tin)
+
+`.env` cần `NOTION_TOKEN`. Không cần token Telegram khi dry-run.
+
+```bash
+PYTHONPATH=src python -m trading_system.zones --dry-run
+```
+
+Tin in ra terminal. Lệnh này **không** ghi nhớ “đã báo”, nên chạy lại vẫn in tiếp.  
+Muốn gửi thật từ máy (thường không cần, vì GitHub đã chạy):
+
+```bash
+PYTHONPATH=src python -m trading_system.zones
+```
+
+### Nhớ “đã báo chưa” — vì sao không dùng cache?
+
+File nhớ chỉ có cờ (id trang, đang ở trong vùng hay không, mức vô hiệu đã báo, ngày bản tin, id CoinGecko). **Không** có token, không có ghi chú phân tích.
+
+- Trên máy: file `.state/buy_zones.json` (đã nằm trong `.gitignore`, không commit).
+- Trên GitHub: nhánh riêng `buy-zone-alert-state`, file `state/buy_zones.json`.
+
+Cache của GitHub Actions có thể bị **xóa** sau vài ngày không đụng tới, rồi bot báo lại từ đầu. Nhánh git không bị xóa như vậy, nên dùng nhánh. Workflow tự tạo và tự cập nhật nhánh đó. Bạn không cần tạo tay.
+
+Đổi ngưỡng 2% hoặc bật tin “đang tiến gần” (mặc định **tắt**): sửa `configs/buy_zones.yaml` (`hysteresis_pct`, `approaching_pct`), rồi merge.
+
+### Kiểm tra code
+
+```bash
+pip install -r requirements.txt
+PYTHONPATH=src python -m pytest
+```
 
 ---
 
@@ -52,10 +173,10 @@ Hướng dẫn ngắn + câu prompt mẫu: xem tài liệu Project store `docs/r
 
 ---
 
-## Chạy code sau này
+## Chạy phần còn lại của hệ thống
 
-Khi Phase 1 xong sẽ bổ sung lệnh cụ thể (tạo môi trường Python, copy `.env.example`, chạy test). **Hiện chưa có ứng dụng để khởi động.**
+Phase 1–6 (paper, chỉ báo, dashboard) **chưa** nằm trên `main`. Khi các PR đó được merge, README của từng phase có lệnh chạy. Phần **đã** chạy được hôm nay là cảnh báo vùng giá ở trên.
 
 ## Bảo mật
 
-Không commit API key / Telegram token. Dùng `.env` (mẫu `.env.example` sẽ có ở Phase 1).
+Không commit API key / Telegram token / Notion token. Mẫu nằm ở `.env.example`. File `.env` và thư mục `.state/` bị git bỏ qua.

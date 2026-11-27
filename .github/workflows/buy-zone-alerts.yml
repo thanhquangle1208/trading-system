@@ -1,0 +1,82 @@
+# Chạy trên nhánh mặc định (main) sau khi merge.
+# GitHub cron có thể trễ vài phút đến vài chục phút — luật nến ngày nhìn nến đã đóng,
+# không phụ thuộc đúng giây 07:00.
+name: Cảnh báo vùng giá gom
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Chỉ in cảnh báo, không gửi Telegram"
+        type: boolean
+        default: false
+
+concurrency:
+  group: buy-zone-alerts
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  alert:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      PYTHONPATH: src
+    steps:
+      - name: Lấy code
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements.txt
+
+      - name: Cài thư viện
+        run: pip install -r requirements.txt
+
+      - name: Lấy trạng thái đã lưu
+        run: |
+          mkdir -p .state
+          if git ls-remote --exit-code --heads origin buy-zone-alert-state >/dev/null 2>&1; then
+            git fetch --depth 1 origin buy-zone-alert-state
+            if git cat-file -e FETCH_HEAD:state/buy_zones.json 2>/dev/null; then
+              git show FETCH_HEAD:state/buy_zones.json > .state/buy_zones.json
+              echo "Đã nạp trạng thái từ nhánh buy-zone-alert-state."
+            else
+              printf '%s\n' '{"version":1,"zones":{},"last_digest_date":null,"coingecko_ids":{}}' > .state/buy_zones.json
+              echo "Nhánh trạng thái chưa có file — bắt đầu trống."
+            fi
+          else
+            printf '%s\n' '{"version":1,"zones":{},"last_digest_date":null,"coingecko_ids":{}}' > .state/buy_zones.json
+            echo "Chưa có nhánh trạng thái — lần này bắt đầu trống."
+          fi
+
+      - name: Kiểm tra vùng giá
+        id: run
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
+          NOTION_DATA_SOURCE_ID: ${{ secrets.NOTION_DATA_SOURCE_ID }}
+          COINGECKO_API_KEY: ${{ secrets.COINGECKO_API_KEY }}
+          BUY_ZONE_STATE_PATH: .state/buy_zones.json
+          DRY: ${{ inputs.dry_run }}
+        run: |
+          if [ "$DRY" = "true" ]; then
+            python -m trading_system.zones --dry-run
+          else
+            python -m trading_system.zones
+          fi
+
+      - name: Lưu trạng thái (không bí mật)
+        if: (steps.run.conclusion == 'success' || steps.run.conclusion == 'failure') && inputs.dry_run != true
+        run: bash scripts/push_buy_zone_state.sh .state/buy_zones.json
