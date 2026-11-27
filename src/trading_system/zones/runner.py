@@ -27,7 +27,16 @@ from trading_system.zones.messages import (
 from trading_system.zones.models import BuyZone
 from trading_system.zones.notion_source import parse_pages, query_pages
 from trading_system.zones.reference import parse_reference
-from trading_system.zones.state import AlertState, StateError, load_state, save_state
+from trading_system.zones.state import (
+    GITHUB_RUNNER,
+    LOCAL_RUNNER,
+    AlertState,
+    StateError,
+    claim_lease,
+    lease_blocks_github,
+    load_state,
+    save_state,
+)
 
 log = get_logger("zones.runner")
 
@@ -47,6 +56,7 @@ class RunReport:
     ok: bool
     messages: list[str] = field(default_factory=list)
     skipped: list[str] = field(default_factory=list)
+    yielded: bool = False
 
 
 def run_once(
@@ -59,19 +69,41 @@ def run_once(
     dry_run: bool = False,
     save: bool = True,
     state_path: Path | None = None,
+    runner: str = GITHUB_RUNNER,
+    claim_only: bool = False,
 ) -> RunReport:
     path = state_path or _resolve_state_path(config.state_path)
+    holder = LOCAL_RUNNER if runner == LOCAL_RUNNER else GITHUB_RUNNER
+    try:
+        state = load_state(path)
+    except StateError as exc:
+        log.error("%s", exc)
+        return RunReport(ok=False)
+
+    if claim_only:
+        if holder == LOCAL_RUNNER and (
+            not settings.notion_token.strip() or not _notifier_ready(notifier)
+        ):
+            log.error("Thiếu token — không giữ nhịp, để GitHub vẫn chạy.")
+            return RunReport(ok=False)
+        claim_lease(state, holder, now)
+        if save:
+            save_state(path, state)
+        log.info("Giữ nhịp %s lúc %s", holder, state.heartbeat_utc)
+        return RunReport(ok=True)
+
+    if holder == GITHUB_RUNNER and lease_blocks_github(state, now, config.lease_max_age_sec):
+        log.info(
+            "Mac đang chạy (nhịp %s). GitHub bỏ qua lần này.",
+            state.heartbeat_utc,
+        )
+        return RunReport(ok=True, yielded=True)
+
     if not settings.notion_token.strip():
         log.error("Thiếu NOTION_TOKEN. Xem README mục cảnh báo vùng giá gom.")
         return RunReport(ok=False)
     if not dry_run and not _notifier_ready(notifier):
         log.error("Thiếu TELEGRAM_BOT_TOKEN hoặc TELEGRAM_CHAT_ID.")
-        return RunReport(ok=False)
-
-    try:
-        state = load_state(path)
-    except StateError as exc:
-        log.error("%s", exc)
         return RunReport(ok=False)
 
     try:
@@ -195,6 +227,7 @@ def run_once(
             last_digest_date=new_digest,
             coingecko_ids=fetched.id_cache,
         )
+        claim_lease(updated, holder, now)
         save_state(path, updated)
     return RunReport(ok=not failed, messages=messages, skipped=skipped + _unique(unpriced_names))
 

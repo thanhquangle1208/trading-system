@@ -81,6 +81,7 @@ def _run(http, box, path, now, **kwargs):
         dry_run=kwargs.get("dry_run", False),
         save=kwargs.get("save", True),
         state_path=path,
+        runner=kwargs.get("runner", "github"),
     )
 
 
@@ -270,6 +271,7 @@ def test_yaml_defaults_and_blank_notion_ids(monkeypatch) -> None:
     assert config.hysteresis_pct == 2
     assert config.approaching is None
     assert (config.digest_hour_vn, config.digest_minute_vn) == (7, 5)
+    assert config.lease_max_age_sec == 20 * 60
 
     settings = Settings(notion_database_id="", notion_data_source_id="  ")
     assert settings.notion_database_id == "41e859693b1581cc80bbfbcd6fe9e8c3"
@@ -309,9 +311,12 @@ def test_workflow_and_state_script_contract() -> None:
     assert "secrets.TELEGRAM_CHAT_ID" in workflow
     assert "secrets.NOTION_TOKEN" in workflow
     assert "buy-zone-alert-state" in workflow
-    script = (root / "scripts/push_buy_zone_state.sh").read_text(encoding="utf-8")
+    script = (root / "scripts/sync_buy_zone_state.sh").read_text(encoding="utf-8")
     assert "git add -A" not in script
-    assert "git add -f -- state/buy_zones.json" in script
+    assert "git switch" not in script
+    assert "add -f -- state/buy_zones.json" in script
+    mac = (root / "scripts/mac/start_buy_zones.sh").read_text(encoding="utf-8")
+    assert "loop_buy_zones.sh" in mac
     example = (root / ".env.example").read_text(encoding="utf-8")
     assert "TELEGRAM_BOT_TOKEN=" in example
     assert "NOTION_TOKEN=" in example

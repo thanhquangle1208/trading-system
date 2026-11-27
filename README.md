@@ -88,31 +88,52 @@ Không bắt buộc: `COINGECKO_API_KEY` (chỉ khi CoinGecko giới hạn giá 
 1. Merge pull request này vào nhánh **`main`**. Lịch của GitHub **chỉ chạy trên nhánh mặc định**.
 2. Tab **Actions** → **Cảnh báo vùng giá gom**. Nếu có nút **Enable workflow** thì bấm.
 3. Bấm **Run workflow** một lần để thử. Để ô dry-run **tắt** nếu muốn nhận tin thật; bật dry-run nếu chỉ muốn xem log, không gửi Telegram.
-4. Sau đó cứ khoảng **10 phút** bot tự chạy. Không cần mở laptop.
+4. Lịch GitHub vẫn bật. Đó là bản dự phòng khi Mac tắt. Khi Mac đang chạy, GitHub thấy nhịp và **không gửi thêm**.
 
-Xem log: Actions → lần chạy mới nhất. Dòng `Không lấy được giá SECZ` là bình thường.
+Xem log: Actions → lần chạy mới nhất. Dòng `Mac đang chạy` nghĩa là GitHub đang nhường. Dòng `Không lấy được giá SECZ` là bình thường.
 
-### Chạy thử trên máy (không gửi tin)
+### Chạy trên Mac (giá Bybit / Binance), GitHub dự phòng
 
-`.env` cần `NOTION_TOKEN`. Không cần token Telegram khi dry-run.
+Máy GitHub ở Mỹ bị Bybit và Binance chặn, nên bản trên GitHub dùng OKX rồi CoinGecko. Máy Mac ở Việt Nam gọi được Bybit và Binance.
+
+Cách làm: Mac là máy chính. Mỗi vòng nó ghi một **nhịp** lên nhánh `buy-zone-alert-state` (cùng sổ “đã báo”, không phải token). GitHub 10 phút kiểm tra một lần. Nhịp còn mới (trong 20 phút) thì GitHub bỏ qua. Mac tắt hoặc script dừng quá 20 phút thì GitHub tự chạy.
+
+Cần file `.env` (3 biến như secret ở trên) và git đẩy được lên GitHub — cùng cách anh vẫn đẩy code, không thêm token vào file.
+
+Trong thư mục repo:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+cp .env.example .env
+# điền NOTION_TOKEN, TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
+
+bash scripts/mac/start_buy_zones.sh
+```
+
+Tắt bot Mac (GitHub sẽ nhận sau khoảng 20 phút):
+
+```bash
+bash scripts/mac/stop_buy_zones.sh
+```
+
+Log nằm ở `.state/buy_zones.log`. Đóng cửa sổ Terminal không tắt bot, vì script chạy nền.
+
+Chỉ xem tin, không gửi:
 
 ```bash
 PYTHONPATH=src python -m trading_system.zones --dry-run
 ```
 
-Tin in ra terminal. Lệnh này **không** ghi nhớ “đã báo”, nên chạy lại vẫn in tiếp.  
-Muốn gửi thật từ máy (thường không cần, vì GitHub đã chạy):
-
-```bash
-PYTHONPATH=src python -m trading_system.zones
-```
+Đừng tự viết vòng `while` gọi bot mà không qua `scripts/mac/`. Vòng đó không đẩy nhịp, GitHub sẽ gửi trùng.
 
 ### Nhớ “đã báo chưa” — vì sao không dùng cache?
 
-File nhớ chỉ có cờ (id trang, đang ở trong vùng hay không, mức vô hiệu đã báo, ngày bản tin, id CoinGecko). **Không** có token, không có ghi chú phân tích.
+File nhớ chỉ có cờ (id trang, đang ở trong vùng hay không, mức vô hiệu đã báo, ngày bản tin, id CoinGecko, và nhịp Mac/GitHub). **Không** có token, không có ghi chú phân tích.
 
-- Trên máy: file `.state/buy_zones.json` (đã nằm trong `.gitignore`, không commit).
-- Trên GitHub: nhánh riêng `buy-zone-alert-state`, file `state/buy_zones.json`.
+- Trên máy: file `.state/buy_zones.json` (đã nằm trong `.gitignore`, không commit vào nhánh code).
+- Trên GitHub: nhánh riêng `buy-zone-alert-state`, file `state/buy_zones.json`. Mac và GitHub cùng sửa file này.
 
 Cache của GitHub Actions có thể bị **xóa** sau vài ngày không đụng tới, rồi bot báo lại từ đầu. Nhánh git không bị xóa như vậy, nên dùng nhánh. Workflow tự tạo và tự cập nhật nhánh đó. Bạn không cần tạo tay.
 
