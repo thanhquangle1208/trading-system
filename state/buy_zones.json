@@ -7,7 +7,7 @@
   },
   "last_digest_date": "2026-11-27",
   "lease": {
-    "heartbeat_utc": "2026-11-27T15:04:32Z",
+    "heartbeat_utc": "2026-11-27T15:04:40Z",
     "holder": "local"
   },
   "version": 1,
@@ -99,7 +99,7 @@
     },
     "41e85969-3b15-814b-a48f-f99f92b25c09": {
       "approach_armed": true,
-      "inside": true,
+      "inside": false,
       "invalidation_level_key": null
     },
     "41e85969-3b15-814c-bb0c-df2b22241fd4": {
@@ -134,7 +134,7 @@
     },
     "41e85969-3b15-816b-871a-cf25184ab952": {
       "approach_armed": true,
-      "inside": true,
+      "inside": false,
       "invalidation_level_key": null
     },
     "41e85969-3b15-816d-ba68-ef0792f447ff": {
@@ -389,7 +389,7 @@
     },
     "41f85969-3b15-8188-a9da-e1c4576261f7": {
       "approach_armed": true,
-      "inside": true,
+      "inside": false,
       "invalidation_level_key": null
     },
     "41f85969-3b15-8199-9a6e-d9647b332ea8": {
