@@ -11,6 +11,7 @@ import urllib.error
 import urllib.request
 from typing import Any, Callable
 
+from trading_system.data.ssl_util import ssl_context
 from trading_system.logging_setup import get_logger
 
 log = get_logger("notify.telegram")
@@ -36,7 +37,7 @@ def _http_send(token: str, chat_id: str, text: str) -> dict[str, Any]:
         method="POST",
     )
     try:
-        with urllib.request.urlopen(req, timeout=20) as resp:
+        with urllib.request.urlopen(req, timeout=20, context=ssl_context()) as resp:
             return json.loads(resp.read().decode("utf-8"))
     except urllib.error.HTTPError as exc:
         body = exc.read().decode("utf-8", errors="replace")

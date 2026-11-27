@@ -94,39 +94,28 @@ Xem log: Actions → lần chạy mới nhất. Dòng `Mac đang chạy` nghĩa 
 
 ### Chạy trên Mac (giá Bybit / Binance), GitHub dự phòng
 
-Máy GitHub ở Mỹ bị Bybit và Binance chặn, nên bản trên GitHub dùng OKX rồi CoinGecko. Máy Mac ở Việt Nam gọi được Bybit và Binance.
+Hướng dẫn ngắn, từng bước: **[docs/HUONG-DAN-MAC.md](docs/HUONG-DAN-MAC.md)**
 
-Cách làm: Mac là máy chính. Mỗi vòng nó ghi một **nhịp** lên nhánh `buy-zone-alert-state` (cùng sổ “đã báo”, không phải token). GitHub 10 phút kiểm tra một lần. Nhịp còn mới (trong 20 phút) thì GitHub bỏ qua. Mac tắt hoặc script dừng quá 20 phút thì GitHub tự chạy.
+Máy GitHub ở Mỹ bị Bybit/Binance chặn nên dùng OKX/CoinGecko. Mac ở Việt Nam dùng Bybit/Binance. Mac ghi nhịp lên nhánh `buy-zone-alert-state`; GitHub chỉ chạy khi nhịp Mac cũ hơn ~20 phút.
 
-Cần file `.env` (3 biến như secret ở trên) và git đẩy được lên GitHub — cùng cách anh vẫn đẩy code, không thêm token vào file.
-
-Trong thư mục repo:
+Cài một lần:
 
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-cp .env.example .env
-# điền NOTION_TOKEN, TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
+cd ~/trading-system
+git checkout main
+git pull
+bash scripts/mac/setup_once.sh
+```
 
+Bật / tắt:
+
+```bash
 bash scripts/mac/start_buy_zones.sh
-```
-
-Tắt bot Mac (GitHub sẽ nhận sau khoảng 20 phút):
-
-```bash
 bash scripts/mac/stop_buy_zones.sh
+tail -n 40 .state/buy_zones.log
 ```
 
-Log nằm ở `.state/buy_zones.log`. Đóng cửa sổ Terminal không tắt bot, vì script chạy nền.
-
-Chỉ xem tin, không gửi:
-
-```bash
-PYTHONPATH=src python -m trading_system.zones --dry-run
-```
-
-Đừng tự viết vòng `while` gọi bot mà không qua `scripts/mac/`. Vòng đó không đẩy nhịp, GitHub sẽ gửi trùng.
+Script `start` tự báo nếu thiếu `.venv`, thư viện, hoặc token trong `.env`. Không tự viết vòng `while` ngoài `scripts/mac/`.
 
 ### Nhớ “đã báo chưa” — vì sao không dùng cache?
 

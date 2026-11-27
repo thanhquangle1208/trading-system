@@ -14,4 +14,9 @@ if [[ -f "$PID_FILE" ]]; then
   fi
   rm -f "$PID_FILE"
 fi
+
+# Dọn process sót (pid cũ, hoặc đổi nhánh lúc đang chạy).
+pkill -f "$ROOT/scripts/mac/loop_buy_zones.sh" 2>/dev/null || true
+pkill -f "$ROOT/scripts/mac/run_once.sh" 2>/dev/null || true
+
 echo "Đã tắt bot Mac. GitHub sẽ nhận việc khi nhịp cũ hơn 20 phút."
