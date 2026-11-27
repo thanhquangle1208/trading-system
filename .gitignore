@@ -1,0 +1,30 @@
+# Bí mật — không commit
+.env
+.env.local
+*.pem
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+dist/
+build/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Nhật ký và trạng thái chạy trên máy (file dedupe trên GitHub nằm ở nhánh riêng)
+logs/
+.state/
+
+# IDE / OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

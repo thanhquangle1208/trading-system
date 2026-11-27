@@ -1,0 +1,20 @@
+# Cảnh báo vùng giá gom. Sửa file này rồi merge — không cần sửa code.
+# Bí mật (token) nằm trong .env / GitHub Secrets, không ghi ở đây.
+
+# Khi giá đã báo "vào vùng", phải ra khỏi vùng thêm bấy nhiêu % thì mới cài lại.
+# Ví dụ 2 = ra ngoài hơn 2% so với mép trên hoặc mép dưới.
+hysteresis_pct: 2
+
+# Báo khi giá nằm phía trên vùng, trong X%. null = tắt (mặc định).
+approaching_pct: null
+
+# Bản tin sáng: những vùng mà giá đang nằm trong. Giờ Việt Nam (UTC+7).
+digest:
+  enabled: true
+  hour_vn: 7
+  minute_vn: 5
+
+# File nhớ "đã báo chưa" trên máy chạy. GitHub Actions đẩy bản không bí mật
+# lên nhánh buy-zone-alert-state (không commit vào nhánh code).
+state:
+  path: .state/buy_zones.json
