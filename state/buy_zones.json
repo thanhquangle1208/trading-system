@@ -1,13 +1,20 @@
 {
   "coingecko_ids": {
+    "0G": "zero-gravity",
+    "AZTEC": "aztec",
+    "BABY": "babylon",
+    "CLANKER": "tokenbot-2",
+    "CLOUD": "crypto-clouds",
     "EDEN": "openeden",
+    "MOCA": "mocaverse",
     "PLUME": "plume",
     "RED": "redstone-oracles",
-    "SECZ": "securitize-corp"
+    "SECZ": "securitize-corp",
+    "STABLE": "stable-2"
   },
-  "last_digest_date": "2026-11-27",
+  "last_digest_date": "2026-11-28",
   "lease": {
-    "heartbeat_utc": "2026-11-27T17:39:34Z",
+    "heartbeat_utc": "2026-11-28T00:43:06Z",
     "holder": "github"
   },
   "version": 1,
@@ -34,7 +41,7 @@
     },
     "41e85969-3b15-8113-accb-ff8754c562ca": {
       "approach_armed": true,
-      "inside": true,
+      "inside": false,
       "invalidation_level_key": null
     },
     "41e85969-3b15-8114-84bf-f4227fef0996": {
@@ -159,7 +166,7 @@
     },
     "41e85969-3b15-8185-8033-d7081ce00775": {
       "approach_armed": true,
-      "inside": false,
+      "inside": true,
       "invalidation_level_key": null
     },
     "41e85969-3b15-818a-90a5-cd17338da8fb": {
@@ -214,12 +221,12 @@
     },
     "41e85969-3b15-81b5-b4e2-fa4e08c97b43": {
       "approach_armed": true,
-      "inside": true,
+      "inside": false,
       "invalidation_level_key": null
     },
     "41e85969-3b15-81b7-ad81-f7b579e352a8": {
       "approach_armed": true,
-      "inside": true,
+      "inside": false,
       "invalidation_level_key": null
     },
     "41e85969-3b15-81ba-a42f-f21885a3ea24": {
@@ -319,7 +326,7 @@
     },
     "41f85969-3b15-811e-a26e-ec5cbb7ec237": {
       "approach_armed": true,
-      "inside": true,
+      "inside": false,
       "invalidation_level_key": null
     },
     "41f85969-3b15-8129-b5d8-d3c542a441a1": {
@@ -370,7 +377,7 @@
     "41f85969-3b15-817c-be58-da7d21db5b28": {
       "approach_armed": true,
       "inside": false,
-      "invalidation_level_key": "0.97"
+      "invalidation_level_key": null
     },
     "41f85969-3b15-817f-97c2-e53f791cb5aa": {
       "approach_armed": true,
@@ -469,7 +476,7 @@
     },
     "41f85969-3b15-81f0-8522-eb236240a6b7": {
       "approach_armed": true,
-      "inside": true,
+      "inside": false,
       "invalidation_level_key": null
     },
     "41f85969-3b15-81f6-adb4-fae514525e06": {
@@ -478,6 +485,186 @@
       "invalidation_level_key": null
     },
     "41f85969-3b15-81f9-b647-cd2eac0ac224": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "42585969-3b15-810e-be9b-f2dbc5a24d5e": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "42585969-3b15-8119-af0c-dbba51b3bfa0": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "42585969-3b15-811b-90cf-fbb22aa4b9db": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "42585969-3b15-8129-8bb5-dc366ca001cb": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "42585969-3b15-812f-8eb0-fb2a1cee5c54": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "42585969-3b15-812f-a527-e73252e2adaa": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "42585969-3b15-8140-a24a-f8e6bca3988a": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "42585969-3b15-8142-b7c4-c3ca3bf42d6f": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "42585969-3b15-814e-82db-ca4a74dd0581": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "42585969-3b15-8156-980d-f4b2d93abd56": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "42585969-3b15-8160-a8b9-f10570f53637": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "42585969-3b15-8160-aae9-e29457c8cc35": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "42585969-3b15-8170-829c-d24cb4186aa0": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "42585969-3b15-8170-9ef5-d2aaeca2cb1e": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "42585969-3b15-8179-969d-e491b9f93458": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "42585969-3b15-817c-8efc-d762da07f3f8": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "42585969-3b15-8182-8d2a-f923a0f89546": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "42585969-3b15-8187-a98d-fd76a425431a": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "42585969-3b15-819c-8eaa-c90a823aa9b7": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "42585969-3b15-819d-b6c2-f358821c7a19": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "42585969-3b15-819f-8a5d-dcc07dc061a8": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "42585969-3b15-81a5-a7f6-fa9253d79c0e": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "42585969-3b15-81ac-8e5b-f0dc90c2a8a5": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "42585969-3b15-81c0-ac59-d46c878a93eb": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "42585969-3b15-81c1-97f9-ecebe9c8c172": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "42585969-3b15-81d0-88d4-e8489bbdc411": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "42585969-3b15-81d2-a634-e8aeaa537d94": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "42585969-3b15-81d3-952a-cd65427bca01": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "42585969-3b15-81d5-8ac8-db5735efe2db": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "42585969-3b15-81df-b3ce-d50d396684ff": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "42585969-3b15-81e1-b8d3-d7ca66e960a9": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "42585969-3b15-81ea-b3e8-c2918cf2a913": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "42585969-3b15-81ee-85f8-c2e8e76fe8bc": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "42585969-3b15-81f0-99a9-fd3e883fa495": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "42585969-3b15-81f4-8110-dea88c82fad7": {
+      "approach_armed": true,
+      "inside": false,
+      "invalidation_level_key": null
+    },
+    "42585969-3b15-81fd-9e49-d53e5dd8eee8": {
       "approach_armed": true,
       "inside": false,
       "invalidation_level_key": null
