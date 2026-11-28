@@ -14,7 +14,7 @@
   },
   "last_digest_date": "2026-11-28",
   "lease": {
-    "heartbeat_utc": "2026-11-28T00:43:06Z",
+    "heartbeat_utc": "2026-11-28T08:30:28Z",
     "holder": "github"
   },
   "version": 1,
@@ -101,7 +101,7 @@
     },
     "41e85969-3b15-8146-b48f-dd8752135d4c": {
       "approach_armed": true,
-      "inside": false,
+      "inside": true,
       "invalidation_level_key": null
     },
     "41e85969-3b15-814b-a48f-f99f92b25c09": {
@@ -416,7 +416,7 @@
     },
     "41f85969-3b15-81be-ac58-c055c02174dd": {
       "approach_armed": true,
-      "inside": true,
+      "inside": false,
       "invalidation_level_key": null
     },
     "41f85969-3b15-81c2-bb32-c92c3ed51d79": {
